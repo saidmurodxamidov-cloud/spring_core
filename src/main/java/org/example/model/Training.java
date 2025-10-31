@@ -13,7 +13,7 @@ import java.util.Objects;
 @Getter
 @ToString(callSuper = true)
 public class Training {
-    private Long traineeId  ;
+    private Long traineeId;
     private Long trainerId;
     private LocalDate date;
     private String trainingName;

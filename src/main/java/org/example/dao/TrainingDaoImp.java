@@ -19,26 +19,6 @@ public class TrainingDaoImp implements TrainingDAO {
         storage.getTrainingStorage().add(training);
     }
 
-    @Override
-    public void update(Training trainee) {
-        var old = findById(trainee.getTraineeId());
-        if(storage.getTrainingStorage().contains(old)){
-            storage.getTrainingStorage().remove(old);
-            storage.getTrainingStorage().add(trainee);
-        }else
-            throw new IllegalArgumentException();
-    }
-
-
-    @Override
-    public Training findById(Long id) {
-        return null;
-    }
-
-    @Override
-    public void delete(Training training) {
-        storage.getTrainingStorage().remove(training);
-    }
 
     @Override
     public List<Training> findAll() {
