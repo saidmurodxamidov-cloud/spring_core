@@ -1,7 +1,16 @@
 package org.example.model;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
+
+@Setter
+@Getter
+@ToString(callSuper = true)
 public class Trainee extends User{
     private Long userId;
     private LocalDate dateOfBirth;
@@ -15,27 +24,16 @@ public class Trainee extends User{
     }
     public Trainee(){}
 
-    public Long getUserId() {
-        return userId;
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Trainee trainee = (Trainee) o;
+        return Objects.equals(userId, trainee.userId) && Objects.equals(dateOfBirth, trainee.dateOfBirth) && Objects.equals(address, trainee.address);
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId, dateOfBirth, address);
     }
 }
