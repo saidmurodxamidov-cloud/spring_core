@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.example.enums.TrainingType;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -17,7 +18,7 @@ public class Training {
     private LocalDate date;
     private String trainingName;
     private TrainingType trainingType;
-    private Integer trainingDuration;
+    private Duration trainingDuration;
 
     public Training(Long traineeId, Long trainerId, LocalDate date, String trainingName, TrainingType trainingType, Integer trainingDuration) {
         this.traineeId = traineeId;
@@ -25,7 +26,7 @@ public class Training {
         this.date = date;
         this.trainingName = trainingName;
         this.trainingType = trainingType;
-        this.trainingDuration = trainingDuration;
+        this.trainingDuration = Duration.ofMinutes(trainingDuration);
     }
     public Training(){}
 
