@@ -1,6 +1,7 @@
 package org.example.model;
 
 public class User {
+    private Long userId;
     private String firstName;
     private String lastName;
     private String userName;
@@ -9,7 +10,8 @@ public class User {
 
     public User(){}
 
-    public User(String firstName, String lastName, String userName, String password, boolean isActive) {
+    public User(Long userId,String firstName, String lastName, String userName, String password, boolean isActive) {
+        this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.userName = userName;

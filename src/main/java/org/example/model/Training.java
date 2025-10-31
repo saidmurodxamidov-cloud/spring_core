@@ -2,6 +2,7 @@ package org.example.model;
 
 import org.example.enums.TrainingType;
 
+import java.time.Duration;
 import java.time.LocalDate;
 
 public class Training {
@@ -10,7 +11,7 @@ public class Training {
     private LocalDate date;
     private String trainingName;
     private TrainingType trainingType;
-    private Integer trainingDuration;
+    private Duration trainingDuration;
 
     public Training(Long traineeId, Long trainerId, LocalDate date, String trainingName, TrainingType trainingType, Integer trainingDuration) {
         this.traineeId = traineeId;
@@ -18,7 +19,7 @@ public class Training {
         this.date = date;
         this.trainingName = trainingName;
         this.trainingType = trainingType;
-        this.trainingDuration = trainingDuration;
+        this.trainingDuration = Duration.ofMinutes(trainingDuration);
     }
     public Training(){}
 
@@ -62,11 +63,11 @@ public class Training {
         this.trainingType = trainingType;
     }
 
-    public Integer getTrainingDuration() {
-        return trainingDuration;
+    public Long getTrainingDuration() {
+        return trainingDuration.toMinutes();
     }
 
     public void setTrainingDuration(Integer trainingDuration) {
-        this.trainingDuration = trainingDuration;
+        this.trainingDuration = Duration.ofMinutes(trainingDuration);
     }
 }

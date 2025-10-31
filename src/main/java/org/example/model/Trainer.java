@@ -1,11 +1,10 @@
 package org.example.model;
 
 public class Trainer extends User{
-    private Long userId;
     private String specialization;
 
-    public Trainer(String firstName, String lastName, String userName, String password, boolean isActive,String specialization) {
-        super(firstName, lastName, userName, password, isActive);
+    public Trainer(Long userId,String firstName, String lastName, String userName, String password, boolean isActive,String specialization) {
+        super(userId,firstName, lastName, userName, password, isActive);
         this.specialization = specialization;
     }
     public Trainer(){}

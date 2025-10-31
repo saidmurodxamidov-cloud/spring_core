@@ -3,25 +3,16 @@ package org.example.model;
 import java.time.LocalDate;
 
 public class Trainee extends User{
-    private Long userId;
     private LocalDate dateOfBirth;
     private String address;
 
-    public Trainee(String firstName, String lastName, String userName, String password, boolean isActive, Long userId, LocalDate dateOfBirth, String address) {
-        super(firstName, lastName, userName, password, isActive);
-        this.userId = userId;
+    public Trainee(Long userId,String firstName, String lastName, String userName, String password, boolean isActive, LocalDate dateOfBirth, String address) {
+        super(userId,firstName, lastName, userName, password, isActive);
         this.dateOfBirth = dateOfBirth;
         this.address = address;
     }
     public Trainee(){}
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
 
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
