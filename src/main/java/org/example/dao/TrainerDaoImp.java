@@ -1,48 +1,45 @@
 package org.example.dao;
 
+import lombok.RequiredArgsConstructor;
+import org.example.exception.EntityAlreadyExistException;
+import org.example.exception.EntityNotFoundException;
 import org.example.model.Trainer;
+import org.example.storage.TrainerStorage;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Repository
+@RequiredArgsConstructor
 public class TrainerDaoImp implements TrainerDAO{
-    private final InMemoryStorage storage;
+    private final TrainerStorage trainerStorage;
 
-    public TrainerDaoImp(InMemoryStorage storage) {
-        this.storage = storage;
-    }
+
     @Override
     public void create(Trainer trainer) {
-        if (!storage.getTrainerStorage().containsKey(trainer.getUserId())) {
-            storage.getTrainerStorage().put(trainer.getUserId(), trainer);
-        } else {
-            throw new IllegalArgumentException("Trainer with ID " + trainer.getUserId() + " already exists.");
+        if (trainerStorage.getStorage().containsKey(trainer.getUserId())) {
+            throw new EntityAlreadyExistException();
         }
+        trainerStorage.getStorage().put(trainer.getUserId(), trainer);
     }
 
     @Override
     public void update(Trainer trainer) {
-        if (storage.getTrainerStorage().containsKey(trainer.getUserId())) {
-            storage.getTrainerStorage().put(trainer.getUserId(), trainer);
-        } else {
-            throw new IllegalArgumentException("Trainer with ID " + trainer.getUserId() + " not found.");
-        }
-    }
-
-    @Override
-    public void delete(Long id) {
-        storage.getTrainerStorage().remove(id);
+        if(!trainerStorage.getStorage().containsKey(trainer.getUserId()))
+            throw new EntityNotFoundException("not found with id: " + trainer.getUserId());
+        trainerStorage.getStorage().put(trainer.getUserId(),trainer);
     }
 
     @Override
     public Trainer findById(Long id) {
-        return storage.getTrainerStorage().get(id);
+        if(!trainerStorage.getStorage().containsKey(id))
+            throw new EntityNotFoundException("not found with id: " + id);
+        return trainerStorage.getStorage().get(id);
     }
 
     @Override
     public List<Trainer> findAll() {
-        return new ArrayList<>(storage.getTrainerStorage().values());
+        return trainerStorage.getStorage().values().stream().toList();
     }
 }

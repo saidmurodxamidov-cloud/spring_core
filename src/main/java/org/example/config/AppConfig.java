@@ -7,7 +7,6 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 

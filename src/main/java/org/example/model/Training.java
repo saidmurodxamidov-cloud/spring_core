@@ -7,9 +7,9 @@ import java.time.Duration;
 import java.time.LocalDate;
 
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Training {
     private Long trainingId;
     private Long traineeId ;

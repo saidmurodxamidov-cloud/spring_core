@@ -2,6 +2,8 @@ package org.example;
 
 import org.example.config.AppConfig;
 
+import org.example.dao.TrainerDAO;
+import org.example.model.Trainer;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 
@@ -17,6 +19,9 @@ public class Main {
         TraineeStorage traineeStorage = context.getBean(TraineeStorage.class);
         TrainingStorage trainingStorage = context.getBean(TrainingStorage.class);
         TrainerStorage trainerStorage = context.getBean(TrainerStorage.class);
+        TrainerDAO trainerDAO = context.getBean(TrainerDAO.class);
+        Trainer trainer = new Trainer(12L,"saidmurod","xamidov","saidxam","password",true,"bot");
+        trainerDAO.create(trainer);
         System.out.println(trainingStorage.getStorage());
         System.out.println(trainerStorage.getStorage());
         System.out.println(traineeStorage.getStorage());

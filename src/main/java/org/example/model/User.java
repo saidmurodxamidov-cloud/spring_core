@@ -4,9 +4,12 @@ import lombok.*;
 
 import java.util.Objects;
 
-@Data
-@AllArgsConstructor
+//@Data
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
 public class User {
     private Long userId;
     private String firstName;

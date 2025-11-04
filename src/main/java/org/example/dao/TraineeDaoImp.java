@@ -1,51 +1,53 @@
 package org.example.dao;
 
+import lombok.RequiredArgsConstructor;
+import org.example.exception.EntityAlreadyExistException;
+import org.example.exception.EntityNotFoundException;
 import org.example.model.Trainee;
+import org.example.storage.TraineeStorage;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
+@RequiredArgsConstructor
 public class TraineeDaoImp implements TraineeDAO{
 
-    private final InMemoryStorage storage;
+    private final TraineeStorage traineeStorage;
 
-    public TraineeDaoImp(InMemoryStorage storage){
-        this.storage = storage;
-    }
 
     @Override
     public void create(Trainee trainee) {
-        if (!storage.getTraineeStorage().containsKey(trainee.getUserId()))
-            storage.getTraineeStorage().put(trainee.getUserId(), trainee);
-         else
-            throw new IllegalArgumentException("Trainee with ID " + trainee.getUserId() + " already exists.");
+        if (traineeStorage.getStorage().containsKey(trainee.getUserId()))
+            throw new EntityAlreadyExistException();
 
+        traineeStorage.getStorage().put(trainee.getUserId(),trainee);
     }
 
     @Override
     public void update(Trainee trainee) {
-        if (storage.getTraineeStorage().containsKey(trainee.getUserId()))
-            storage.getTraineeStorage().put(trainee.getUserId(), trainee);
-         else
-            throw new IllegalArgumentException("Trainee with ID " + trainee.getUserId() + " not found.");
+        if (!traineeStorage.getStorage().containsKey(trainee.getUserId()))
+            throw new EntityNotFoundException();
+        traineeStorage.getStorage().put(trainee.getUserId(), trainee);
 
     }
 
     @Override
     public void delete(Long id) {
-        storage.getTraineeStorage().remove(id);
+        if(!traineeStorage.getStorage().containsKey(id))
+            throw new EntityNotFoundException();
+        traineeStorage.getStorage().remove(id);
     }
 
     @Override
     public Trainee findById(Long id) {
-        if(storage.getTraineeStorage().containsKey(id))
-            return storage.getTraineeStorage().get(id);
-        throw new IllegalArgumentException("no user found with id: " + id);
+        if(!traineeStorage.getStorage().containsKey(id))
+            throw new EntityNotFoundException();
+        return traineeStorage.getStorage().get(id);
     }
 
     @Override
     public List<Trainee> findAll() {
-        return storage.getTraineeStorage().values().stream().toList();
+        return traineeStorage.getStorage().values().stream().toList();
     }
 }

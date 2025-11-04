@@ -1,26 +1,37 @@
 package org.example.dao;
 
+import lombok.RequiredArgsConstructor;
+import org.example.exception.EntityAlreadyExistException;
+import org.example.exception.EntityNotFoundException;
 import org.example.model.Training;
+import org.example.storage.TrainingStorage;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
+@RequiredArgsConstructor
 public class TrainingDaoImp implements TrainingDAO {
-    private final InMemoryStorage storage;
+    private final TrainingStorage trainingStorage;
 
-    public TrainingDaoImp(InMemoryStorage storage) {
-        this.storage = storage;
-    }
 
     @Override
     public void create(Training training) {
-        storage.getTrainingStorage().add(training);
+        if(trainingStorage.getStorage().containsKey(training.getTrainingId()))
+            throw new EntityAlreadyExistException("entity already exists!");
+        trainingStorage.getStorage().put(training.getTrainingId(),training);
+    }
+
+    @Override
+    public Training findById(Long id) {
+        if(!trainingStorage.getStorage().containsKey(id))
+            throw new EntityNotFoundException("entity not found with id: " + id);
+        return trainingStorage.getStorage().get(id);
     }
 
 
     @Override
     public List<Training> findAll() {
-        return storage.getTrainingStorage().stream().toList();
+        return trainingStorage.getStorage().values().stream().toList();
     }
 }
