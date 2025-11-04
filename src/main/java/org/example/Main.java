@@ -3,6 +3,7 @@ package org.example;
 import org.example.config.AppConfig;
 
 import org.example.dao.TrainerDAO;
+import org.example.facade.GymFacade;
 import org.example.model.Trainer;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -22,10 +23,9 @@ public class Main {
         TrainerDAO trainerDAO = context.getBean(TrainerDAO.class);
         Trainer trainer = new Trainer(12L,"saidmurod","xamidov","saidxam","password",true,"bot");
         trainerDAO.create(trainer);
-        System.out.println(trainingStorage.getStorage());
-        System.out.println(trainerStorage.getStorage());
-        System.out.println(traineeStorage.getStorage());
-
+        GymFacade gymFacade = context.getBean(GymFacade.class);
+        gymFacade.updateTrainer(trainer);
+        gymFacade.getAllTrainings().forEach(System.out::println);
         context.close();
     }
 }
