@@ -40,7 +40,14 @@
             <artifactId>spring-beans</artifactId>
         </dependency>
 
-        <!-- These are not managed by the Spring BOM, so keep versions -->
+
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>2.1</version> <!-- or latest -->
+        </dependency>
+
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>

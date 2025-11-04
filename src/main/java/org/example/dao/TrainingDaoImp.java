@@ -1,7 +1,6 @@
 package org.example.dao;
 
 import org.example.model.Training;
-import org.example.storage.InMemoryStorage;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

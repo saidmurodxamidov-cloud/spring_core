@@ -1,0 +1,3 @@
+storage:
+  init:
+    path: classpath:data/data.json

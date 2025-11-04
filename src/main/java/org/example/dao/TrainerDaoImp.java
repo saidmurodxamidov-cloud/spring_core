@@ -1,12 +1,10 @@
 package org.example.dao;
 
 import org.example.model.Trainer;
-import org.example.storage.InMemoryStorage;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 public class TrainerDaoImp implements TrainerDAO{
