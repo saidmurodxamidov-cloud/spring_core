@@ -1,16 +1,14 @@
 package org.example.model;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
 
-@Setter
 @Getter
-@ToString(callSuper = true)
+@Setter
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 public class Trainee extends User{
     private LocalDate dateOfBirth;
     private String address;
@@ -20,20 +18,5 @@ public class Trainee extends User{
         this.dateOfBirth = dateOfBirth;
         this.address = address;
     }
-    public Trainee(){}
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Trainee trainee)) return false;
-        if (!super.equals(o)) return false;
-        return Objects.equals(dateOfBirth, trainee.dateOfBirth)
-                && Objects.equals(address, trainee.address);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(),dateOfBirth, address);
-    }
 }
+

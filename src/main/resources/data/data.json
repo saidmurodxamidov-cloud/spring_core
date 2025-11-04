@@ -6,6 +6,6 @@
     { "userId": 1, "firstName": "John", "lastName": "Smith", "userName": "john.smith", "password": "0987654321", "active": true, "specialization": "Yoga" }
   ],
   "trainings": [
-    { "traineeId": 1, "trainerId": 1, "date": "2024-10-10", "trainingName": "Morning Yoga", "trainingType": "YOGA", "trainingDuration": 60 }
+    { "trainingId": 1, "traineeId": 1, "trainerId": 1, "date": "2024-10-10", "trainingName": "Morning Yoga", "trainingType": "YOGA", "trainingDuration": 60 }
   ]
 }
