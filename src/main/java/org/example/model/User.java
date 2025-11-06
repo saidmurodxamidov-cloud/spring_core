@@ -7,6 +7,7 @@ import java.util.Objects;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(of = {"userId"})
 public class User {
     private Long userId;
     private String firstName;

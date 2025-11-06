@@ -1,10 +1,12 @@
 package org.example;
 
 import org.example.config.AppConfig;
-import org.example.storage.TraineeStorage;
-import org.example.storage.TrainerStorage;
-import org.example.storage.TrainingStorage;
+import org.example.model.Trainee;
+import org.example.model.Trainer;
+import org.example.model.Training;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import java.util.Map;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
@@ -12,12 +14,13 @@ public class Main {
     public static void main(String[] args) {
         AnnotationConfigApplicationContext context =
                 new AnnotationConfigApplicationContext(AppConfig.class);
-        TraineeStorage traineeStorage = context.getBean(TraineeStorage.class);
-        TrainingStorage trainingStorage = context.getBean(TrainingStorage.class);
-        TrainerStorage trainerStorage = context.getBean(TrainerStorage.class);
-        System.out.println(trainingStorage.getStorage());
-        System.out.println(trainerStorage.getStorage());
-        System.out.println(traineeStorage.getStorage());
+        Map<Long, Trainee> traineeStorage = context.getBean("traineeStorage", Map.class);
+        Map<Long, Trainer> trainerStorage = context.getBean("trainerStorage", Map.class);
+        Map<Long, Training> trainingStorage = context.getBean("trainingStorage", Map.class);
+
+        System.out.println("Trainings: " + trainingStorage);
+        System.out.println("Trainers: " + trainerStorage);
+        System.out.println("Trainees: " + traineeStorage);
 
         context.close();
     }
