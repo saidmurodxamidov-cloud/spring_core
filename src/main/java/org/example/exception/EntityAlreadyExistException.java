@@ -1,12 +1,7 @@
 package org.example.exception;
 
+import lombok.experimental.StandardException;
+
+@StandardException
 public class EntityAlreadyExistException extends RuntimeException {
-
-    public EntityAlreadyExistException(String message) {
-        super(message);
-    }
-    public EntityAlreadyExistException() {
-        super();
-    }
 }
-

@@ -4,12 +4,12 @@ import lombok.*;
 
 import java.util.Objects;
 
-//@Data
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(of = {"userId"})
 public class User {
     private Long userId;
     private String firstName;
@@ -17,5 +17,4 @@ public class User {
     private String userName;
     private String password;
     private boolean isActive;
-
 }
