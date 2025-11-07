@@ -25,8 +25,8 @@ public class GymFacade {
     public Trainee createTrainee(Trainee trainee) {
         log.info("Facade: Creating trainee {}", trainee.getFirstName());
         traineeService.createTrainee(trainee);
-        log.info("Facade: Trainee created with username: {} and password: {}",
-                trainee.getUserName(), trainee.getPassword());
+        log.info("Facade: Trainee created with username: {}",
+                trainee.getUserName());
         return trainee;
     }
 
