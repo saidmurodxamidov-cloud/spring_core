@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.exception.EntityAlreadyExistException;
 import org.example.exception.EntityNotFoundException;
 import org.example.model.Trainer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -11,10 +12,15 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-@RequiredArgsConstructor
-public class TrainerDaoImp implements TrainerDAO{
-    private final Map<Long,Trainer> trainerStorage;
 
+
+public class TrainerDaoImp implements TrainerDAO{
+    private Map<Long,Trainer> trainerStorage;
+
+    @Autowired
+    public void setTrainerStorage(Map<Long, Trainer> trainerStorage) {
+        this.trainerStorage = trainerStorage;
+    }
 
     @Override
     public void create(Trainer trainer) {

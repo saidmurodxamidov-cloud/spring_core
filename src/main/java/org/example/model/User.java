@@ -10,7 +10,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"userId"})
-public class User {
+public abstract class User {
     private Long userId;
     private String firstName;
     private String lastName;

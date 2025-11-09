@@ -1,6 +1,7 @@
 package org.example.util;
 
 import java.security.SecureRandom;
+import java.util.Arrays;
 
 public class PasswordGenerator {
 
@@ -8,7 +9,7 @@ public class PasswordGenerator {
     private static final SecureRandom random = new SecureRandom();
 
     public static String generatePassword() {
-        StringBuilder password = new StringBuilder(PASSWORD_LENGTH);
+        char[] password = new char[PASSWORD_LENGTH];
 
         for (int i = 0; i < PASSWORD_LENGTH; i++) {
             int category = random.nextInt(3); // 0=lower, 1=upper, 2=digit
@@ -20,10 +21,9 @@ public class PasswordGenerator {
                 default -> // digit
                         (char) ('0' + random.nextInt(10));
             };
-            password.append(nextChar);
+            password[i] = nextChar;
         }
 
-        return password.toString();
+        return Arrays.toString(password);
     }
 }
-

@@ -20,7 +20,7 @@ public class TrainingService {
             throw new IllegalArgumentException("Trainer ID and Trainee ID must not be null");
         }
 
-        log.info("Creating training '{}' for traineeId: {} and trainerId: {}",
+        log.debug("Creating training '{}' for traineeId: {} and trainerId: {}",
                 training.getTrainingName(), training.getTraineeId(), training.getTrainerId());
 
         trainingDAO.create(training);
@@ -28,12 +28,12 @@ public class TrainingService {
     }
 
     public Training getTrainingById(Long id) {
-        log.info("Fetching training with ID: {}", id);
+        log.debug("Fetching training with ID: {}", id);
         return trainingDAO.findById(id);
     }
 
     public List<Training> getAllTrainings() {
-        log.info("Fetching all trainings");
+        log.debug("Fetching all trainings");
         return trainingDAO.findAll();
     }
 }
