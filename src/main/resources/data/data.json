@@ -1,0 +1,11 @@
+{
+  "trainees": [
+    { "userId": 1, "firstName": "Alice", "lastName": "Brown", "userName": "alice.brown", "password": "1234567890", "active": true, "dateOfBirth": "2000-01-01", "address": "London" }
+  ],
+  "trainers": [
+    { "userId": 1, "firstName": "John", "lastName": "Smith", "userName": "john.smith", "password": "0987654321", "active": true, "specialization": "Yoga" }
+  ],
+  "trainings": [
+    { "trainingId": 1, "traineeId": 1, "trainerId": 1, "date": "2024-10-10", "trainingName": "Morning Yoga", "trainingType": "YOGA", "trainingDuration": 60 }
+  ]
+}
