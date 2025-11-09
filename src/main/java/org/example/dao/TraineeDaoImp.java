@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.exception.EntityAlreadyExistException;
 import org.example.exception.EntityNotFoundException;
 import org.example.model.Trainee;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,8 +14,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class TraineeDaoImp implements TraineeDAO{
 
-    private final Map<Long,Trainee> traineeStorage;
+    private Map<Long,Trainee> traineeStorage;
 
+    @Autowired
+    public void setTraineeStorage(Map<Long, Trainee> traineeStorage) {
+        this.traineeStorage = traineeStorage;
+    }
 
     @Override
     public void create(Trainee trainee) {
@@ -48,6 +53,6 @@ public class TraineeDaoImp implements TraineeDAO{
 
     @Override
     public List<Trainee> findAll() {
-        return traineeStorage.values().stream().toList();
+        return List.copyOf(traineeStorage.values());
     }
 }
