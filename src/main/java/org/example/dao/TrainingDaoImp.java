@@ -36,6 +36,6 @@ public class TrainingDaoImp implements TrainingDAO {
 
     @Override
     public List<Training> findAll() {
-        return trainingStorage.values().stream().toList();
+        return List.copyOf(trainingStorage.values());
     }
 }

@@ -4,16 +4,21 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dao.TrainerDAO;
 import org.example.model.Trainer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class TrainerService {
 
-    private final TrainerDAO trainerDAO;
+    private TrainerDAO trainerDAO;
+
+    @Autowired
+    public void setTrainerDAO(TrainerDAO trainerDAO) {
+        this.trainerDAO = trainerDAO;
+    }
 
     public void createTrainer(Trainer trainer) {
         log.debug("Creating trainer: {}", trainer.getUserName());

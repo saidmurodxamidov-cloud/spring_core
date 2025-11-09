@@ -46,6 +46,6 @@ public class TrainerDaoImp implements TrainerDAO{
 
     @Override
     public List<Trainer> findAll() {
-        return trainerStorage.values().stream().toList();
+        return List.copyOf(trainerStorage.values());
     }
 }

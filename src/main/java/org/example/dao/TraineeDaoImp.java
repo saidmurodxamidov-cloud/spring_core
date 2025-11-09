@@ -53,7 +53,6 @@ public class TraineeDaoImp implements TraineeDAO{
 
     @Override
     public List<Trainee> findAll() {
-        return List.copyOf(traineeStorage.values().stream().toList());
+        return List.copyOf(traineeStorage.values());
     }
 }
-

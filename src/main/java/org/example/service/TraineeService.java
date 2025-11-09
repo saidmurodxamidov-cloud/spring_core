@@ -7,6 +7,7 @@ import org.example.model.Trainee;
 import org.example.model.User;
 import org.example.util.PasswordGenerator;
 import org.example.util.UsernameGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,11 +15,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class TraineeService {
 
-    private final TraineeDAO traineeDAO;
+    private TraineeDAO traineeDAO;
+
+    @Autowired
+    public void setTraineeDAO(TraineeDAO traineeDAO) {
+        this.traineeDAO = traineeDAO;
+    }
 
     public void createTrainee(Trainee trainee) {
 
