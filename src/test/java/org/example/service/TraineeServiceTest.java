@@ -4,7 +4,11 @@ import org.example.dao.TraineeDAO;
 import org.example.model.Trainee;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,15 +16,17 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class TraineeServiceTest {
-
+    @Mock
     private TraineeDAO traineeDAO;
+
+    @InjectMocks
     private TraineeService traineeService;
 
     @BeforeEach
     void setUp() {
-        traineeDAO = mock(TraineeDAO.class);
-        traineeService = new TraineeService(traineeDAO);
+
     }
 
     @Test
