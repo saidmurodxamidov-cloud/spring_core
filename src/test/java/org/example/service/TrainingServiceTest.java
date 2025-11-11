@@ -23,14 +23,13 @@ class TrainingServiceTest {
     @InjectMocks
     private TrainingService trainingService;
 
-    // Shared test objects
+
     private Training training1;
     private Training training2;
 
     @BeforeEach
     void setUp() {
 
-        // Initialize reusable training objects
         training1 = new Training();
         training1.setTrainingId(1L);
         training1.setTrainingName("Morning Cardio");

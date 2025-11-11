@@ -6,9 +6,9 @@ import org.example.model.Training;
 import org.example.service.TraineeService;
 import org.example.service.TrainerService;
 import org.example.service.TrainingService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -26,12 +26,8 @@ class GymFacadeTest {
     @Mock
     private TrainingService trainingService;
 
-    @Mock
+    @InjectMocks
     private GymFacade gymFacade;
-
-    @BeforeEach
-    void setUp() {
-    }
 
     @Test
     void createTrainee_ShouldCallService() {
@@ -53,7 +49,32 @@ class GymFacadeTest {
         training.setTrainingName("Strength");
         training.setTrainerId(1L);
         training.setTraineeId(2L);
+
         gymFacade.createTraining(training);
         verify(trainingService).createTraining(training);
+    }
+
+    @Test
+    void getTraineeById_ShouldDelegateToService() {
+        gymFacade.getTraineeById(5L);
+        verify(traineeService).getTraineeById(5L);
+    }
+
+    @Test
+    void getTrainingById_ShouldDelegateToService() {
+        gymFacade.getTrainingById(3L);
+        verify(trainingService).getTrainingById(3L);
+    }
+
+    @Test
+    void getAllTrainees_ShouldCallService() {
+        gymFacade.getAllTrainees();
+        verify(traineeService).getAllTrainees();
+    }
+
+    @Test
+    void getAllTrainers_ShouldCallService() {
+        gymFacade.getAllTrainers();
+        verify(trainerService).getAllTrainers();
     }
 }
