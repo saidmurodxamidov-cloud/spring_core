@@ -4,9 +4,11 @@ import lombok.*;
 
 import java.util.Objects;
 
-@Data
-@AllArgsConstructor
+
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(of = {"userId"})
 public class User {
     private Long userId;

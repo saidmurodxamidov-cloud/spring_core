@@ -5,12 +5,11 @@ import org.example.enums.TrainingType;
 
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.Objects;
 
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Training {
     private Long trainingId;
     private Long traineeId ;
@@ -18,7 +17,5 @@ public class Training {
     private LocalDate date;
     private String trainingName;
     private TrainingType trainingType;
-    private Duration trainingDurationInMinutes;
+    private Duration trainingDuration;
 }
-
-
