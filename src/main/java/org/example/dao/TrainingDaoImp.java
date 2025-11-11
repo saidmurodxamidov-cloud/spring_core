@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-@RequiredArgsConstructor
 public class TrainingDaoImp implements TrainingDAO {
     private Map<Long,Training> trainingStorage;
 

@@ -13,6 +13,13 @@ import java.util.Map;
 
 @Repository
 
+public class TrainerDaoImp implements TrainerDAO{
+    private Map<Long,Trainer> trainerStorage;
+
+    @Autowired
+    public void setTrainerStorage(Map<Long, Trainer> trainerStorage) {
+        this.trainerStorage = trainerStorage;
+    }
 
 public class TrainerDaoImp implements TrainerDAO{
     private Map<Long,Trainer> trainerStorage;
