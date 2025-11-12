@@ -1,24 +1,29 @@
 package org.example.util;
 
 import java.security.SecureRandom;
+import java.util.Arrays;
 
 public class PasswordGenerator {
 
-    private static final String LOWERCASE = "abcdefghijklmnopqrstuvwxyz";
-    private static final String UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private static final String DIGITS = "0123456789";
-    private static final String ALL_CHARS = LOWERCASE + UPPERCASE + DIGITS;
-    private static final int PASSWORD_LENGTH = 8;
-
+    private static final int PASSWORD_LENGTH = 10;
     private static final SecureRandom random = new SecureRandom();
 
     public static String generatePassword() {
-        StringBuilder password = new StringBuilder(PASSWORD_LENGTH);
+        char[] password = new char[PASSWORD_LENGTH];
+
         for (int i = 0; i < PASSWORD_LENGTH; i++) {
-            int index = random.nextInt(ALL_CHARS.length());
-            password.append(ALL_CHARS.charAt(index));
+            int category = random.nextInt(3); // 0=lower, 1=upper, 2=digit
+            char nextChar = switch (category) {
+                case 0 -> // lowercase
+                        (char) ('a' + random.nextInt(26));
+                case 1 -> // uppercase
+                        (char) ('A' + random.nextInt(26));
+                default -> // digit
+                        (char) ('0' + random.nextInt(10));
+            };
+            password[i] = nextChar;
         }
-        return password.toString();
+
+        return Arrays.toString(password);
     }
 }
-

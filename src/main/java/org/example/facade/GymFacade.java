@@ -23,10 +23,10 @@ public class GymFacade {
 
 
     public Trainee createTrainee(Trainee trainee) {
-        log.info("Facade: Creating trainee {}", trainee.getFirstName());
+        log.debug("Facade: Creating trainee {}", trainee.getFirstName());
         traineeService.createTrainee(trainee);
-        log.info("Facade: Trainee created with username: {} and password: {}",
-                trainee.getUserName(), trainee.getPassword());
+        log.info("Facade: Trainee created with username: {}",
+                trainee.getUserName());
         return trainee;
     }
 
@@ -41,18 +41,18 @@ public class GymFacade {
     }
 
     public Trainee getTraineeById(Long traineeId) {
-        log.info("Facade: Getting trainee by ID {}", traineeId);
+        log.debug("Facade: Getting trainee by ID {}", traineeId);
         return traineeService.getTraineeById(traineeId);
     }
 
     public List<Trainee> getAllTrainees() {
-        log.info("Facade: Fetching all trainees");
+        log.debug("Facade: Fetching all trainees");
         return traineeService.getAllTrainees();
     }
 
 
     public Trainer createTrainer(Trainer trainer) {
-        log.info("Facade: Creating trainer {}", trainer.getFirstName());
+        log.debug("Facade: Creating trainer {}", trainer.getFirstName());
         trainerService.createTrainer(trainer);
         log.info("Facade: Trainer created with username: {} and password: {}",
                 trainer.getUserName(), trainer.getPassword());
@@ -65,12 +65,12 @@ public class GymFacade {
     }
 
     public Trainer getTrainerById(Long trainerId) {
-        log.info("Facade: Getting trainer by ID {}", trainerId);
+        log.debug("Facade: Getting trainer by ID {}", trainerId);
         return trainerService.getTrainerById(trainerId);
     }
 
     public List<Trainer> getAllTrainers() {
-        log.info("Facade: Fetching all trainers");
+        log.debug("Facade: Fetching all trainers");
         return trainerService.getAllTrainers();
     }
 
@@ -81,12 +81,12 @@ public class GymFacade {
     }
 
     public Training getTrainingById(Long trainingId) {
-        log.info("Facade: Getting training by ID {}", trainingId);
+        log.debug("Facade: Getting training by ID {}", trainingId);
         return trainingService.getTrainingById(trainingId);
     }
 
     public List<Training> getAllTrainings() {
-        log.info("Facade: Fetching all trainings");
+        log.debug("Facade: Fetching all trainings");
         return trainingService.getAllTrainings();
     }
 }

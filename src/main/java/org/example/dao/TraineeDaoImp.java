@@ -1,53 +1,58 @@
 package org.example.dao;
 
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.example.exception.EntityAlreadyExistException;
 import org.example.exception.EntityNotFoundException;
 import org.example.model.Trainee;
-import org.example.storage.TraineeStorage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
-@RequiredArgsConstructor
 public class TraineeDaoImp implements TraineeDAO{
 
-    private final TraineeStorage traineeStorage;
+    private Map<Long,Trainee> traineeStorage;
 
+    @Autowired
+    public void setTraineeStorage(Map<Long, Trainee> traineeStorage) {
+        this.traineeStorage = traineeStorage;
+    }
 
     @Override
     public void create(Trainee trainee) {
-        if (traineeStorage.getStorage().containsKey(trainee.getUserId()))
+        if (traineeStorage.containsKey(trainee.getUserId()))
             throw new EntityAlreadyExistException();
 
-        traineeStorage.getStorage().put(trainee.getUserId(),trainee);
+        traineeStorage.put(trainee.getUserId(),trainee);
     }
 
     @Override
     public void update(Trainee trainee) {
-        if (!traineeStorage.getStorage().containsKey(trainee.getUserId()))
+        if (!traineeStorage.containsKey(trainee.getUserId()))
             throw new EntityNotFoundException();
-        traineeStorage.getStorage().put(trainee.getUserId(), trainee);
+        traineeStorage.put(trainee.getUserId(), trainee);
 
     }
 
     @Override
     public void delete(Long id) {
-        if(!traineeStorage.getStorage().containsKey(id))
+        if(!traineeStorage.containsKey(id))
             throw new EntityNotFoundException();
-        traineeStorage.getStorage().remove(id);
+        traineeStorage.remove(id);
     }
 
     @Override
     public Trainee findById(Long id) {
-        if(!traineeStorage.getStorage().containsKey(id))
+        if(!traineeStorage.containsKey(id))
             throw new EntityNotFoundException();
-        return traineeStorage.getStorage().get(id);
+        return traineeStorage.get(id);
     }
 
     @Override
     public List<Trainee> findAll() {
-        return traineeStorage.getStorage().values().stream().toList();
+        return List.copyOf(traineeStorage.values());
     }
 }

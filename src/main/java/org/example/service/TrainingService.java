@@ -4,23 +4,28 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dao.TrainingDAO;
 import org.example.model.Training;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class TrainingService {
 
-    private final TrainingDAO trainingDAO;
+    private TrainingDAO trainingDAO;
+
+    @Autowired
+    public void setTrainingDAO(TrainingDAO trainingDAO) {
+        this.trainingDAO = trainingDAO;
+    }
 
     public void createTraining(Training training) {
         if (training.getTraineeId() == null || training.getTrainerId() == null) {
             throw new IllegalArgumentException("Trainer ID and Trainee ID must not be null");
         }
 
-        log.info("Creating training '{}' for traineeId: {} and trainerId: {}",
+        log.debug("Creating training '{}' for traineeId: {} and trainerId: {}",
                 training.getTrainingName(), training.getTraineeId(), training.getTrainerId());
 
         trainingDAO.create(training);
@@ -28,12 +33,12 @@ public class TrainingService {
     }
 
     public Training getTrainingById(Long id) {
-        log.info("Fetching training with ID: {}", id);
+        log.debug("Fetching training with ID: {}", id);
         return trainingDAO.findById(id);
     }
 
     public List<Training> getAllTrainings() {
-        log.info("Fetching all trainings");
+        log.debug("Fetching all trainings");
         return trainingDAO.findAll();
     }
 }
