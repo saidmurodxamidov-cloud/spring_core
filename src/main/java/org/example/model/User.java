@@ -11,7 +11,6 @@ import java.util.Objects;
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"userId"})
 public abstract class User {
-
     private Long userId;
     private String firstName;
     private String lastName;
