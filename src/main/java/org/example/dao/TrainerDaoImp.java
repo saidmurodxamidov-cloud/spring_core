@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-
 public class TrainerDaoImp implements TrainerDAO{
     private Map<Long,Trainer> trainerStorage;
 

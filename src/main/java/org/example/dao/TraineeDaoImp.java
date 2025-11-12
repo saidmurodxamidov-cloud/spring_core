@@ -1,6 +1,4 @@
 package org.example.dao;
-
-import lombok.RequiredArgsConstructor;
 import org.example.exception.EntityAlreadyExistException;
 import org.example.exception.EntityNotFoundException;
 import org.example.model.Trainee;
@@ -11,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-@RequiredArgsConstructor
 public class TraineeDaoImp implements TraineeDAO{
 
     private Map<Long,Trainee> traineeStorage;
