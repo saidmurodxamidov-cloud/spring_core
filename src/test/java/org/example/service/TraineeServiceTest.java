@@ -1,6 +1,6 @@
 package org.example.service;
 
-import org.example.dao.TraineeDAO;
+import org.example.interfaces.TraineeDAO;
 import org.example.model.Trainee;
 import org.example.util.PasswordGenerator;
 import org.example.util.UsernameGenerator;

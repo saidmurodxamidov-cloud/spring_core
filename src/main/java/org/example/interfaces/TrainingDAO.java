@@ -1,4 +1,4 @@
-package org.example.dao;
+package org.example.interfaces;
 
 
 import org.example.model.Training;

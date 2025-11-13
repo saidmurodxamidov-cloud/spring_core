@@ -1,8 +1,8 @@
 package org.example.dao;
 
-import lombok.RequiredArgsConstructor;
 import org.example.exception.EntityAlreadyExistException;
 import org.example.exception.EntityNotFoundException;
+import org.example.interfaces.TrainingDAO;
 import org.example.model.Training;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
