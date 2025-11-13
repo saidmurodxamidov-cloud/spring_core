@@ -1,6 +1,6 @@
 package org.example.service;
 
-import org.example.dao.TrainingDAO;
+import org.example.interfaces.TrainingDAO;
 import org.example.model.Training;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

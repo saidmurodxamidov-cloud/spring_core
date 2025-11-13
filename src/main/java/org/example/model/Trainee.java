@@ -1,8 +1,10 @@
 package org.example.model;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Objects;
+
 
 
 @Getter
@@ -10,11 +12,11 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class Trainee extends User{
+    @Past
     private LocalDate dateOfBirth;
     private String address;
 
-    public Trainee(Long userId, String firstName, String lastName, String userName, String password, boolean isActive,
-                   LocalDate dateOfBirth, String address) {
+    public Trainee(Long userId, String firstName, String lastName, String userName, char[] password, boolean isActive, LocalDate dateOfBirth, String address) {
         super(userId, firstName, lastName, userName, password, isActive);
         this.dateOfBirth = dateOfBirth;
         this.address = address;

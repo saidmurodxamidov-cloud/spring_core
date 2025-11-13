@@ -1,6 +1,7 @@
 package org.example.dao;
 import org.example.exception.EntityAlreadyExistException;
 import org.example.exception.EntityNotFoundException;
+import org.example.interfaces.TraineeDAO;
 import org.example.model.Trainee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class TraineeDaoImp implements TraineeDAO{
+public class TraineeDaoImp implements TraineeDAO {
 
     private Map<Long,Trainee> traineeStorage;
 

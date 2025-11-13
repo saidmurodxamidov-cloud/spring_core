@@ -1,4 +1,4 @@
-package org.example.enums;
+package org.example.model;
 
 public enum TrainingType {
     YOGA,STRENGTH,
