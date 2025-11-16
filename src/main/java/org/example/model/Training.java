@@ -1,5 +1,7 @@
 package org.example.model;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 import org.example.enums.TrainingType;
 
@@ -11,11 +13,16 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Training {
+    @NotNull
     private Long trainingId;
+    @NotNull
     private Long traineeId ;
+    @NotNull
     private Long trainerId;
     private LocalDate date;
     private String trainingName;
     private TrainingType trainingType;
+    @NotNull
+    @PositiveOrZero
     private Duration trainingDuration;
 }

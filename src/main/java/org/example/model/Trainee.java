@@ -1,4 +1,5 @@
 package org.example.model;
+import jakarta.validation.constraints.Past;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -10,6 +11,7 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class Trainee extends User{
+    @Past
     private LocalDate dateOfBirth;
     private String address;
 
