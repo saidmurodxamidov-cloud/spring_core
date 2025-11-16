@@ -50,7 +50,7 @@ public class TraineeService {
     public void deleteTrainee(Long id) {
         log.debug("Deleting trainee with ID: {}", id);
         traineeDAO.delete(id);
-        log.info("Trainee deleted successfully.");
+        log.info("Trainee deleted successfully with id: {}" ,id);
     }
 
     public Trainee getTraineeById(Long id) {
