@@ -2,8 +2,6 @@ package org.example.model;
 
 import lombok.*;
 
-import java.util.Objects;
-
 
 @Getter
 @Setter
@@ -15,6 +13,6 @@ public abstract class User {
     private String firstName;
     private String lastName;
     private String userName;
-    private String password;
+    private char[] password;
     private boolean isActive;
 }
