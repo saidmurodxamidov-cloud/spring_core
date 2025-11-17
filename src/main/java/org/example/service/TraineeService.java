@@ -32,7 +32,7 @@ public class TraineeService {
         String username = UsernameGenerator.generateUsername(trainee.getFirstName(), trainee.getLastName(), existingUsernames);
         trainee.setUserName(username);
 
-        String password = PasswordGenerator.generatePassword();
+        char[] password = PasswordGenerator.generatePassword();
         trainee.setPassword(password);
 
         log.debug("Creating trainee: {}", trainee.getUserName());
@@ -43,13 +43,13 @@ public class TraineeService {
     public void updateTrainee(Trainee trainee) {
         log.debug("Updating trainee with ID: {}", trainee.getUserId());
         traineeDAO.update(trainee);
-        log.info("Trainee updated successfully.");
+        log.info("Trainee updated successfully with id: {}", trainee.getUserId());
     }
 
     public void deleteTrainee(Long id) {
         log.debug("Deleting trainee with ID: {}", id);
         traineeDAO.delete(id);
-        log.info("Trainee deleted successfully.");
+        log.info("Trainee deleted successfully with id: {}" ,id);
     }
 
     public Trainee getTraineeById(Long id) {
