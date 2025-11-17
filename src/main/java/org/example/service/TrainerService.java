@@ -1,6 +1,5 @@
 package org.example.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dao.TrainerDAO;
 import org.example.model.Trainer;
@@ -29,7 +28,7 @@ public class TrainerService {
     public void updateTrainer(Trainer trainer) {
         log.debug("Updating trainer with ID: {}", trainer.getUserId());
         trainerDAO.update(trainer);
-        log.info("Trainer updated successfully.");
+        log.info("Trainer updated successfully with id: {}",trainer.getUserName());
     }
 
     public Trainer getTrainerById(Long id) {

@@ -8,7 +8,7 @@ public class PasswordGenerator {
     private static final int PASSWORD_LENGTH = 10;
     private static final SecureRandom random = new SecureRandom();
 
-    public static String generatePassword() {
+    public static char[] generatePassword() {
         char[] password = new char[PASSWORD_LENGTH];
 
         for (int i = 0; i < PASSWORD_LENGTH; i++) {
@@ -24,6 +24,6 @@ public class PasswordGenerator {
             password[i] = nextChar;
         }
 
-        return Arrays.toString(password);
+        return password;
     }
 }

@@ -3,7 +3,6 @@ package org.example.model;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
-import org.example.enums.TrainingType;
 
 import java.time.Duration;
 import java.time.LocalDate;

@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,7 +18,6 @@ public abstract class User {
     private String lastName;
     @NotNull
     private String userName;
-    @Min(value = 8,message = "password should be at least 8 characters long")
-    private String password;
+    private char[] password;
     private boolean isActive;
 }
