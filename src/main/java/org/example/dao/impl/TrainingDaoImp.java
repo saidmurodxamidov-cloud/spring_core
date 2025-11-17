@@ -1,6 +1,6 @@
-package org.example.dao;
+package org.example.dao.impl;
 
-import lombok.RequiredArgsConstructor;
+import org.example.dao.TrainingDAO;
 import org.example.exception.EntityAlreadyExistException;
 import org.example.exception.EntityNotFoundException;
 import org.example.model.Training;

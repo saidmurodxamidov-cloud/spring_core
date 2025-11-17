@@ -1,4 +1,5 @@
-package org.example.dao;
+package org.example.dao.impl;
+import org.example.dao.TraineeDAO;
 import org.example.exception.EntityAlreadyExistException;
 import org.example.exception.EntityNotFoundException;
 import org.example.model.Trainee;
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class TraineeDaoImp implements TraineeDAO{
+public class TraineeDaoImp implements TraineeDAO {
 
     private Map<Long,Trainee> traineeStorage;
 
