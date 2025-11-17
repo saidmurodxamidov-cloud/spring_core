@@ -33,7 +33,7 @@ public class TraineeService {
         String username = UsernameGenerator.generateUsername(trainee.getFirstName(), trainee.getLastName(), existingUsernames);
         trainee.setUserName(username);
 
-        String password = PasswordGenerator.generatePassword();
+        char[] password = PasswordGenerator.generatePassword();
         trainee.setPassword(password);
 
         log.debug("Creating trainee: {}", trainee.getUserName());
