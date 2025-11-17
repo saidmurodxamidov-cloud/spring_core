@@ -44,7 +44,7 @@ public class TraineeService {
     public void updateTrainee(Trainee trainee) {
         log.debug("Updating trainee with ID: {}", trainee.getUserId());
         traineeDAO.update(trainee);
-        log.info("Trainee updated successfully.");
+        log.info("Trainee updated successfully with id: {}", trainee.getUserId());
     }
 
     public void deleteTrainee(Long id) {
