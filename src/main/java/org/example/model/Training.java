@@ -1,7 +1,6 @@
 package org.example.model;
 
 import lombok.*;
-import org.example.enums.TrainingType;
 
 import java.time.Duration;
 import java.time.LocalDate;
