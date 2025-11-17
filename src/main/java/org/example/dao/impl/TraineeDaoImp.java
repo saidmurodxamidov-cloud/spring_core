@@ -1,6 +1,7 @@
-package org.example.dao;
-
+package org.example.dao.impl;
 import lombok.extern.slf4j.Slf4j;
+import org.example.dao.TraineeDAO;
+
 import org.example.exception.EntityAlreadyExistException;
 import org.example.exception.EntityNotFoundException;
 import org.example.model.Trainee;

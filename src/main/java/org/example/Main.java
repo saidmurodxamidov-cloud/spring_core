@@ -21,7 +21,7 @@ public class Main {
             Map<Long, Trainer> trainerStorage = context.getBean("trainerStorage", Map.class);
             Map<Long, Training> trainingStorage = context.getBean("trainingStorage", Map.class);
             TrainerDAO trainerDAO = context.getBean(TrainerDAO.class);
-            Trainer trainer = new Trainer(12L, "saidmurod", "xamidov", "saidxam", "password", true, "bot");
+            Trainer trainer = new Trainer(12L, "saidmurod", "xamidov", "saidxam","password".toCharArray(), true, "bot");
             trainerDAO.create(trainer);
             GymFacade gymFacade = context.getBean(GymFacade.class);
             gymFacade.updateTrainer(trainer);

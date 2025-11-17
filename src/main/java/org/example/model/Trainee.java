@@ -2,7 +2,6 @@ package org.example.model;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 
 @Getter

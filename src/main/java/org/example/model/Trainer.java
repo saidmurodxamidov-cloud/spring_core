@@ -2,7 +2,6 @@ package org.example.model;
 
 import lombok.*;
 
-import java.util.Objects;
 
 @Setter
 @Getter
