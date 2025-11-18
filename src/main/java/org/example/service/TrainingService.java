@@ -1,10 +1,11 @@
 package org.example.service;
-
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dao.TrainingDAO;
 import org.example.model.Training;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
@@ -15,15 +16,12 @@ public class TrainingService {
     private TrainingDAO trainingDAO;
 
     @Autowired
+    @Validated
     public void setTrainingDAO(TrainingDAO trainingDAO) {
         this.trainingDAO = trainingDAO;
     }
 
-    public void createTraining(Training training) {
-        if (training.getTraineeId() == null || training.getTrainerId() == null) {
-            throw new IllegalArgumentException("Trainer ID and Trainee ID must not be null");
-        }
-
+    public void createTraining(@Valid Training training) {
         log.debug("Creating training '{}' for traineeId: {} and trainerId: {}",
                 training.getTrainingName(), training.getTraineeId(), training.getTrainerId());
 
