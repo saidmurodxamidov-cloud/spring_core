@@ -1,5 +1,5 @@
 package org.example.model;
 
 public enum TrainingType {
-    YOGA,STRENGTH,
+    YOGA,STRENGTH,GYM,CARDIO
 }
