@@ -52,12 +52,12 @@ class TraineeServiceTest {
                     UsernameGenerator.generateUsername(eq("John"), eq("Doe"), any(Set.class))
             ).thenReturn("john.doe");
 
-            passwordGenMock.when(PasswordGenerator::generatePassword).thenReturn("p@ssword");
+            passwordGenMock.when(PasswordGenerator::generatePassword).thenReturn("p@ssword".toCharArray());
 
             traineeService.createTrainee(trainee);
 
             assertEquals("john.doe", trainee.getUserName());
-            assertEquals("p@ssword", trainee.getPassword());
+            assertArrayEquals("p@ssword".toCharArray(), trainee.getPassword());
 
             verify(traineeDAO).create(trainee);
         }
