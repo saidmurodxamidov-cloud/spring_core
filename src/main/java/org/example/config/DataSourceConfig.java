@@ -27,13 +27,13 @@ public class DataSourceConfig {
     }
     @Bean
     public DataSource dataSource() {
-        HikariDataSource ds = new HikariDataSource();
-        ds.setDriverClassName(env.getProperty("db.driver"));
-        ds.setJdbcUrl(env.getProperty("db.url"));
-        ds.setUsername(env.getProperty("db.username"));
-        ds.setPassword(env.getProperty("db.password"));
-        ds.setMaximumPoolSize(10);
-        return ds;
+        HikariDataSource hikariDataSource = new HikariDataSource();
+        hikariDataSource.setDriverClassName(env.getProperty("db.driver"));
+        hikariDataSource.setJdbcUrl(env.getProperty("db.url"));
+        hikariDataSource.setUsername(env.getProperty("db.username"));
+        hikariDataSource.setPassword(env.getProperty("db.password"));
+        hikariDataSource.setMaximumPoolSize(10);
+        return hikariDataSource;
     }
     @Bean
     public boolean testConnection(DataSource dataSource) {

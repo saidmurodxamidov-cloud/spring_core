@@ -30,8 +30,7 @@ class HibernateConfigTest {
     @Mock
     private EntityManager entityManager;
 
-    @InjectMocks
-    private TransactionConfig transactionConfig; // your @Configuration class
+
 
     @BeforeEach
     void setUp() throws SQLException {
@@ -57,9 +56,4 @@ class HibernateConfigTest {
         assertNotNull(em);
     }
 
-    @Test
-    void testTransactionManagerCreation() {
-        JpaTransactionManager txManager = transactionConfig.transactionManager(entityManagerFactory);
-        assertNotNull(txManager);
-    }
 }

@@ -1,35 +1,30 @@
 package org.example;
 
-import org.example.config.AppConfig;
-
-
-import org.example.dao.TrainerDAO;
-import org.example.facade.GymFacade;
-import org.example.model.Trainee;
-import org.example.model.Trainer;
-import org.example.model.Training;
+import org.example.config.DataSourceConfig;
+import org.example.config.EntityManagerConfig;
+import org.example.config.RepositoryConfig;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
-        try(AnnotationConfigApplicationContext context =
-                new AnnotationConfigApplicationContext(AppConfig.class);) {
+        // 1️⃣ Create Spring context
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
-//            Map<Long, Trainee> traineeStorage = context.getBean("traineeStorage", Map.class);
-//            Map<Long, Trainer> trainerStorage = context.getBean("trainerStorage", Map.class);
-//            Map<Long, Training> trainingStorage = context.getBean("trainingStorage", Map.class);
-//            TrainerDAO trainerDAO = context.getBean(TrainerDAO.class);
-//            Trainer trainer = new Trainer(12L, "saidmurod", "xamidov", "saidxam","password".toCharArray(), true, "bot");
-//            trainerDAO.create(trainer);
-//            GymFacade gymFacade = context.getBean(GymFacade.class);
-//            gymFacade.updateTrainer(trainer);
-//            gymFacade.getAllTrainings().forEach(System.out::println);
-//
-//            System.out.println("Trainings: " + trainingStorage);
-//            System.out.println("Trainers: " + trainerStorage);
-//            System.out.println("Trainees: " + traineeStorage);
-        }
+        // 2️⃣ Register your configuration classes
+        context.register(
+                DataSourceConfig.class,
+                EntityManagerConfig.class,
+                RepositoryConfig.class
+        );
+
+        // 3️⃣ Refresh context to initialize beans
+        context.refresh();
+
+        System.out.println("Spring context initialized successfully.");
+
+
+
+        // 5️⃣ Close context when done
+        context.close();
     }
 }

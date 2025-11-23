@@ -7,6 +7,6 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 
 @Configuration
-@ComponentScan(basePackages = "org.example")
+@ComponentScan(basePackages = "org.example.config")
 public class AppConfig {
 }
