@@ -1,10 +1,7 @@
 package org.example;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.config.DataSourceConfig;
-import org.example.config.EntityManagerConfig;
-import org.example.config.RepositoryConfig;
-import org.example.config.TransactionConfig;
+import org.example.config.*;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 @Slf4j
@@ -15,10 +12,7 @@ public class Main {
 
         try (AnnotationConfigApplicationContext context =
                      new AnnotationConfigApplicationContext(
-                             DataSourceConfig.class,
-                             EntityManagerConfig.class,
-                             RepositoryConfig.class,
-                             TransactionConfig.class
+                             AppConfig.class
                      )) {
 
             log.info("Spring context initialized successfully.");

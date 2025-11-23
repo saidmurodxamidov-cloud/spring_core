@@ -1,6 +1,7 @@
 package org.example.config;
 
 import jakarta.persistence.EntityManagerFactory;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -14,13 +15,10 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
+@RequiredArgsConstructor
 public class EntityManagerConfig {
 
     private final DataSource dataSource;
-
-    public EntityManagerConfig(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
