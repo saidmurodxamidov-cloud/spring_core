@@ -18,11 +18,12 @@ public class DataSourceConfig {
 
     private final DataSourceProperties dataSourceProperties;
 
+
     @Bean
     public DataSource dataSource() {
         HikariDataSource hikariDataSource = new HikariDataSource();
         hikariDataSource.setDriverClassName(dataSourceProperties.getDbDriver());
-        hikariDataSource.setJdbcUrl(dataSourceProperties.getDbDriver());
+        hikariDataSource.setJdbcUrl(dataSourceProperties.getDbUrl());
         hikariDataSource.setUsername(dataSourceProperties.getDbUsername());
         hikariDataSource.setPassword(dataSourceProperties.getDbPassword());
         hikariDataSource.setMaximumPoolSize(10);
