@@ -11,12 +11,12 @@ import java.util.List;
 
 @Service
 @Slf4j
+@Validated
 public class TrainingService {
 
     private TrainingDAO trainingDAO;
 
     @Autowired
-    @Validated
     public void setTrainingDAO(TrainingDAO trainingDAO) {
         this.trainingDAO = trainingDAO;
     }

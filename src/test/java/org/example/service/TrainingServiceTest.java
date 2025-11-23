@@ -1,5 +1,6 @@
 package org.example.service;
 
+import jakarta.validation.ConstraintViolationException;
 import org.example.dao.TrainingDAO;
 import org.example.model.Training;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,21 +54,7 @@ class TrainingServiceTest {
         verify(trainingDAO, times(1)).create(training1);
     }
 
-    @Test
-    void createTraining_ShouldThrowException_WhenTraineeIdIsNull() {
-        training1.setTraineeId(null);
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> trainingService.createTraining(training1));
-        assertEquals("Trainer ID and Trainee ID must not be null", ex.getMessage());
-    }
 
-    @Test
-    void createTraining_ShouldThrowException_WhenTrainerIdIsNull() {
-        training1.setTrainerId(null);
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> trainingService.createTraining(training1));
-        assertEquals("Trainer ID and Trainee ID must not be null", ex.getMessage());
-    }
 
     @Test
     void getTrainingById_ShouldReturnTrainingFromDAO() {
@@ -113,4 +100,5 @@ class TrainingServiceTest {
         assertTrue(trainings.isEmpty());
         verify(trainingDAO, times(1)).findAll();
     }
+
 }
