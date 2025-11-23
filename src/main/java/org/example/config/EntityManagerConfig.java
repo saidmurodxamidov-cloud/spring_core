@@ -47,7 +47,6 @@ public class EntityManagerConfig {
         props.setProperty("hibernate.show_sql", "true");
         props.setProperty("hibernate.format_sql", "true");
 
-        // Add these properties to help with metadata building
         props.setProperty("hibernate.jdbc.lob.non_contextual_creation", "true");
         props.setProperty("hibernate.temp.use_jdbc_metadata_defaults", "false");
         return props;
