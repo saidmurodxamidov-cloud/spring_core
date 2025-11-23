@@ -9,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"userId"})
+@ToString
 @Entity
 public class UserEntity {
     @Id
@@ -25,6 +26,7 @@ public class UserEntity {
     @Column(unique = true)
     private String userName;
 
+    @ToString.Exclude
     private char[] password;
 
     private boolean isActive;
