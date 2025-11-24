@@ -29,6 +29,5 @@ public class DataSourceConfig {
         hikariDataSource.setPassword(dataSourceProperties.getDbPassword());
         hikariDataSource.setMaximumPoolSize(10);
         return hikariDataSource;
-
     }
 }
