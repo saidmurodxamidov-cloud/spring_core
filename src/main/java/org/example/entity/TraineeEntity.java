@@ -25,6 +25,6 @@ public class TraineeEntity {
 
 
     @OneToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "user_id")
     private UserEntity user;
 }
