@@ -47,6 +47,8 @@ public class EntityManagerConfig {
 
         props.setProperty("hibernate.jdbc.lob.non_contextual_creation", "true");
         props.setProperty("hibernate.temp.use_jdbc_metadata_defaults", "false");
+        props.setProperty("hibernate.physical_naming_strategy",
+                SnakeCasePhysicalNamingStrategy.class.getName());
         return props;
     }
 }
