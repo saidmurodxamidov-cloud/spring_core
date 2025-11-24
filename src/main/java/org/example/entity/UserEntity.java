@@ -14,7 +14,7 @@ import lombok.*;
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long id;
 
     @NotNull(message = "First name should be present")
     private String firstName;
