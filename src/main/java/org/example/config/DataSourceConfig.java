@@ -10,9 +10,11 @@ import org.springframework.context.annotation.PropertySource;
 
 import javax.sql.DataSource;
 
+
 @Configuration
 @Slf4j
 @PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)
+
 @RequiredArgsConstructor
 public class DataSourceConfig {
 
@@ -27,6 +29,6 @@ public class DataSourceConfig {
         hikariDataSource.setPassword(dataSourceProperties.getDbPassword());
         hikariDataSource.setMaximumPoolSize(10);
         return hikariDataSource;
-    }
 
+    }
 }
