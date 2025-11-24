@@ -1,35 +1,27 @@
 package org.example;
 
-import org.example.config.AppConfig;
-
-
-import org.example.dao.TrainerDAO;
-import org.example.facade.GymFacade;
-import org.example.model.Trainee;
-import org.example.model.Trainer;
-import org.example.model.Training;
+import lombok.extern.slf4j.Slf4j;
+import org.example.config.*;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import java.util.Map;
-
+@Slf4j
 public class Main {
-    public static void main(String[] args) {
-        try(AnnotationConfigApplicationContext context =
-                new AnnotationConfigApplicationContext(AppConfig.class);) {
 
-//            Map<Long, Trainee> traineeStorage = context.getBean("traineeStorage", Map.class);
-//            Map<Long, Trainer> trainerStorage = context.getBean("trainerStorage", Map.class);
-//            Map<Long, Training> trainingStorage = context.getBean("trainingStorage", Map.class);
-//            TrainerDAO trainerDAO = context.getBean(TrainerDAO.class);
-//            Trainer trainer = new Trainer(12L, "saidmurod", "xamidov", "saidxam","password".toCharArray(), true, "bot");
-//            trainerDAO.create(trainer);
-//            GymFacade gymFacade = context.getBean(GymFacade.class);
-//            gymFacade.updateTrainer(trainer);
-//            gymFacade.getAllTrainings().forEach(System.out::println);
-//
-//            System.out.println("Trainings: " + trainingStorage);
-//            System.out.println("Trainers: " + trainerStorage);
-//            System.out.println("Trainees: " + traineeStorage);
+    public static void main(String[] args) {
+        log.debug("Starting application...");
+
+        try (AnnotationConfigApplicationContext context =
+                     new AnnotationConfigApplicationContext(
+                             AppConfig.class
+                     )) {
+
+            log.info("Spring context initialized successfully.");
+
+        } catch (Exception e) {
+            log.error("Application failed to start", e);
+            System.exit(1);
         }
+
+        log.info("Application shutdown complete.");
     }
 }
