@@ -37,5 +37,4 @@ public class EntityManagerConfig {
 
         return entityManagerFactory;
     }
-
 }

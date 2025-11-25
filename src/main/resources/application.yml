@@ -18,8 +18,8 @@ hibernate:
   temp:
     use-jdbc-metadata-defaults: false
 
+
 logging:
   level:
     org.hibernate: DEBUG
     org.springframework.orm.jpa: DEBUG
-
