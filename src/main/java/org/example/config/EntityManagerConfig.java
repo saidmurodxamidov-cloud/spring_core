@@ -19,7 +19,7 @@ import java.util.Properties;
 public class EntityManagerConfig {
 
     private final DataSource dataSource;
-
+    private final HibernateProperties hibernateProperties;
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
@@ -31,24 +31,10 @@ public class EntityManagerConfig {
         vendorAdapter.setShowSql(true);
         entityManagerFactory.setJpaVendorAdapter(vendorAdapter);
 
-        Properties props = getProperties();
+        Properties props = hibernateProperties.toProperties();
 
         entityManagerFactory.setJpaProperties(props);
 
         return entityManagerFactory;
-    }
-
-    private static Properties getProperties() {
-        Properties props = new Properties();
-        props.setProperty("hibernate.hbm2ddl.auto", "update");
-        props.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
-        props.setProperty("hibernate.show_sql", "true");
-        props.setProperty("hibernate.format_sql", "true");
-
-        props.setProperty("hibernate.jdbc.lob.non_contextual_creation", "true");
-        props.setProperty("hibernate.temp.use_jdbc_metadata_defaults", "false");
-        props.setProperty("hibernate.physical_naming_strategy",
-                SnakeCasePhysicalNamingStrategy.class.getName());
-        return props;
     }
 }
