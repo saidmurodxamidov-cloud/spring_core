@@ -8,12 +8,15 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode(of = {"id"})
+@Table(name = "trainee")
 public class TraineeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -27,4 +30,7 @@ public class TraineeEntity {
     @OneToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
+
+    @ManyToMany(mappedBy = "trainees")
+    private Set<TrainerEntity> trainers = new HashSet<>();
 }
