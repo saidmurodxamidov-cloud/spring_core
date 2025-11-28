@@ -23,4 +23,7 @@ public class TrainingTypeEntity {
     @ManyToMany(mappedBy = "specializations")
     @ToString.Exclude
     private Set<TrainerEntity> trainerEntities = new HashSet<>();
+
+    @OneToMany(mappedBy = "trainingType")
+    private Set<TrainingEntity> trainings = new HashSet<>();
 }

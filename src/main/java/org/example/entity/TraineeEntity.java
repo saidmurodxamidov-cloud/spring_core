@@ -33,4 +33,7 @@ public class TraineeEntity {
 
     @ManyToMany(mappedBy = "trainees")
     private Set<TrainerEntity> trainers = new HashSet<>();
+
+    @OneToMany(mappedBy = "trainee")
+    private Set<TrainingEntity> trainings = new HashSet<>();
 }
