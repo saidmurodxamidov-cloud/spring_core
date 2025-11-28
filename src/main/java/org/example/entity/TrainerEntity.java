@@ -43,4 +43,7 @@ public class TrainerEntity {
     )
     @ToString.Exclude
     private Set<TraineeEntity> trainees = new HashSet<>();
+
+    @OneToMany(mappedBy = "trainer")
+    private Set<TrainingEntity> trainings = new HashSet<>();
 }
