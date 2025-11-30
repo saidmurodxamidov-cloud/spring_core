@@ -15,6 +15,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(of = {"id"})
 @ToString
 @Entity
+@Table(name = "training")
 public class TrainingEntity {
 
     @Id
@@ -25,7 +26,7 @@ public class TrainingEntity {
     private LocalDate date;
     @NotNull
     @PositiveOrZero
-    private Duration trainingDuration;
+    private Duration trainingDurationInMinutes;
 
     @ManyToOne
     @JoinColumn(name = "trainee_id")
