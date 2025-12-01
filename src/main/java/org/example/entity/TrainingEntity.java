@@ -15,6 +15,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(of = {"id"})
 @ToString
 @Entity
+@Table(name = "training")
 public class TrainingEntity {
 
     @Id
