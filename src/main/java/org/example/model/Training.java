@@ -20,7 +20,7 @@ public class Training {
     private Long trainerId;
     private LocalDate date;
     private String trainingName;
-    private TrainingType trainingType;
+    private TrainingTypeDTO trainingType;
     @NotNull
     @PositiveOrZero
     private Duration trainingDuration;

@@ -9,6 +9,7 @@ import java.time.LocalDate;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
+@AllArgsConstructor
 public class Trainee extends User{
     @Past
     private LocalDate dateOfBirth;

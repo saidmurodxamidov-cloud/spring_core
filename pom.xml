@@ -183,6 +183,19 @@
             <version>3.26.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>1.5.5.Final</version> <!-- Use latest stable version -->
+        </dependency>
+
+        <!-- MapStruct annotation processor -->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <version>1.5.5.Final</version>
+            <scope>provided</scope> <!-- compile-time only -->
+        </dependency>
     </dependencies>
 
     <build>
