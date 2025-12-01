@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"userId"})
-public abstract class User {
+public class User {
     private Long userId;
     @NotNull(message = "name should be present")
     private String firstName;

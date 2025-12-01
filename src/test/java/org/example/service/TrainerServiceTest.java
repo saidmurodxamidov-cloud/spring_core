@@ -2,6 +2,7 @@ package org.example.service;
 
 import org.example.dao.TrainerDAO;
 import org.example.model.Trainer;
+import org.example.model.TrainingTypeDTO;
 import org.example.util.PasswordGenerator;
 import org.example.util.UsernameGenerator;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +34,7 @@ class TrainerServiceTest {
         trainer.setUserId(1L);
         trainer.setFirstName("Alice");
         trainer.setLastName("Smith");
-        trainer.setSpecialization("Yoga");
+        trainer.setSpecialization(Set.of(new TrainingTypeDTO(1L,"YOGA")));
     }
 
     @Test
