@@ -26,7 +26,7 @@ public class TrainingEntity {
     private LocalDate date;
     @NotNull
     @PositiveOrZero
-    private Duration trainingDurationInMinutes;
+    private Duration trainingDuration;
 
     @ManyToOne
     @JoinColumn(name = "trainee_id")
