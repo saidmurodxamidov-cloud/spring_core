@@ -3,14 +3,12 @@ package org.example.service;
 import org.example.dao.TrainerDAO;
 import org.example.model.Trainer;
 import org.example.model.TrainingTypeDTO;
-import org.example.util.PasswordGenerator;
-import org.example.util.UsernameGenerator;
+import org.example.service.dao.TrainerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
