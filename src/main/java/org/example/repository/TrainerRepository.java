@@ -20,5 +20,5 @@ public interface TrainerRepository extends JpaRepository<TrainerEntity,Long> {
             "(SELECT tr FROM TraineeEntity tn JOIN tn.trainers tr WHERE tn.user.userName = :traineeUsername)")
     List<TrainerEntity> findTrainersNotAssignedToTrainee(@Param("traineeUsername") String traineeUsername);
 
-    List<TrainerEntity> findByUserIsActiveTrue();
+    List<TrainerEntity> findByUserIsActive(boolean isActive);
 }

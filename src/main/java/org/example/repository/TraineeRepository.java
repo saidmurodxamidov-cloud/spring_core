@@ -17,5 +17,5 @@ public interface TraineeRepository extends JpaRepository<TraineeEntity,Long> {
 
     void deleteByUserUserName(String username);
 
-    List<TraineeEntity> findByUserIsActiveTrue();
+    List<TraineeEntity> findByUserIsActive(boolean isActive);
 }
