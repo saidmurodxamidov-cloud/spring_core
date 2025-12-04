@@ -10,11 +10,13 @@ import org.example.repository.TraineeRepository;
 import org.example.repository.UserRepository;
 import org.example.util.PasswordGenerator;
 import org.example.util.UsernameGenerator;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
+
 
 @Slf4j
 @Service
@@ -44,9 +46,16 @@ public class TraineeEntityService {
     }
 
     public boolean authenticate(String username,String password){
-       return traineeRepository.findByUserUserName(username)
-               .map(t -> bcrypt.matches(password,String.valueOf(t.getUser().getPassword())))
-               .orElse(false);
+        TraineeEntity trainee = traineeRepository.findByUserUserName(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+        if(!trainee.getUser().isActive())
+            throw new IllegalStateException("user is not active: " + username);
+
+        boolean matches = bcrypt.matches(password,String.valueOf(trainee.getUser().getPassword()));
+        if(!matches)
+            throw new BadCredentialsException("wrong passwrod for user: " + username);
+
+        return true;
     }
     @Transactional(readOnly = true)
     public Trainee getTraineeByUsername(String username) {
