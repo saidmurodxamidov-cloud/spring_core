@@ -1,4 +1,4 @@
-package org.example.service;
+package org.example.service.dao;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dao.TrainingDAO;
