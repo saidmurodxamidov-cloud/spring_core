@@ -3,7 +3,6 @@ package org.example.service;
 import org.example.dao.TrainerDAO;
 import org.example.model.Trainer;
 import org.example.model.TrainingTypeDTO;
-import org.example.service.dao.TrainerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
