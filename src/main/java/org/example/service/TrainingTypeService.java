@@ -23,7 +23,7 @@ public class TrainingTypeService {
 
     @Transactional(readOnly = true)
     public TrainingTypeDTO getTrainingTypeByName(String name) {
-        log.info("Fetching training type by name: {}", name);
+        log.debug("Fetching training type by name: {}", name);
 
         TrainingTypeEntity trainingType = trainingTypeRepository.findByTrainingTypeName(name)
                 .orElseThrow(() -> new EntityNotFoundException("Training type not found: " + name));
