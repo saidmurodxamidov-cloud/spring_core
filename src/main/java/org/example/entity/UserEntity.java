@@ -12,7 +12,8 @@ import org.example.converter.CharArrayToStringConverter;
 @EqualsAndHashCode(of = {"id"})
 @ToString
 @Entity
-@Table(name = "user")
+@Builder
+@Table(name = "users")
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -2,10 +2,7 @@ package org.example.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Past;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -17,6 +14,9 @@ import java.util.Set;
 @ToString
 @EqualsAndHashCode(of = {"id"})
 @Table(name = "trainee")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TraineeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
