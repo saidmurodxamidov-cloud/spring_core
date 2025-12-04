@@ -3,6 +3,7 @@ package org.example.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.entity.TraineeEntity;
+import org.example.exception.EntityNotFoundException;
 import org.example.mapper.TraineeMapper;
 import org.example.model.Trainee;
 import org.example.repository.TraineeRepository;
@@ -40,6 +41,21 @@ public class TraineeEntityService {
         log.info("trainee created successfully with username: {}", traineeEntity.getUser().getUserName());
 
         return trainee;
+    }
+
+    public boolean authenticate(String username,String password){
+       return traineeRepository.findByUserUserName(username)
+               .map(t -> bcrypt.matches(password,String.valueOf(t.getUser().getPassword())))
+               .orElse(false);
+    }
+    @Transactional(readOnly = true)
+    public Trainee getTraineeByUsername(String username) {
+        log.debug("Fetching trainee by username: {}", username);
+
+        TraineeEntity trainee = traineeRepository.findByUserUserName(username)
+                .orElseThrow(() -> new EntityNotFoundException("Trainee not found: " + username));
+
+        return traineeMapper.toDTO(trainee);
     }
 
 }
