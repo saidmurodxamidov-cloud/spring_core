@@ -2,7 +2,7 @@ package org.example.mapper;
 
 import org.example.entity.TraineeEntity;
 import org.example.entity.UserEntity;
-import org.example.model.Trainee;
+import org.example.model.TraineeDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -11,11 +11,11 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TraineeMapperTest {
+class TraineeDTOMapperTest {
 
     private TraineeMapper traineeMapper;
     private TraineeEntity traineeEntity;
-    private Trainee trainee;
+    private TraineeDTO traineeDTO;
 
     @BeforeEach
     void setUp() {
@@ -38,21 +38,21 @@ class TraineeMapperTest {
                 .user(userEntity)
                 .build();
 
-        trainee = new Trainee();
-        trainee.setUserId(2L);
-        trainee.setFirstName("Bob");
-        trainee.setLastName("Brown");
-        trainee.setUserName("bob.brown");
-        trainee.setPassword("secret456".toCharArray());
-        trainee.setActive(false);
-        trainee.setDateOfBirth(LocalDate.of(1990, 10, 20));
-        trainee.setAddress("456 Oak Avenue");
+        traineeDTO = new TraineeDTO();
+        traineeDTO.setUserId(2L);
+        traineeDTO.setFirstName("Bob");
+        traineeDTO.setLastName("Brown");
+        traineeDTO.setUserName("bob.brown");
+        traineeDTO.setPassword("secret456".toCharArray());
+        traineeDTO.setActive(false);
+        traineeDTO.setDateOfBirth(LocalDate.of(1990, 10, 20));
+        traineeDTO.setAddress("456 Oak Avenue");
     }
 
     @Test
     void testToDtoWithAllFields() {
         // When
-        Trainee dto = traineeMapper.toDTO(traineeEntity);
+        TraineeDTO dto = traineeMapper.toDTO(traineeEntity);
 
         // Then
         assertNotNull(dto);
@@ -68,7 +68,7 @@ class TraineeMapperTest {
     @Test
     void testToDtoWithNullEntity() {
         // When
-        Trainee dto = traineeMapper.toDTO(null);
+        TraineeDTO dto = traineeMapper.toDTO(null);
 
         // Then
         assertNull(dto);
@@ -80,7 +80,7 @@ class TraineeMapperTest {
         traineeEntity.setUser(null);
 
         // When
-        Trainee dto = traineeMapper.toDTO(traineeEntity);
+        TraineeDTO dto = traineeMapper.toDTO(traineeEntity);
 
         // Then
         assertNotNull(dto);
@@ -94,7 +94,7 @@ class TraineeMapperTest {
     @Test
     void testToEntityWithAllFields() {
         // When
-        TraineeEntity entity = traineeMapper.toEntity(trainee);
+        TraineeEntity entity = traineeMapper.toEntity(traineeDTO);
 
         // Then
         assertNotNull(entity);
@@ -114,10 +114,10 @@ class TraineeMapperTest {
     @Test
     void testToEntityWithNullDateOfBirth() {
         // Given
-        trainee.setDateOfBirth(null);
+        traineeDTO.setDateOfBirth(null);
 
         // When
-        TraineeEntity entity = traineeMapper.toEntity(trainee);
+        TraineeEntity entity = traineeMapper.toEntity(traineeDTO);
 
         // Then
         assertNotNull(entity);
@@ -128,10 +128,10 @@ class TraineeMapperTest {
     @Test
     void testToEntityWithNullAddress() {
         // Given
-        trainee.setAddress(null);
+        traineeDTO.setAddress(null);
 
         // When
-        TraineeEntity entity = traineeMapper.toEntity(trainee);
+        TraineeEntity entity = traineeMapper.toEntity(traineeDTO);
 
         // Then
         assertNotNull(entity);

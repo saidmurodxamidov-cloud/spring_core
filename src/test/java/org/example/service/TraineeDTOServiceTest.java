@@ -1,7 +1,7 @@
 package org.example.service;
 
 import org.example.dao.TraineeDAO;
-import org.example.model.Trainee;
+import org.example.model.TraineeDTO;
 import org.example.util.PasswordGenerator;
 import org.example.util.UsernameGenerator;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class TraineeServiceTest {
+class TraineeDTOServiceTest {
 
     @Mock
     private TraineeDAO traineeDAO;
@@ -28,16 +28,16 @@ class TraineeServiceTest {
     @InjectMocks
     private TraineeService traineeService;
 
-    private Trainee trainee;
+    private TraineeDTO traineeDTO;
 
     @BeforeEach
     void setUp() {
-        trainee = new Trainee();
-        trainee.setUserId(1L);
-        trainee.setFirstName("John");
-        trainee.setLastName("Doe");
-        trainee.setDateOfBirth(LocalDate.of(1990, 1, 1));
-        trainee.setAddress("Test Street");
+        traineeDTO = new TraineeDTO();
+        traineeDTO.setUserId(1L);
+        traineeDTO.setFirstName("John");
+        traineeDTO.setLastName("Doe");
+        traineeDTO.setDateOfBirth(LocalDate.of(1990, 1, 1));
+        traineeDTO.setAddress("Test Street");
     }
 
     @Test
@@ -54,19 +54,19 @@ class TraineeServiceTest {
 
             passwordGenMock.when(PasswordGenerator::generatePassword).thenReturn("p@ssword".toCharArray());
 
-            traineeService.createTrainee(trainee);
+            traineeService.createTrainee(traineeDTO);
 
-            assertEquals("john.doe", trainee.getUserName());
-            assertArrayEquals("p@ssword".toCharArray(), trainee.getPassword());
+            assertEquals("john.doe", traineeDTO.getUserName());
+            assertArrayEquals("p@ssword".toCharArray(), traineeDTO.getPassword());
 
-            verify(traineeDAO).create(trainee);
+            verify(traineeDAO).create(traineeDTO);
         }
     }
 
     @Test
     void updateTrainee_ShouldCallDAOUpdate() {
-        traineeService.updateTrainee(trainee);
-        verify(traineeDAO, times(1)).update(trainee);
+        traineeService.updateTrainee(traineeDTO);
+        verify(traineeDAO, times(1)).update(traineeDTO);
     }
 
     @Test
@@ -77,9 +77,9 @@ class TraineeServiceTest {
 
     @Test
     void getTraineeById_ShouldReturnFromDAO() {
-        when(traineeDAO.findById(1L)).thenReturn(trainee);
+        when(traineeDAO.findById(1L)).thenReturn(traineeDTO);
 
-        Trainee result = traineeService.getTraineeById(1L);
+        TraineeDTO result = traineeService.getTraineeById(1L);
 
         assertNotNull(result);
         assertEquals("John", result.getFirstName());
@@ -88,9 +88,9 @@ class TraineeServiceTest {
 
     @Test
     void getAllTrainees_ShouldReturnListFromDAO() {
-        when(traineeDAO.findAll()).thenReturn(List.of(trainee));
+        when(traineeDAO.findAll()).thenReturn(List.of(traineeDTO));
 
-        List<Trainee> result = traineeService.getAllTrainees();
+        List<TraineeDTO> result = traineeService.getAllTrainees();
 
         assertEquals(1, result.size());
         assertEquals("John", result.get(0).getFirstName());

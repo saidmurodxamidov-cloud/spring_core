@@ -4,16 +4,11 @@ import org.example.entity.TraineeEntity;
 import org.example.entity.TrainerEntity;
 import org.example.entity.TrainingEntity;
 import org.example.entity.TrainingTypeEntity;
-import org.example.model.Training;
+import org.example.model.TrainingDTO;
 import org.example.model.TrainingTypeDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -22,12 +17,12 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TrainingMapperTest {
+class TrainingDTOMapperTest {
 
     private TrainingTypeMapper trainingTypeMapper;
     private TrainingMapper trainingMapper;
     private TrainingEntity trainingEntity;
-    private Training training;
+    private TrainingDTO trainingDTO;
 
     @BeforeEach
     void setUp() {
@@ -59,14 +54,14 @@ class TrainingMapperTest {
                 .trainingType(trainingType)
                 .build();
 
-        training = new Training();
-        training.setTrainingId(200L);
-        training.setTraineeId(15L);
-        training.setTrainerId(25L);
-        training.setDate(LocalDate.of(2024, 12, 5));
-        training.setTrainingName("Evening Fitness");
-        training.setTrainingType(new TrainingTypeDTO(2L, "Fitness"));
-        training.setTrainingDuration(Duration.ofMinutes(90));
+        trainingDTO = new TrainingDTO();
+        trainingDTO.setTrainingId(200L);
+        trainingDTO.setTraineeId(15L);
+        trainingDTO.setTrainerId(25L);
+        trainingDTO.setDate(LocalDate.of(2024, 12, 5));
+        trainingDTO.setTrainingName("Evening Fitness");
+        trainingDTO.setTrainingType(new TrainingTypeDTO(2L, "Fitness"));
+        trainingDTO.setTrainingDuration(Duration.ofMinutes(90));
     }
 
     @Test
@@ -82,7 +77,7 @@ class TrainingMapperTest {
     void testToTrainingModelsWithEmptySet() {
         Set<TrainingEntity> entities = new HashSet<>();
 
-        Set<Training> dtos = trainingMapper.toTrainingModels(entities);
+        Set<TrainingDTO> dtos = trainingMapper.toTrainingModels(entities);
 
         assertNotNull(dtos);
         assertTrue(dtos.isEmpty());

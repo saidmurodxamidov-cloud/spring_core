@@ -1,8 +1,8 @@
 package org.example.facade;
 
-import org.example.model.Trainee;
-import org.example.model.Trainer;
-import org.example.model.Training;
+import org.example.model.TraineeDTO;
+import org.example.model.TrainerDTO;
+import org.example.model.TrainingDTO;
 import org.example.service.TraineeService;
 import org.example.service.TrainerService;
 import org.example.service.TrainingService;
@@ -31,27 +31,27 @@ class GymFacadeTest {
 
     @Test
     void createTrainee_ShouldCallService() {
-        Trainee trainee = new Trainee();
-        gymFacade.createTrainee(trainee);
-        verify(traineeService).createTrainee(trainee);
+        TraineeDTO traineeDTO = new TraineeDTO();
+        gymFacade.createTrainee(traineeDTO);
+        verify(traineeService).createTrainee(traineeDTO);
     }
 
     @Test
     void createTrainer_ShouldCallService() {
-        Trainer trainer = new Trainer();
-        gymFacade.createTrainer(trainer);
-        verify(trainerService).createTrainer(trainer);
+        TrainerDTO trainerDTO = new TrainerDTO();
+        gymFacade.createTrainer(trainerDTO);
+        verify(trainerService).createTrainer(trainerDTO);
     }
 
     @Test
     void createTraining_ShouldCallService() {
-        Training training = new Training();
-        training.setTrainingName("Strength");
-        training.setTrainerId(1L);
-        training.setTraineeId(2L);
+        TrainingDTO trainingDTO = new TrainingDTO();
+        trainingDTO.setTrainingName("Strength");
+        trainingDTO.setTrainerId(1L);
+        trainingDTO.setTraineeId(2L);
 
-        gymFacade.createTraining(training);
-        verify(trainingService).createTraining(training);
+        gymFacade.createTraining(trainingDTO);
+        verify(trainingService).createTraining(trainingDTO);
     }
 
     @Test
