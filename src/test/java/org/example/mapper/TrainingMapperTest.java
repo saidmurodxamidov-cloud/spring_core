@@ -77,10 +77,7 @@ class TrainingMapperTest {
     void testToTrainingWithNullEntity() {
         assertNull(trainingMapper.toTraining(null));
     }
-
-
-
-
+    
     @Test
     void testToTrainingModelsWithEmptySet() {
         Set<TrainingEntity> entities = new HashSet<>();
