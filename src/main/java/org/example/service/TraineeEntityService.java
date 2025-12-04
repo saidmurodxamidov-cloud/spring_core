@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -27,10 +28,12 @@ public class TraineeEntityService {
 
     @Transactional
     public Trainee createTrainee(Trainee trainee){
+        Set<String> availableUsernames = userRepository.findAllUserNames();
         String password = new String(PasswordGenerator.generatePassword());
-
-        trainee.setPassword(bcrypt.encode(password).toCharArray());
-        trainee.setUserName(UsernameGenerator.generateUsername(trainee.getFirstName(),trainee.getLastName(),userRepository.findAllUserNames()));
+        String username = UsernameGenerator.generateUsername(trainee.getFirstName(),trainee.getLastName(),availableUsernames);
+        String encodedPassword = bcrypt.encode(password);
+        trainee.setPassword(encodedPassword.toCharArray());
+        trainee.setUserName(username);
 
         log.info("creating trainee with username {}", trainee.getUserName());
 

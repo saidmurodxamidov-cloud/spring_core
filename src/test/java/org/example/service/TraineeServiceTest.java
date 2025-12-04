@@ -2,7 +2,6 @@ package org.example.service;
 
 import org.example.dao.TraineeDAO;
 import org.example.model.Trainee;
-import org.example.service.dao.TraineeService;
 import org.example.util.PasswordGenerator;
 import org.example.util.UsernameGenerator;
 import org.junit.jupiter.api.BeforeEach;

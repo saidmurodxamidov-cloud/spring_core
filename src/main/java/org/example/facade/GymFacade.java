@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.model.Trainee;
 import org.example.model.Trainer;
 import org.example.model.Training;
-import org.example.service.dao.TraineeService;
-import org.example.service.dao.TrainerService;
-import org.example.service.dao.TrainingService;
+import org.example.service.TraineeService;
+import org.example.service.TrainerService;
+import org.example.service.TrainingService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
