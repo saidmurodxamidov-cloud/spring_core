@@ -1,8 +1,8 @@
 package org.example.service;
 
-import jakarta.validation.ConstraintViolationException;
 import org.example.dao.TrainingDAO;
 import org.example.model.Training;
+import org.example.service.dao.TrainingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

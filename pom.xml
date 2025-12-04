@@ -37,7 +37,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 
@@ -201,6 +200,14 @@
             <version>1.5.5.Final</version>
             <scope>provided</scope> <!-- compile-time only -->
         </dependency>
+
+        <!-- BCrypt password encoder -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
+            <version>6.2.2</version> <!-- Compatible with Spring 6.x -->
+        </dependency>
+
     </dependencies>
 
     <build>
