@@ -14,7 +14,7 @@ public class UserEntityService {
 
     private final UserRepository userRepository;
 
-    public boolean matchCredentials(String username,String password){
+    public boolean passwordMatches(String username,String password){
         Optional<UserEntity> userOptional = userRepository.findByUserName(username);
         if(userOptional.isEmpty())
             return false;
