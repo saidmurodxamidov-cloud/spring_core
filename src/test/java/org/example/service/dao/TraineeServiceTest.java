@@ -1,4 +1,4 @@
-package org.example.service;
+package org.example.service.dao;
 
 import org.example.dao.TraineeDAO;
 import org.example.model.Trainee;
