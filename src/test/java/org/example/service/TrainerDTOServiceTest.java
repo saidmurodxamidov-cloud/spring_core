@@ -1,7 +1,11 @@
 package org.example.service;
 
 import org.example.dao.TrainerDAO;
+<<<<<<< HEAD:src/test/java/org/example/service/TrainerServiceTest.java
 import org.example.model.Trainer;
+=======
+import org.example.model.TrainerDTO;
+>>>>>>> main:src/test/java/org/example/service/TrainerDTOServiceTest.java
 import org.example.model.TrainingTypeDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,35 +21,43 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class TrainerServiceTest {
+class TrainerDTOServiceTest {
 
     @Mock
     private TrainerDAO trainerDAO;
     @InjectMocks
     private TrainerService trainerService;
-    private Trainer trainer;
+    private TrainerDTO trainerDTO;
 
     @BeforeEach
     void setUp() {
+<<<<<<< HEAD:src/test/java/org/example/service/TrainerServiceTest.java
         trainer = new Trainer();
         trainer.setUserId(1L);
         trainer.setFirstName("Alice");
         trainer.setLastName("Smith");
         trainer.setSpecialization(Set.of(new TrainingTypeDTO(1L,"YOGA")));
+=======
+        trainerDTO = new TrainerDTO();
+        trainerDTO.setUserId(1L);
+        trainerDTO.setFirstName("Alice");
+        trainerDTO.setLastName("Smith");
+        trainerDTO.setSpecialization(Set.of(new TrainingTypeDTO(1L,"YOGA")));
+>>>>>>> main:src/test/java/org/example/service/TrainerDTOServiceTest.java
     }
 
     @Test
     void updateTrainer_ShouldInvokeDAO() {
-        trainerService.updateTrainer(trainer);
-        verify(trainerDAO).update(trainer);
+        trainerService.updateTrainer(trainerDTO);
+        verify(trainerDAO).update(trainerDTO);
     }
 
 
     @Test
     void getTrainerById_ShouldReturnTrainerFromDAO() {
-        when(trainerDAO.findById(1L)).thenReturn(trainer);
+        when(trainerDAO.findById(1L)).thenReturn(trainerDTO);
 
-        Trainer result = trainerService.getTrainerById(1L);
+        TrainerDTO result = trainerService.getTrainerById(1L);
 
         assertNotNull(result);
         assertEquals("Alice", result.getFirstName());
@@ -54,9 +66,9 @@ class TrainerServiceTest {
 
     @Test
     void getAllTrainers_ShouldReturnListFromDAO() {
-        when(trainerDAO.findAll()).thenReturn(List.of(trainer));
+        when(trainerDAO.findAll()).thenReturn(List.of(trainerDTO));
 
-        List<Trainer> result = trainerService.getAllTrainers();
+        List<TrainerDTO> result = trainerService.getAllTrainers();
 
         assertEquals(1, result.size());
         assertEquals("Alice", result.get(0).getFirstName());

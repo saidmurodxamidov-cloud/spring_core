@@ -1,7 +1,7 @@
 package org.example.mapper;
 
 import org.example.entity.UserEntity;
-import org.example.model.User;
+import org.example.model.UserDTO;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -9,8 +9,8 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     @Mapping(source = "id",target = "userId")
-    User toDto(UserEntity entity);
+    UserDTO toDto(UserEntity entity);
 
     @InheritInverseConfiguration
-    UserEntity toEntity(User user);
+    UserEntity toEntity(UserDTO userDTO);
 }

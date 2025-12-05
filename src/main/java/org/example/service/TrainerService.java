@@ -2,7 +2,7 @@ package org.example.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.dao.TrainerDAO;
-import org.example.model.Trainer;
+import org.example.model.TrainerDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,24 +19,24 @@ public class TrainerService {
         this.trainerDAO = trainerDAO;
     }
 
-    public void createTrainer(Trainer trainer) {
-        log.debug("Creating trainer: {}", trainer.getUserName());
-        trainerDAO.create(trainer);
-        log.info("Trainer created with ID: {}", trainer.getUserId());
+    public void createTrainer(TrainerDTO trainerDTO) {
+        log.debug("Creating trainer: {}", trainerDTO.getUserName());
+        trainerDAO.create(trainerDTO);
+        log.info("Trainer created with ID: {}", trainerDTO.getUserId());
     }
 
-    public void updateTrainer(Trainer trainer) {
-        log.debug("Updating trainer with ID: {}", trainer.getUserId());
-        trainerDAO.update(trainer);
-        log.info("Trainer updated successfully with id: {}",trainer.getUserName());
+    public void updateTrainer(TrainerDTO trainerDTO) {
+        log.debug("Updating trainer with ID: {}", trainerDTO.getUserId());
+        trainerDAO.update(trainerDTO);
+        log.info("Trainer updated successfully with id: {}", trainerDTO.getUserName());
     }
 
-    public Trainer getTrainerById(Long id) {
+    public TrainerDTO getTrainerById(Long id) {
         log.debug("Fetching trainer with ID: {}", id);
         return trainerDAO.findById(id);
     }
 
-    public List<Trainer> getAllTrainers() {
+    public List<TrainerDTO> getAllTrainers() {
         log.debug("Fetching all trainers");
         return trainerDAO.findAll();
     }

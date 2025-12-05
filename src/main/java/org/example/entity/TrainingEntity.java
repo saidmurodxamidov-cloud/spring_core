@@ -16,6 +16,7 @@ import java.time.LocalDate;
 @ToString
 @Entity
 @Table(name = "training")
+@Builder
 public class TrainingEntity {
 
     @Id
