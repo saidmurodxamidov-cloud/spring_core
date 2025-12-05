@@ -60,7 +60,7 @@ class TrainerDTOServiceTest {
         List<TrainerDTO> result = trainerService.getAllTrainers();
 
         assertEquals(1, result.size());
-        assertEquals("Alice", result.get(0).getFirstName());
+        assertEquals("Alice", result.getFirst().getFirstName());
         verify(trainerDAO).findAll();
     }
 }

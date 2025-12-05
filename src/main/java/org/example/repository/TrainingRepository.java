@@ -15,7 +15,7 @@ public interface TrainingRepository extends JpaRepository<TrainingEntity, Long> 
     @Query("""
            SELECT tr
            FROM TrainingEntity tr
-           WHERE tr.trainer.user.userName = :username
+           WHERE tr.trainee.user.userName = :username
              AND (:fromDate IS NULL OR tr.date >= :fromDate)
              AND (:toDate IS NULL OR tr.date <= :toDate)
              AND (
