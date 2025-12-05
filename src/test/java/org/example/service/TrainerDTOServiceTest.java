@@ -28,13 +28,11 @@ class TrainerDTOServiceTest {
 
     @BeforeEach
     void setUp() {
-
         trainerDTO = new TrainerDTO();
         trainerDTO.setUserId(1L);
         trainerDTO.setFirstName("Alice");
         trainerDTO.setLastName("Smith");
         trainerDTO.setSpecialization(Set.of(new TrainingTypeDTO(1L,"YOGA")));
-
     }
 
     @Test
