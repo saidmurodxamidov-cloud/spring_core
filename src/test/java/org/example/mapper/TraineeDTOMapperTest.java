@@ -11,11 +11,11 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TraineeMapperTest {
+class TraineeDTOMapperTest {
 
     private TraineeMapper traineeMapper;
     private TraineeEntity traineeEntity;
-    private TraineeDTO trainee;
+    private TraineeDTO traineeDTO;
 
     @BeforeEach
     void setUp() {
@@ -38,15 +38,15 @@ class TraineeMapperTest {
                 .user(userEntity)
                 .build();
 
-        trainee = new TraineeDTO();
-        trainee.setUserId(2L);
-        trainee.setFirstName("Bob");
-        trainee.setLastName("Brown");
-        trainee.setUserName("bob.brown");
-        trainee.setPassword("secret456".toCharArray());
-        trainee.setActive(false);
-        trainee.setDateOfBirth(LocalDate.of(1990, 10, 20));
-        trainee.setAddress("456 Oak Avenue");
+        traineeDTO = new TraineeDTO();
+        traineeDTO.setUserId(2L);
+        traineeDTO.setFirstName("Bob");
+        traineeDTO.setLastName("Brown");
+        traineeDTO.setUserName("bob.brown");
+        traineeDTO.setPassword("secret456".toCharArray());
+        traineeDTO.setActive(false);
+        traineeDTO.setDateOfBirth(LocalDate.of(1990, 10, 20));
+        traineeDTO.setAddress("456 Oak Avenue");
     }
 
     @Test
@@ -94,7 +94,7 @@ class TraineeMapperTest {
     @Test
     void testToEntityWithAllFields() {
         // When
-        TraineeEntity entity = traineeMapper.toEntity(trainee);
+        TraineeEntity entity = traineeMapper.toEntity(traineeDTO);
 
         // Then
         assertNotNull(entity);
@@ -114,10 +114,10 @@ class TraineeMapperTest {
     @Test
     void testToEntityWithNullDateOfBirth() {
         // Given
-        trainee.setDateOfBirth(null);
+        traineeDTO.setDateOfBirth(null);
 
         // When
-        TraineeEntity entity = traineeMapper.toEntity(trainee);
+        TraineeEntity entity = traineeMapper.toEntity(traineeDTO);
 
         // Then
         assertNotNull(entity);
@@ -128,10 +128,10 @@ class TraineeMapperTest {
     @Test
     void testToEntityWithNullAddress() {
         // Given
-        trainee.setAddress(null);
+        traineeDTO.setAddress(null);
 
         // When
-        TraineeEntity entity = traineeMapper.toEntity(trainee);
+        TraineeEntity entity = traineeMapper.toEntity(traineeDTO);
 
         // Then
         assertNotNull(entity);

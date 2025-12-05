@@ -14,11 +14,11 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TrainerMapperTest {
+class TrainerDTOMapperTest {
 
     private TrainerMapper trainerMapper;
     private TrainerEntity trainerEntity;
-    private TrainerDTO trainer;
+    private TrainerDTO trainerDTO;
 
     @BeforeEach
     void setUp() {
@@ -54,18 +54,18 @@ class TrainerMapperTest {
                 .specializations(specializations)
                 .build();
 
-        trainer = new TrainerDTO();
-        trainer.setUserId(3L);
-        trainer.setFirstName("Sarah");
-        trainer.setLastName("Connor");
-        trainer.setUserName("sarah.connor");
-        trainer.setPassword("secret789".toCharArray());
-        trainer.setActive(false);
+        trainerDTO = new TrainerDTO();
+        trainerDTO.setUserId(3L);
+        trainerDTO.setFirstName("Sarah");
+        trainerDTO.setLastName("Connor");
+        trainerDTO.setUserName("sarah.connor");
+        trainerDTO.setPassword("secret789".toCharArray());
+        trainerDTO.setActive(false);
 
         Set<TrainingTypeDTO> trainerSpecializations = new HashSet<>();
         trainerSpecializations.add(new TrainingTypeDTO(3L, "Cardio"));
         trainerSpecializations.add(new TrainingTypeDTO(4L, "Strength"));
-        trainer.setSpecialization(trainerSpecializations);
+        trainerDTO.setSpecialization(trainerSpecializations);
     }
 
 
@@ -111,7 +111,7 @@ class TrainerMapperTest {
     @Test
     void testToEntityWithAllFields() {
         // When
-        TrainerEntity entity = trainerMapper.toEntity(trainer);
+        TrainerEntity entity = trainerMapper.toEntity(trainerDTO);
 
         // Then
         assertNotNull(entity);
@@ -135,10 +135,10 @@ class TrainerMapperTest {
     @Test
     void testToEntityWithNullSpecializations() {
         // Given
-        trainer.setSpecialization(null);
+        trainerDTO.setSpecialization(null);
 
         // When
-        TrainerEntity entity = trainerMapper.toEntity(trainer);
+        TrainerEntity entity = trainerMapper.toEntity(trainerDTO);
 
         // Then
         assertNotNull(entity);

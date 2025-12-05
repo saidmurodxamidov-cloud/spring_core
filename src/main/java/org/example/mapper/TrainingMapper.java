@@ -1,7 +1,7 @@
 package org.example.mapper;
 
 import org.example.entity.TrainingEntity;
-import org.example.model.Training;
+import org.example.model.TrainingDTO;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -13,10 +13,10 @@ public interface TrainingMapper {
     @Mapping(source = "trainingId",target = "id")
     @Mapping(source = "trainerId", target = "trainer.id")
     @Mapping(source = "traineeId", target = "trainee.id")
-    TrainingEntity toEntity(Training training);
+    TrainingEntity toEntity(TrainingDTO trainingDTO);
 
     @InheritInverseConfiguration
-    Training toTraining(TrainingEntity entity);
+    TrainingDTO toTraining(TrainingEntity entity);
 
-    Set<Training> toTrainingModels(Set<TrainingEntity> entities);
+    Set<TrainingDTO> toTrainingModels(Set<TrainingEntity> entities);
 }

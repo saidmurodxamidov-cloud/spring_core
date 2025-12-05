@@ -1,14 +1,13 @@
 package org.example.mapper;
 
 import org.example.entity.UserEntity;
-
 import org.example.model.UserDTO;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UserMapperTest {
+public class UserDTOMapperTest {
 
     private final UserMapper mapper = Mappers.getMapper(UserMapper.class);
 

@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Training {
+public class TrainingDTO {
     @NotNull
     private Long trainingId;
     @NotNull

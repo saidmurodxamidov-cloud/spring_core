@@ -3,20 +3,17 @@ package org.example.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.entity.TraineeEntity;
-import org.example.exception.EntityNotFoundException;
 import org.example.mapper.TraineeMapper;
-import org.example.model.Trainee;
+import org.example.model.TraineeDTO;
 import org.example.repository.TraineeRepository;
 import org.example.repository.UserRepository;
 import org.example.util.PasswordGenerator;
 import org.example.util.UsernameGenerator;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -29,42 +26,22 @@ public class TraineeEntityService {
 
 
     @Transactional
-    public Trainee createTrainee(Trainee trainee){
+    public TraineeDTO createTrainee(TraineeDTO traineeDTO){
+        Set<String> availableUsernames = userRepository.findAllUserNames();
         String password = new String(PasswordGenerator.generatePassword());
+        String username = UsernameGenerator.generateUsername(traineeDTO.getFirstName(), traineeDTO.getLastName(),availableUsernames);
+        String encodedPassword = bcrypt.encode(password);
+        traineeDTO.setPassword(encodedPassword.toCharArray());
+        traineeDTO.setUserName(username);
 
-        trainee.setPassword(bcrypt.encode(password).toCharArray());
-        trainee.setUserName(UsernameGenerator.generateUsername(trainee.getFirstName(),trainee.getLastName(),userRepository.findAllUserNames()));
+        log.info("creating trainee with username {}", traineeDTO.getUserName());
 
-        log.info("creating trainee with username {}", trainee.getUserName());
-
-        TraineeEntity traineeEntity = traineeMapper.toEntity(trainee);
+        TraineeEntity traineeEntity = traineeMapper.toEntity(traineeDTO);
         traineeRepository.save(traineeEntity);
 
         log.info("trainee created successfully with username: {}", traineeEntity.getUser().getUserName());
 
-        return trainee;
-    }
-
-    public boolean authenticate(String username,String password){
-        TraineeEntity trainee = traineeRepository.findByUserUserName(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-        if(!trainee.getUser().isActive())
-            throw new IllegalStateException("user is not active: " + username);
-
-        boolean matches = bcrypt.matches(password,String.valueOf(trainee.getUser().getPassword()));
-        if(!matches)
-            throw new BadCredentialsException("wrong passwrod for user: " + username);
-
-        return true;
-    }
-    @Transactional(readOnly = true)
-    public Trainee getTraineeByUsername(String username) {
-        log.debug("Fetching trainee by username: {}", username);
-
-        TraineeEntity trainee = traineeRepository.findByUserUserName(username)
-                .orElseThrow(() -> new EntityNotFoundException("Trainee not found: " + username));
-
-        return traineeMapper.toDTO(trainee);
+        return traineeDTO;
     }
 
 }
