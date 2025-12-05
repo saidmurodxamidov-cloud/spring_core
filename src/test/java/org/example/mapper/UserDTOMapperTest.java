@@ -1,13 +1,13 @@
 package org.example.mapper;
 
 import org.example.entity.UserEntity;
-import org.example.model.User;
+import org.example.model.UserDTO;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UserMapperTest {
+public class UserDTOMapperTest {
 
     private final UserMapper mapper = Mappers.getMapper(UserMapper.class);
 
@@ -15,7 +15,7 @@ public class UserMapperTest {
     void testToDto() {
         UserEntity entity = new UserEntity(1L, "John", "Doe", "jdoe", "pass".toCharArray(), true);
 
-        User dto = mapper.toDto(entity);
+        UserDTO dto = mapper.toDto(entity);
 
         assertNotNull(dto);
         assertEquals(entity.getId(), dto.getUserId());
@@ -25,7 +25,7 @@ public class UserMapperTest {
 
     @Test
     void testToEntity() {
-        User dto = new User(2L, "Jane", "Smith", "jsmith", "p2".toCharArray(), false);
+        UserDTO dto = new UserDTO(2L, "Jane", "Smith", "jsmith", "p2".toCharArray(), false);
 
         UserEntity entity = mapper.toEntity(dto);
 

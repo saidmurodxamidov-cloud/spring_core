@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.example.exception.EntityAlreadyExistException;
 import org.example.exception.EntityNotFoundException;
-import org.example.model.Training;
+import org.example.model.TrainingDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -16,16 +16,16 @@ import java.util.Map;
 @Repository
 public class TrainingDaoImp implements TrainingDAO {
 
-    private Map<Long, Training> trainingStorage;
+    private Map<Long, TrainingDTO> trainingStorage;
 
     @Autowired
-    public void setTrainingStorage(Map<Long, Training> trainingStorage) {
+    public void setTrainingStorage(Map<Long, TrainingDTO> trainingStorage) {
         this.trainingStorage = trainingStorage;
     }
 
     @Override
-    public void create(Training training) {
-        Long id = training.getTrainingId();
+    public void create(TrainingDTO trainingDTO) {
+        Long id = trainingDTO.getTrainingId();
         log.trace("DAO: create() called for trainingId={}", id);
 
         if (trainingStorage.containsKey(id)) {
@@ -33,12 +33,12 @@ public class TrainingDaoImp implements TrainingDAO {
             throw new EntityAlreadyExistException("entity already exists!");
         }
 
-        trainingStorage.put(id, training);
+        trainingStorage.put(id, trainingDTO);
         log.trace("DAO: trainingId={} created successfully", id);
     }
 
     @Override
-    public Training findById(Long id) {
+    public TrainingDTO findById(Long id) {
         log.trace("DAO: findById() called for trainingId={}", id);
 
         if (!trainingStorage.containsKey(id)) {
@@ -50,7 +50,7 @@ public class TrainingDaoImp implements TrainingDAO {
     }
 
     @Override
-    public List<Training> findAll() {
+    public List<TrainingDTO> findAll() {
         log.trace("DAO: findAll() called, {} trainings found", trainingStorage.size());
         return List.copyOf(trainingStorage.values());
     }

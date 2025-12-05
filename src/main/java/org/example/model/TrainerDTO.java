@@ -9,7 +9,7 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class Trainer extends User{
+public class TrainerDTO extends UserDTO {
     private Set<TrainingTypeDTO> specialization;
 
 }

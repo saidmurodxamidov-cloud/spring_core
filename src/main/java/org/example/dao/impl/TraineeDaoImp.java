@@ -4,7 +4,7 @@ import org.example.dao.TraineeDAO;
 
 import org.example.exception.EntityAlreadyExistException;
 import org.example.exception.EntityNotFoundException;
-import org.example.model.Trainee;
+import org.example.model.TraineeDTO;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,11 +14,11 @@ import java.util.Map;
 @Repository
 public class TraineeDaoImp implements TraineeDAO {
 
-    private Map<Long, Trainee> traineeStorage;
+    private Map<Long, TraineeDTO> traineeStorage;
 
     @Override
-    public void create(Trainee trainee) {
-        Long id = trainee.getUserId();
+    public void create(TraineeDTO traineeDTO) {
+        Long id = traineeDTO.getUserId();
 
         log.trace("DAO: create() called for traineeId={}", id);
 
@@ -27,13 +27,13 @@ public class TraineeDaoImp implements TraineeDAO {
             throw new EntityAlreadyExistException();
         }
 
-        traineeStorage.put(id, trainee);
+        traineeStorage.put(id, traineeDTO);
         log.trace("DAO: traineeId={} created successfully", id);
     }
 
     @Override
-    public void update(Trainee trainee) {
-        Long id = trainee.getUserId();
+    public void update(TraineeDTO traineeDTO) {
+        Long id = traineeDTO.getUserId();
         log.trace("DAO: update() called for traineeId={}", id);
 
         if (!traineeStorage.containsKey(id)) {
@@ -41,7 +41,7 @@ public class TraineeDaoImp implements TraineeDAO {
             throw new EntityNotFoundException();
         }
 
-        traineeStorage.put(id, trainee);
+        traineeStorage.put(id, traineeDTO);
         log.trace("DAO: traineeId={} updated successfully", id);
     }
 
@@ -59,7 +59,7 @@ public class TraineeDaoImp implements TraineeDAO {
     }
 
     @Override
-    public Trainee findById(Long id) {
+    public TraineeDTO findById(Long id) {
         log.trace("DAO: findById() called for traineeId={}", id);
 
         if (!traineeStorage.containsKey(id)) {
@@ -71,7 +71,7 @@ public class TraineeDaoImp implements TraineeDAO {
     }
 
     @Override
-    public List<Trainee> findAll() {
+    public List<TraineeDTO> findAll() {
         log.trace("DAO: findAll() called, {} trainees found", traineeStorage.size());
         return List.copyOf(traineeStorage.values());
     }

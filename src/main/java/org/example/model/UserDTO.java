@@ -1,9 +1,7 @@
 package org.example.model;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 
 @Getter
@@ -11,7 +9,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"userId"})
-public class User {
+public class UserDTO {
     private Long userId;
     @NotNull(message = "name should be present")
     private String firstName;

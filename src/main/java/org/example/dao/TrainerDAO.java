@@ -1,12 +1,12 @@
 package org.example.dao;
 
-import org.example.model.Trainer;
+import org.example.model.TrainerDTO;
 
 import java.util.List;
 
 public interface TrainerDAO {
-    void create(Trainer trainee);
-    void update(Trainer trainee);
-    Trainer findById(Long id);
-    List<Trainer> findAll();
+    void create(TrainerDTO trainee);
+    void update(TrainerDTO trainee);
+    TrainerDTO findById(Long id);
+    List<TrainerDTO> findAll();
 }

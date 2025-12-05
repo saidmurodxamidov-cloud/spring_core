@@ -3,7 +3,7 @@ package org.example.mapper;
 import org.example.entity.TrainerEntity;
 import org.example.entity.TrainingTypeEntity;
 import org.example.entity.UserEntity;
-import org.example.model.Trainer;
+import org.example.model.TrainerDTO;
 import org.example.model.TrainingTypeDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,11 +14,11 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TrainerMapperTest {
+class TrainerDTOMapperTest {
 
     private TrainerMapper trainerMapper;
     private TrainerEntity trainerEntity;
-    private Trainer trainer;
+    private TrainerDTO trainerDTO;
 
     @BeforeEach
     void setUp() {
@@ -54,25 +54,25 @@ class TrainerMapperTest {
                 .specializations(specializations)
                 .build();
 
-        trainer = new Trainer();
-        trainer.setUserId(3L);
-        trainer.setFirstName("Sarah");
-        trainer.setLastName("Connor");
-        trainer.setUserName("sarah.connor");
-        trainer.setPassword("secret789".toCharArray());
-        trainer.setActive(false);
+        trainerDTO = new TrainerDTO();
+        trainerDTO.setUserId(3L);
+        trainerDTO.setFirstName("Sarah");
+        trainerDTO.setLastName("Connor");
+        trainerDTO.setUserName("sarah.connor");
+        trainerDTO.setPassword("secret789".toCharArray());
+        trainerDTO.setActive(false);
 
         Set<TrainingTypeDTO> trainerSpecializations = new HashSet<>();
         trainerSpecializations.add(new TrainingTypeDTO(3L, "Cardio"));
         trainerSpecializations.add(new TrainingTypeDTO(4L, "Strength"));
-        trainer.setSpecialization(trainerSpecializations);
+        trainerDTO.setSpecialization(trainerSpecializations);
     }
 
 
     @Test
     void testToDtoWithNullEntity() {
         // When
-        Trainer dto = trainerMapper.toDTO(null);
+        TrainerDTO dto = trainerMapper.toDTO(null);
 
         // Then
         assertNull(dto);
@@ -84,7 +84,7 @@ class TrainerMapperTest {
         trainerEntity.setUser(null);
 
         // When
-        Trainer dto = trainerMapper.toDTO(trainerEntity);
+        TrainerDTO dto = trainerMapper.toDTO(trainerEntity);
 
         // Then
         assertNotNull(dto);
@@ -100,7 +100,7 @@ class TrainerMapperTest {
         trainerEntity.setSpecializations(new HashSet<>());
 
         // When
-        Trainer dto = trainerMapper.toDTO(trainerEntity);
+        TrainerDTO dto = trainerMapper.toDTO(trainerEntity);
 
         // Then
         assertNotNull(dto);
@@ -111,7 +111,7 @@ class TrainerMapperTest {
     @Test
     void testToEntityWithAllFields() {
         // When
-        TrainerEntity entity = trainerMapper.toEntity(trainer);
+        TrainerEntity entity = trainerMapper.toEntity(trainerDTO);
 
         // Then
         assertNotNull(entity);
@@ -135,10 +135,10 @@ class TrainerMapperTest {
     @Test
     void testToEntityWithNullSpecializations() {
         // Given
-        trainer.setSpecialization(null);
+        trainerDTO.setSpecialization(null);
 
         // When
-        TrainerEntity entity = trainerMapper.toEntity(trainer);
+        TrainerEntity entity = trainerMapper.toEntity(trainerDTO);
 
         // Then
         assertNotNull(entity);
@@ -148,7 +148,7 @@ class TrainerMapperTest {
     @Test
     void testRoundTripMapping() {
         // When
-        Trainer dto = trainerMapper.toDTO(trainerEntity);
+        TrainerDTO dto = trainerMapper.toDTO(trainerEntity);
         TrainerEntity mappedBackEntity = trainerMapper.toEntity(dto);
 
         // Then
