@@ -1,11 +1,8 @@
 package org.example.service;
 
 import org.example.dao.TrainerDAO;
-<<<<<<< HEAD:src/test/java/org/example/service/TrainerServiceTest.java
-import org.example.model.Trainer;
-=======
+
 import org.example.model.TrainerDTO;
->>>>>>> main:src/test/java/org/example/service/TrainerDTOServiceTest.java
 import org.example.model.TrainingTypeDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,19 +28,13 @@ class TrainerDTOServiceTest {
 
     @BeforeEach
     void setUp() {
-<<<<<<< HEAD:src/test/java/org/example/service/TrainerServiceTest.java
-        trainer = new Trainer();
-        trainer.setUserId(1L);
-        trainer.setFirstName("Alice");
-        trainer.setLastName("Smith");
-        trainer.setSpecialization(Set.of(new TrainingTypeDTO(1L,"YOGA")));
-=======
+
         trainerDTO = new TrainerDTO();
         trainerDTO.setUserId(1L);
         trainerDTO.setFirstName("Alice");
         trainerDTO.setLastName("Smith");
         trainerDTO.setSpecialization(Set.of(new TrainingTypeDTO(1L,"YOGA")));
->>>>>>> main:src/test/java/org/example/service/TrainerDTOServiceTest.java
+
     }
 
     @Test

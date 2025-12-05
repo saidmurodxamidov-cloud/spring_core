@@ -1,7 +1,7 @@
 package org.example.service;
 
 import org.example.dao.TrainingDAO;
-import org.example.model.Training;
+import org.example.model.TrainingDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,13 +24,13 @@ class TrainingServiceTest {
     private TrainingService trainingService;
 
 
-    private Training training1;
-    private Training training2;
+    private TrainingDTO training1;
+    private TrainingDTO training2;
 
     @BeforeEach
     void setUp() {
 
-        training1 = new Training();
+        training1 = new TrainingDTO();
         training1.setTrainingId(1L);
         training1.setTrainingName("Morning Cardio");
         training1.setTraineeId(10L);
@@ -38,7 +38,7 @@ class TrainingServiceTest {
         training1.setDate(LocalDate.now());
         training1.setTrainingDuration(Duration.ofMinutes(60));
 
-        training2 = new Training();
+        training2 = new TrainingDTO();
         training2.setTrainingId(2L);
         training2.setTrainingName("Evening Yoga");
         training2.setTraineeId(11L);
@@ -59,7 +59,7 @@ class TrainingServiceTest {
     void getTrainingById_ShouldReturnTrainingFromDAO() {
         when(trainingDAO.findById(1L)).thenReturn(training1);
 
-        Training result = trainingService.getTrainingById(1L);
+        TrainingDTO result = trainingService.getTrainingById(1L);
 
         assertNotNull(result);
         assertEquals(training1.getTrainingId(), result.getTrainingId());
@@ -71,7 +71,7 @@ class TrainingServiceTest {
     void getTrainingById_ShouldReturnNull_WhenNotFound() {
         when(trainingDAO.findById(99L)).thenReturn(null);
 
-        Training result = trainingService.getTrainingById(99L);
+        TrainingDTO result = trainingService.getTrainingById(99L);
 
         assertNull(result);
         verify(trainingDAO, times(1)).findById(99L);
@@ -81,7 +81,7 @@ class TrainingServiceTest {
     void getAllTrainings_ShouldReturnListFromDAO() {
         when(trainingDAO.findAll()).thenReturn(List.of(training1, training2));
 
-        List<Training> trainings = trainingService.getAllTrainings();
+        List<TrainingDTO> trainings = trainingService.getAllTrainings();
 
         assertEquals(2, trainings.size());
         assertTrue(trainings.contains(training1));
@@ -93,7 +93,7 @@ class TrainingServiceTest {
     void getAllTrainings_ShouldReturnEmptyList_WhenNoTrainings() {
         when(trainingDAO.findAll()).thenReturn(List.of());
 
-        List<Training> trainings = trainingService.getAllTrainings();
+        List<TrainingDTO> trainings = trainingService.getAllTrainings();
 
         assertNotNull(trainings);
         assertTrue(trainings.isEmpty());
