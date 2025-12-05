@@ -13,17 +13,9 @@ import java.util.Optional;
 public interface TraineeRepository extends JpaRepository<TraineeEntity,Long> {
     Optional<TraineeEntity> findByUserUserName(String username);
 
-<<<<<<< HEAD
-    Optional<TraineeEntity> findByUserUserNameAndUserPassword(String username,char[] password);
-
     void deleteByUserUserName(String username);
 
     List<TraineeEntity> findByUserIsActive(boolean isActive);
 
 
-=======
-    void deleteByUserUserName(String username);
-
-    List<TraineeEntity> findByUserIsActive(boolean isActive);
->>>>>>> origin/main
 }

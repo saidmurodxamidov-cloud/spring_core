@@ -1,10 +1,7 @@
 package org.example.service;
 
 import org.example.dao.TrainerDAO;
-<<<<<<< HEAD
-=======
 
->>>>>>> origin/main
 import org.example.model.TrainerDTO;
 import org.example.model.TrainingTypeDTO;
 import org.junit.jupiter.api.BeforeEach;
