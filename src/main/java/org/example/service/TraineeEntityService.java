@@ -3,6 +3,7 @@ package org.example.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.entity.TraineeEntity;
+import org.example.exception.EntityNotFoundException;
 import org.example.mapper.TraineeMapper;
 import org.example.model.TraineeDTO;
 import org.example.repository.TraineeRepository;
@@ -44,4 +45,22 @@ public class TraineeEntityService {
         return traineeDTO;
     }
 
+    @Transactional(readOnly = true)
+    public TraineeDTO getTraineeByUsername(String username){
+        log.debug("getting trainee with username: {}",username);
+        return traineeRepository.findByUserUserName(username)
+                .map(traineeMapper::toDTO)
+                .orElseThrow();
+    }
+
+    @Transactional
+    public TraineeDTO updateTrainee(String username, TraineeDTO updateDTO){
+        log.info("updating trainee with username: {}",username);
+        TraineeEntity traineeEntity = traineeRepository.findByUserUserName(username)
+                .orElseThrow(EntityNotFoundException::new);
+        traineeMapper.updateEntity(updateDTO,traineeEntity);
+        traineeRepository.save(traineeEntity);
+        log.info("updated successfully trainee with username: {}", username);
+        return updateDTO;
+    }
 }
