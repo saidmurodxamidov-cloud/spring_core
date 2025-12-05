@@ -2,8 +2,8 @@ package org.example.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.dao.TraineeDAO;
-import org.example.model.Trainee;
-import org.example.model.User;
+import org.example.model.TraineeDTO;
+import org.example.model.UserDTO;
 import org.example.util.PasswordGenerator;
 import org.example.util.UsernameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,26 +24,26 @@ public class TraineeService {
         this.traineeDAO = traineeDAO;
     }
 
-    public void createTrainee(Trainee trainee) {
+    public void createTrainee(TraineeDTO traineeDTO) {
 
         Set<String> existingUsernames = traineeDAO.findAll().stream()
-                .map(User::getUserName)
+                .map(UserDTO::getUserName)
                 .collect(Collectors.toSet());
-        String username = UsernameGenerator.generateUsername(trainee.getFirstName(), trainee.getLastName(), existingUsernames);
-        trainee.setUserName(username);
+        String username = UsernameGenerator.generateUsername(traineeDTO.getFirstName(), traineeDTO.getLastName(), existingUsernames);
+        traineeDTO.setUserName(username);
 
         char[] password = PasswordGenerator.generatePassword();
-        trainee.setPassword(password);
+        traineeDTO.setPassword(password);
 
-        log.debug("Creating trainee: {}", trainee.getUserName());
-        traineeDAO.create(trainee);
-        log.info("Trainee created with ID: {}", trainee.getUserId());
+        log.debug("Creating trainee: {}", traineeDTO.getUserName());
+        traineeDAO.create(traineeDTO);
+        log.info("Trainee created with ID: {}", traineeDTO.getUserId());
     }
 
-    public void updateTrainee(Trainee trainee) {
-        log.debug("Updating trainee with ID: {}", trainee.getUserId());
-        traineeDAO.update(trainee);
-        log.info("Trainee updated successfully with id: {}", trainee.getUserId());
+    public void updateTrainee(TraineeDTO traineeDTO) {
+        log.debug("Updating trainee with ID: {}", traineeDTO.getUserId());
+        traineeDAO.update(traineeDTO);
+        log.info("Trainee updated successfully with id: {}", traineeDTO.getUserId());
     }
 
     public void deleteTrainee(Long id) {
@@ -52,12 +52,12 @@ public class TraineeService {
         log.info("Trainee deleted successfully with id: {}" ,id);
     }
 
-    public Trainee getTraineeById(Long id) {
+    public TraineeDTO getTraineeById(Long id) {
         log.debug("Fetching trainee with ID: {}", id);
         return traineeDAO.findById(id);
     }
 
-    public List<Trainee> getAllTrainees() {
+    public List<TraineeDTO> getAllTrainees() {
         log.debug("Fetching all trainees");
         return traineeDAO.findAll();
     }

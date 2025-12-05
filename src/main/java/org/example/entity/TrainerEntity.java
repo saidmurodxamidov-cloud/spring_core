@@ -15,6 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @Table(name = "trainer")
+@Builder
 public class TrainerEntity {
 
     @Id

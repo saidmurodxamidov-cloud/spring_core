@@ -2,7 +2,7 @@ package org.example.service;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dao.TrainingDAO;
-import org.example.model.Training;
+import org.example.model.TrainingDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -21,20 +21,20 @@ public class TrainingService {
         this.trainingDAO = trainingDAO;
     }
 
-    public void createTraining(@Valid Training training) {
+    public void createTraining(@Valid TrainingDTO trainingDTO) {
         log.debug("Creating training '{}' for traineeId: {} and trainerId: {}",
-                training.getTrainingName(), training.getTraineeId(), training.getTrainerId());
+                trainingDTO.getTrainingName(), trainingDTO.getTraineeId(), trainingDTO.getTrainerId());
 
-        trainingDAO.create(training);
-        log.info("Training created with ID: {}", training.getTrainingId());
+        trainingDAO.create(trainingDTO);
+        log.info("Training created with ID: {}", trainingDTO.getTrainingId());
     }
 
-    public Training getTrainingById(Long id) {
+    public TrainingDTO getTrainingById(Long id) {
         log.debug("Fetching training with ID: {}", id);
         return trainingDAO.findById(id);
     }
 
-    public List<Training> getAllTrainings() {
+    public List<TrainingDTO> getAllTrainings() {
         log.debug("Fetching all trainings");
         return trainingDAO.findAll();
     }

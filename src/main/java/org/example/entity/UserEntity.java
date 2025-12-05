@@ -3,6 +3,7 @@ package org.example.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.example.converter.CharArrayToStringConverter;
 
 @Getter
 @Setter
@@ -11,7 +12,8 @@ import lombok.*;
 @EqualsAndHashCode(of = {"id"})
 @ToString
 @Entity
-@Table(name = "user")
+@Builder
+@Table(name = "users")
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

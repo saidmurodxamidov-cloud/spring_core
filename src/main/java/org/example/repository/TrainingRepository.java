@@ -15,13 +15,13 @@ public interface TrainingRepository extends JpaRepository<TrainingEntity, Long> 
     @Query("""
            SELECT tr
            FROM TrainingEntity tr
-           WHERE tr.trainee.user.userName = :username
+           WHERE tr.traineeDTO.userDTO.userName = :username
              AND (:fromDate IS NULL OR tr.date >= :fromDate)
              AND (:toDate IS NULL OR tr.date <= :toDate)
              AND (
                   :trainerName IS NULL OR
-                  tr.trainer.user.firstName LIKE %:trainerName%
-                  OR tr.trainer.user.lastName LIKE %:trainerName%
+                  tr.trainerDTO.userDTO.firstName LIKE %:trainerName%
+                  OR tr.trainerDTO.userDTO.lastName LIKE %:trainerName%
              )
              AND (:trainingTypeName IS NULL OR tr.trainingType.trainingTypeName = :trainingTypeName)
            """)
@@ -37,13 +37,13 @@ public interface TrainingRepository extends JpaRepository<TrainingEntity, Long> 
     @Query("""
            SELECT tr
            FROM TrainingEntity tr
-           WHERE tr.trainer.user.userName = :username
+           WHERE tr.trainerDTO.userDTO.userName = :username
              AND (:fromDate IS NULL OR tr.date >= :fromDate)
              AND (:toDate IS NULL OR tr.date <= :toDate)
              AND (
                   :traineeName IS NULL OR
-                  tr.trainee.user.firstName LIKE %:traineeName%
-                  OR tr.trainee.user.lastName LIKE %:traineeName%
+                  tr.traineeDTO.userDTO.firstName LIKE %:traineeName%
+                  OR tr.traineeDTO.userDTO.lastName LIKE %:traineeName%
              )
            """)
     List<TrainingEntity> findTrainerTrainingsByCriteria(

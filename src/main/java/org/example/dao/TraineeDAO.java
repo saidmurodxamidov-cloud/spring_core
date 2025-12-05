@@ -1,13 +1,13 @@
 package org.example.dao;
 
-import org.example.model.Trainee;
+import org.example.model.TraineeDTO;
 
 import java.util.List;
 
 public interface TraineeDAO {
-    void create(Trainee trainee);
-    void update(Trainee trainee);
+    void create(TraineeDTO traineeDTO);
+    void update(TraineeDTO traineeDTO);
     void delete(Long id);
-    Trainee findById(Long id);
-    List<Trainee> findAll();
+    TraineeDTO findById(Long id);
+    List<TraineeDTO> findAll();
 }

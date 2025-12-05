@@ -9,13 +9,15 @@ import java.time.LocalDate;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class Trainee extends User{
+@AllArgsConstructor
+@ToString
+public class TraineeDTO extends UserDTO {
     @Past
     private LocalDate dateOfBirth;
     private String address;
 
-    public Trainee(Long userId, String firstName, String lastName, String userName, char[] password, boolean isActive,
-                   LocalDate dateOfBirth, String address) {
+    public TraineeDTO(Long userId, String firstName, String lastName, String userName, char[] password, boolean isActive,
+                      LocalDate dateOfBirth, String address) {
         super(userId, firstName, lastName, userName, password, isActive);
         this.dateOfBirth = dateOfBirth;
         this.address = address;

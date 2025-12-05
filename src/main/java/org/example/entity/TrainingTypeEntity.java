@@ -1,9 +1,7 @@
 package org.example.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +10,9 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(name = "training_type")
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @ToString
 public class TrainingTypeEntity {
     @Id
@@ -26,4 +27,5 @@ public class TrainingTypeEntity {
 
     @OneToMany(mappedBy = "trainingType")
     private Set<TrainingEntity> trainings = new HashSet<>();
+
 }
