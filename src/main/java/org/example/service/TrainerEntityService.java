@@ -1,0 +1,44 @@
+package org.example.service;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.example.entity.TrainerEntity;
+import org.example.mapper.TrainerMapper;
+import org.example.model.TrainerDTO;
+import org.example.repository.TrainerRepository;
+import org.example.repository.TrainingTypeRepository;
+import org.example.repository.UserRepository;
+import org.example.util.UsernameGenerator;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.Set;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class TrainerEntityService {
+
+    private final TrainerRepository trainerRepository;
+    private final TrainingTypeRepository trainingTypeRepository;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bcrypt;
+    private final TrainingService trainingService;
+    private final PasswordEncoder passwordEncoder;
+    private final TrainerMapper trainerMapper;
+
+    public TrainerDTO createTrainer(TrainerDTO trainerDTO){
+        Set<String> availableUsernames = userRepository.findAllUserNames();
+        String password = bcrypt.encode(String.valueOf(trainerDTO.getPassword()));
+        String username = UsernameGenerator.generateUsername(trainerDTO.getFirstName(),trainerDTO.getLastName(),availableUsernames);
+        log.info("creating trainer with username {}", username);
+        trainerDTO.setPassword(password.toCharArray());
+        trainerDTO.setUserName(username);
+
+        TrainerEntity trainer = trainerMapper.toEntity(trainerDTO);
+        trainerRepository.save(trainer);
+        log.info("trainer {} created successfully", username);
+        return trainerDTO;
+    }
+}
