@@ -100,4 +100,5 @@ class TrainingServiceTest {
         verify(trainingDAO, times(1)).findAll();
     }
 
+
 }
