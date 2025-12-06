@@ -183,4 +183,25 @@ class TrainerEntityServiceTest {
         verify(trainerMapper, never()).updateFromDTO(any(), any());
         verify(trainerRepository, never()).save(any());
     }
+    @Test
+    void setActiveStatus_success() {
+        String username = "johnDoe";
+        trainerEntity.getUser().setActive(false);
+
+        when(trainerRepository.findByUserUserName(username)).thenReturn(Optional.of(trainerEntity));
+
+        service.setActiveStatus(username, true);
+
+        assertTrue(trainerEntity.getUser().isActive());
+        verify(trainerRepository).save(trainerEntity);
+    }
+
+    @Test
+    void setActiveStatus_trainerNotFound() {
+        String username = "unknown";
+        when(trainerRepository.findByUserUserName(username)).thenReturn(Optional.empty());
+
+        assertThrows(UsernameNotFoundException.class, () -> service.setActiveStatus(username, true));
+        verify(trainerRepository, never()).save(any());
+    }
 }
