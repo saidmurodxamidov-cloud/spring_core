@@ -3,13 +3,14 @@ package org.example.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.entity.TraineeEntity;
-import org.example.exception.EntityNotFoundException;
 import org.example.mapper.TraineeMapper;
 import org.example.model.TraineeDTO;
 import org.example.repository.TraineeRepository;
 import org.example.repository.UserRepository;
 import org.example.util.PasswordGenerator;
 import org.example.util.UsernameGenerator;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,13 +45,25 @@ public class TraineeEntityService {
 
         return traineeDTO;
     }
+        public boolean authenticate(String username,String password){
 
+            TraineeEntity trainee = traineeRepository.findByUserUserName(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+            if(!trainee.getUser().isActive())
+                throw new IllegalStateException("user is not active: " + username);
+
+            boolean matches = bcrypt.matches(password,String.valueOf(trainee.getUser().getPassword()));
+            if(!matches)
+                throw new BadCredentialsException("wrong passwrod for user: " + username);
+
+            return true;
+        }
     @Transactional(readOnly = true)
     public TraineeDTO getTraineeByUsername(String username){
         log.debug("getting trainee with username: {}",username);
         return traineeRepository.findByUserUserName(username)
                 .map(traineeMapper::toDTO)
-                .orElseThrow();
+                .orElseThrow((() -> new UsernameNotFoundException("user not found with username: " + username)));
     }
 
 }
