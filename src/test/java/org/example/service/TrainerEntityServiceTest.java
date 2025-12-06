@@ -165,5 +165,22 @@ class TrainerEntityServiceTest {
                 () -> service.getTrainerByUsername("john")
         );
     }
+    @Test
+    void updateTrainer_trainerNotFound() {
+        // Arrange
+        TrainerDTO dto = new TrainerDTO();
+        dto.setUserName("unknown");
 
+        when(trainerRepository.findByUserUserName("unknown"))
+                .thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(
+                UsernameNotFoundException.class,
+                () -> service.updateTrainer(dto)
+        );
+
+        verify(trainerMapper, never()).updateFromDTO(any(), any());
+        verify(trainerRepository, never()).save(any());
+    }
 }
