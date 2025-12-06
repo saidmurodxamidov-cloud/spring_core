@@ -3,10 +3,11 @@ package org.example.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.entity.TraineeEntity;
-import org.example.exception.EntityNotFoundException;
+import org.example.entity.TrainerEntity;
 import org.example.mapper.TraineeMapper;
 import org.example.model.TraineeDTO;
 import org.example.repository.TraineeRepository;
+import org.example.repository.TrainerRepository;
 import org.example.repository.UserRepository;
 import org.example.util.PasswordGenerator;
 import org.example.util.UsernameGenerator;
@@ -16,7 +17,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -26,7 +29,7 @@ public class TraineeEntityService {
     private final TraineeMapper traineeMapper;
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bcrypt;
-
+    private final TrainerRepository trainerRepository;
 
     @Transactional
     public TraineeDTO createTrainee(TraineeDTO traineeDTO){
@@ -67,6 +70,17 @@ public class TraineeEntityService {
                 .orElseThrow((() -> new UsernameNotFoundException("user not found with username: " + username)));
     }
 
+    @Transactional
+    public void updateTrainersList(String traineeUsername, List<String> trainersUsernames){
+        log.info("updating trainee: {}'s trainers", traineeUsername);
+        TraineeEntity trainee = traineeRepository.findByUserUserName(traineeUsername)
+                .orElseThrow(() -> new UsernameNotFoundException("trainee: " + traineeUsername + "does not exist"));
+        Set<TrainerEntity> newTrainers = trainersUsernames.stream().map(trainer -> trainerRepository.findByUserUserName(trainer)
+                .orElseThrow(() -> new UsernameNotFoundException("trainer: " + trainer + "does not exist!"))).collect(Collectors.toSet());
+        trainee.setTrainers(newTrainers);
+        traineeRepository.save(trainee);
+        log.info("trainee {}'s trainers updated successfllly", traineeUsername);
+    }
 }
 
 
