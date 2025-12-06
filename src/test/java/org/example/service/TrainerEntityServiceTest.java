@@ -20,6 +20,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -204,4 +205,31 @@ class TrainerEntityServiceTest {
         assertThrows(UsernameNotFoundException.class, () -> service.setActiveStatus(username, true));
         verify(trainerRepository, never()).save(any());
     }
+    @Test
+    void getTrainersNotAssignedToTrainee_success() {
+        String traineeUsername = "trainee1";
+
+        TrainerEntity t1 = new TrainerEntity();
+        TrainerEntity t2 = new TrainerEntity();
+        TrainerDTO dto1 = new TrainerDTO();
+        TrainerDTO dto2 = new TrainerDTO();
+
+        when(trainerRepository.findTrainersNotAssignedToTrainee(traineeUsername))
+                .thenReturn(List.of(t1, t2));
+
+        when(trainerMapper.toDTO(any(TrainerEntity.class)))
+                .thenReturn(dto1, dto2); // returns dto1 for first, dto2 for second
+
+        List<TrainerDTO> result = service.getTrainersNotAssignedToTrainee(traineeUsername);
+
+        // Assertions
+        assertEquals(2, result.size());
+        assertTrue(result.contains(dto1));
+        assertTrue(result.contains(dto2));
+
+        // Only verify repository call, remove mapper verification
+        verify(trainerRepository).findTrainersNotAssignedToTrainee(traineeUsername);
+    }
+
+
 }
