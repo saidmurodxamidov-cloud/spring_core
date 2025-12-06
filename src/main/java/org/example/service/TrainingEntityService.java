@@ -7,6 +7,7 @@ import org.example.entity.TrainerEntity;
 import org.example.entity.TrainingEntity;
 import org.example.entity.TrainingTypeEntity;
 import org.example.exception.EntityNotFoundException;
+import org.example.mapper.TrainingMapper;
 import org.example.model.TrainingDTO;
 import org.example.repository.TraineeRepository;
 import org.example.repository.TrainerRepository;
@@ -15,6 +16,8 @@ import org.example.repository.TrainingTypeRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -25,6 +28,7 @@ public class TrainingEntityService {
     private final TrainerRepository trainerRepository;
     private final TraineeRepository traineeRepository;
     private final TrainingTypeRepository trainingTypeRepository;
+    private final TrainingMapper trainingMapper;
 
     @Transactional
     TrainingDTO createTraining(TrainingDTO trainingDTO){
@@ -51,4 +55,21 @@ public class TrainingEntityService {
         log.info("training named {} created successfully", training.getTrainingName());
         return trainingDTO;
     }
+    @Transactional(readOnly = true)
+    public List<TrainingDTO> getAllTraineeTrainings(String username){
+        log.debug("getting trainee: {}'s trainings",username);
+        TraineeEntity trainee = traineeRepository.findByUserUserName(username)
+                .orElseThrow(() -> new UsernameNotFoundException("trainee " +  username + " does not exist"));
+        log.debug("successfully gotten trainings for trainee {}",username);
+        return trainingMapper.toTrainingModels(trainee.getTrainings()).stream().toList();
+    }
+    @Transactional(readOnly = true)
+    public List<TrainingDTO> getAllTrainerTrainings(String username){
+        log.debug("getting trainer: {}'s trainings",username);
+        TrainerEntity trainee = trainerRepository.findByUserUserName(username)
+                .orElseThrow(() -> new UsernameNotFoundException("trainer " +  username + " does not exist"));
+        log.debug("successfully gotten trainings for trainer {}",username);
+        return trainingMapper.toTrainingModels(trainee.getTrainings()).stream().toList();
+    }
+
 }
