@@ -62,5 +62,12 @@ public class TrainerEntityService {
         log.info("trainer {} updated successfully", trainerDto.getUserName());
         return trainerDto;
     }
-
+    public void setActiveStatus(String username,boolean active){
+        log.debug("setting active to {} status to trainer {}", active, username);
+        TrainerEntity trainer = trainerRepository.findByUserUserName(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username + "trainer does not exist"));
+        trainer.getUser().setActive(active);
+        trainerRepository.save(trainer);
+        log.info("successfully updated active status to {} of {} trainer",active,username);
+    }
 }
