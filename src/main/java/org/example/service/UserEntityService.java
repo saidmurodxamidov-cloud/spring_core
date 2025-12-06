@@ -2,10 +2,13 @@ package org.example.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.entity.UserEntity;
+import org.example.model.TrainingDTO;
 import org.example.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Service

@@ -3,7 +3,6 @@ package org.example.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.entity.TraineeEntity;
-import org.example.exception.EntityNotFoundException;
 import org.example.mapper.TraineeMapper;
 import org.example.model.TraineeDTO;
 import org.example.repository.TraineeRepository;
