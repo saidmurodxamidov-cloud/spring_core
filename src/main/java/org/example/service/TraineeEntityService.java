@@ -64,8 +64,9 @@ public class TraineeEntityService {
         log.debug("getting trainee with username: {}",username);
         return traineeRepository.findByUserUserName(username)
                 .map(traineeMapper::toDTO)
-                .orElseThrow((() -> new UsernameNotFoundException("user not found with username: " + username));
+                .orElseThrow((() -> new UsernameNotFoundException("user not found with username: " + username)));
     }
 
 }
+
 
