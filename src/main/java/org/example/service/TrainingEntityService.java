@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -72,4 +73,48 @@ public class TrainingEntityService {
         return trainingMapper.toTrainingModels(trainee.getTrainings()).stream().toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<TrainingDTO> getTraineeTrainings(String username, LocalDate fromDate, LocalDate toDate, String trainerName, String trainingTypeName){
+        log.debug("getting trainee {}, from = {},to = {}, trainerName = {}, trainingTypeName = {} trainings",username,fromDate,toDate,trainerName,trainingTypeName);
+
+        if(!traineeRepository.existsByUserUserName(username))
+            throw new UsernameNotFoundException("trainee " + username + " does not exist");
+
+        trainerName = normalize(trainerName);
+        trainingTypeName = normalize(trainingTypeName);
+        log.debug("got successfully trainee {}, from = {},to = {}, trainerName = {}, trainingTypeName = {} trainings",username,fromDate,toDate,trainerName,trainingTypeName);
+
+        return trainingRepository.findTraineeTrainingsByCriteria(
+                username,
+                fromDate,
+                toDate,
+                trainerName,
+                trainingTypeName
+        ).stream().map(trainingMapper::toTraining).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<TrainingDTO> getTrainerTrainings(String username,
+                                                 LocalDate fromDate,
+                                                 LocalDate toDate,
+                                                 String traineeName) {
+        if(!trainerRepository.existsByUserUserName(username))
+            throw new UsernameNotFoundException("trainer " + username + " does not exist");
+        log.debug("getting trainer {}, from = {},to = {}, traineeName = {} trainings",username,fromDate,toDate,traineeName);
+        traineeName = normalize(traineeName);
+        List<TrainingEntity> trainings = trainingRepository.findTrainerTrainingsByCriteria(
+                username, fromDate, toDate, traineeName
+        );
+        log.debug("got successfully trainer {}, from = {},to = {}, traineeName = {} trainings",username,fromDate,toDate,traineeName);
+
+        return trainings.stream().map(trainingMapper::toTraining).toList();
+    }
+
+
+    private String normalize(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        return value.trim();
+    }
 }
