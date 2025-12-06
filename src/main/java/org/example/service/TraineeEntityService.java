@@ -67,6 +67,14 @@ public class TraineeEntityService {
                 .orElseThrow((() -> new UsernameNotFoundException("user not found with username: " + username)));
     }
 
+    public void deleteByUsername(String username){
+        log.info("deleting user with username: {}" ,username);
+        TraineeEntity trainee = traineeRepository.findByUserUserName(username)
+                .orElseThrow(() -> new UsernameNotFoundException("user does not exist: " + username));
+
+        traineeRepository.delete(trainee);
+        log.info("user: {} is deleted successfully",username);
+    }
 }
 
 
