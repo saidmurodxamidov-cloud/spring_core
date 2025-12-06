@@ -52,5 +52,6 @@ public class TraineeEntityService {
                 .map(traineeMapper::toDTO)
                 .orElseThrow();
     }
+
 }
 
