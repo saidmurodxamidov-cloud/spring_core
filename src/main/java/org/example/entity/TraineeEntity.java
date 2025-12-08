@@ -35,6 +35,6 @@ public class TraineeEntity {
     @ManyToMany(mappedBy = "trainees")
     private Set<TrainerEntity> trainers = new HashSet<>();
 
-    @OneToMany(mappedBy = "trainee", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "trainee", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<TrainingEntity> trainings = new HashSet<>();
 }
