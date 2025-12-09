@@ -55,9 +55,9 @@ public class TraineeEntityService {
 
     @Transactional
     public TraineeDTO updateTrainee(String username, TraineeDTO updateDTO){
-        log.info("updating trainee with username: {}",username);
+        log.debug("updating trainee with username: {}",username);
         TraineeEntity traineeEntity = traineeRepository.findByUserUserName(username)
-                .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(() -> new EntityNotFoundException("trainee with username: " + username + "not found"));
         traineeMapper.updateEntity(updateDTO,traineeEntity);
         traineeRepository.save(traineeEntity);
         log.info("updated successfully trainee with username: {}", username);

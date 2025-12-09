@@ -19,7 +19,6 @@ class TraineeMapperTest {
 
     @BeforeEach
     void setUp() {
-        // Initialize mapper with its dependencies
         traineeMapper = Mappers.getMapper(TraineeMapper.class);
 
         UserEntity userEntity = UserEntity.builder()
@@ -137,5 +136,164 @@ class TraineeMapperTest {
         assertNotNull(entity);
         assertEquals(LocalDate.of(1990, 10, 20), entity.getDateOfBirth());
         assertNull(entity.getAddress());
+    }
+    @Test
+    void testUpdateEntityWithAllFields() {
+        // Given - entity with existing values
+        UserEntity existingUser = UserEntity.builder()
+                .id(1L)
+                .firstName("Alice")
+                .lastName("Williams")
+                .userName("alice.williams")
+                .password("password123".toCharArray())
+                .isActive(true)
+                .build();
+
+        TraineeEntity existingEntity = TraineeEntity.builder()
+                .id(10L)
+                .dateOfBirth(LocalDate.of(1995, 5, 15))
+                .address("123 Main Street")
+                .user(existingUser)
+                .build();
+
+        // DTO with new values
+        TraineeDTO updateDTO = new TraineeDTO();
+        updateDTO.setDateOfBirth(LocalDate.of(1990, 10, 20));
+        updateDTO.setAddress("456 Oak Avenue");
+
+        // When
+        traineeMapper.updateEntity(updateDTO, existingEntity);
+
+        // Then - only updatable fields should change
+        assertEquals(10L, existingEntity.getId()); // id should remain unchanged
+        assertEquals(LocalDate.of(1990, 10, 20), existingEntity.getDateOfBirth());
+        assertEquals("456 Oak Avenue", existingEntity.getAddress());
+        assertNotNull(existingEntity.getUser()); // user should remain unchanged
+        assertEquals("Alice", existingEntity.getUser().getFirstName());
+    }
+
+    @Test
+    void testUpdateEntityWithNullValues() {
+        // Given - entity with existing values
+        UserEntity existingUser = UserEntity.builder()
+                .id(1L)
+                .firstName("Alice")
+                .lastName("Williams")
+                .userName("alice.williams")
+                .password("password123".toCharArray())
+                .isActive(true)
+                .build();
+
+        TraineeEntity existingEntity = TraineeEntity.builder()
+                .id(10L)
+                .dateOfBirth(LocalDate.of(1995, 5, 15))
+                .address("123 Main Street")
+                .user(existingUser)
+                .build();
+
+        // DTO with null values - should NOT update due to NullValuePropertyMappingStrategy.IGNORE
+        TraineeDTO updateDTO = new TraineeDTO();
+        updateDTO.setDateOfBirth(null);
+        updateDTO.setAddress(null);
+
+        // When
+        traineeMapper.updateEntity(updateDTO, existingEntity);
+
+        // Then - existing values should remain unchanged due to IGNORE strategy
+        assertEquals(LocalDate.of(1995, 5, 15), existingEntity.getDateOfBirth());
+        assertEquals("123 Main Street", existingEntity.getAddress());
+        assertNotNull(existingEntity.getUser());
+    }
+
+    @Test
+    void testUpdateEntityPartialUpdate() {
+        // Given - entity with existing values
+        UserEntity existingUser = UserEntity.builder()
+                .id(1L)
+                .firstName("Alice")
+                .lastName("Williams")
+                .userName("alice.williams")
+                .password("password123".toCharArray())
+                .isActive(true)
+                .build();
+
+        TraineeEntity existingEntity = TraineeEntity.builder()
+                .id(10L)
+                .dateOfBirth(LocalDate.of(1995, 5, 15))
+                .address("123 Main Street")
+                .user(existingUser)
+                .build();
+
+        TraineeDTO updateDTO = new TraineeDTO();
+        updateDTO.setAddress("789 Pine Road");
+
+        traineeMapper.updateEntity(updateDTO, existingEntity);
+
+        // Then
+        assertEquals(LocalDate.of(1995, 5, 15), existingEntity.getDateOfBirth()); // unchanged
+        assertEquals("789 Pine Road", existingEntity.getAddress()); // updated
+    }
+
+    @Test
+    void testUpdateEntityIdAndUserNotAffected() {
+        // Given
+        UserEntity existingUser = UserEntity.builder()
+                .id(1L)
+                .firstName("Alice")
+                .lastName("Williams")
+                .userName("alice.williams")
+                .password("password123".toCharArray())
+                .isActive(true)
+                .build();
+
+        TraineeEntity existingEntity = TraineeEntity.builder()
+                .id(10L)
+                .dateOfBirth(LocalDate.of(1995, 5, 15))
+                .address("123 Main Street")
+                .user(existingUser)
+                .build();
+
+        // DTO trying to update with different user data
+        TraineeDTO updateDTO = new TraineeDTO();
+        updateDTO.setUserId(999L);
+        updateDTO.setFirstName("NewName");
+        updateDTO.setLastName("NewLastName");
+        updateDTO.setUserName("newusername");
+        updateDTO.setPassword("newpassword".toCharArray());
+        updateDTO.setActive(false);
+        updateDTO.setDateOfBirth(LocalDate.of(2000, 1, 1));
+        updateDTO.setAddress("New Address");
+
+        // When
+        traineeMapper.updateEntity(updateDTO, existingEntity);
+
+        // Then - id and user should remain unchanged
+        assertEquals(10L, existingEntity.getId());
+        assertNotNull(existingEntity.getUser());
+        assertEquals(1L, existingEntity.getUser().getId());
+        assertEquals("Alice", existingEntity.getUser().getFirstName());
+        assertEquals("Williams", existingEntity.getUser().getLastName());
+        assertEquals("alice.williams", existingEntity.getUser().getUserName());
+
+        // But address and dateOfBirth should be updated
+        assertEquals(LocalDate.of(2000, 1, 1), existingEntity.getDateOfBirth());
+        assertEquals("New Address", existingEntity.getAddress());
+    }
+
+    @Test
+    void testUpdateEntityWithNullDTO() {
+        // Given
+        TraineeEntity existingEntity = TraineeEntity.builder()
+                .id(10L)
+                .dateOfBirth(LocalDate.of(1995, 5, 15))
+                .address("123 Main Street")
+                .build();
+
+        // When
+        traineeMapper.updateEntity(null, existingEntity);
+
+        assertEquals(10L, existingEntity.getId());
+        assertEquals(LocalDate.of(1995, 5, 15), existingEntity.getDateOfBirth());
+        assertEquals("123 Main Street", existingEntity.getAddress());
     }
 }
