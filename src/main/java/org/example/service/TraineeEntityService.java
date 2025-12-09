@@ -65,7 +65,7 @@ public class TraineeEntityService {
                 .map(traineeMapper::toDTO)
                 .orElseThrow((() -> new UsernameNotFoundException("user not found with username: " + username)));
     }
-
+    @Transactional
     public TraineeDTO setActiveStatus(String username, boolean active){
         TraineeEntity trainee = traineeRepository.findByUserUserName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("user not found with username: " + username));
