@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -108,6 +109,7 @@ class TrainerEntityServiceTest {
     void testAuthenticateSuccess() {
         UserEntity user = new UserEntity();
         user.setPassword("HASHED".toCharArray());
+        user.setActive(true);
         trainerEntity.setUser(user);
 
         when(trainerRepository.findByUserUserName("john")).thenReturn(Optional.of(trainerEntity));
@@ -122,14 +124,19 @@ class TrainerEntityServiceTest {
     void testAuthenticateWrongPassword() {
         UserEntity user = new UserEntity();
         user.setPassword("HASHED".toCharArray());
+        user.setActive(true); // <- make sure user is active
         trainerEntity.setUser(user);
 
         when(trainerRepository.findByUserUserName("john")).thenReturn(Optional.of(trainerEntity));
         when(bcrypt.matches("wrong", "HASHED")).thenReturn(false);
 
-        boolean result = service.authenticate("john", "wrong");
-        Assertions.assertFalse(result);
+        // Expect BadCredentialsException
+        Assertions.assertThrows(BadCredentialsException.class, () -> {
+            service.authenticate("john", "wrong");
+        });
     }
+
+
 
     @Test
     void testAuthenticateTrainerNotFound() {
