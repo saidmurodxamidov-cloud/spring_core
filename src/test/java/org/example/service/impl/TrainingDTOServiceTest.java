@@ -1,4 +1,4 @@
-package org.example.service;
+package org.example.service.impl;
 
 import org.example.dao.TrainingDAO;
 import org.example.model.TrainingDTO;
@@ -21,7 +21,7 @@ class TrainingDTOServiceTest {
     @Mock
     private TrainingDAO trainingDAO;
     @InjectMocks
-    private TrainingService trainingService;
+    private TrainingServiceImpl trainingServiceImpl;
 
 
     private TrainingDTO trainingDTO1;
@@ -49,7 +49,7 @@ class TrainingDTOServiceTest {
 
     @Test
     void createTraining_ShouldInvokeDAO() {
-        trainingService.createTraining(trainingDTO1);
+        trainingServiceImpl.createTraining(trainingDTO1);
         verify(trainingDAO, times(1)).create(trainingDTO1);
     }
 
@@ -59,7 +59,7 @@ class TrainingDTOServiceTest {
     void getTrainingById_ShouldReturnTrainingFromDAO() {
         when(trainingDAO.findById(1L)).thenReturn(trainingDTO1);
 
-        TrainingDTO result = trainingService.getTrainingById(1L);
+        TrainingDTO result = trainingServiceImpl.getTrainingById(1L);
 
         assertNotNull(result);
         assertEquals(trainingDTO1.getTrainingId(), result.getTrainingId());
@@ -71,7 +71,7 @@ class TrainingDTOServiceTest {
     void getTrainingById_ShouldReturnNull_WhenNotFound() {
         when(trainingDAO.findById(99L)).thenReturn(null);
 
-        TrainingDTO result = trainingService.getTrainingById(99L);
+        TrainingDTO result = trainingServiceImpl.getTrainingById(99L);
 
         assertNull(result);
         verify(trainingDAO, times(1)).findById(99L);
@@ -81,7 +81,7 @@ class TrainingDTOServiceTest {
     void getAllTrainings_ShouldReturnListFromDAO() {
         when(trainingDAO.findAll()).thenReturn(List.of(trainingDTO1, trainingDTO2));
 
-        List<TrainingDTO> trainingDTOS = trainingService.getAllTrainings();
+        List<TrainingDTO> trainingDTOS = trainingServiceImpl.getAllTrainings();
 
         assertEquals(2, trainingDTOS.size());
         assertTrue(trainingDTOS.contains(trainingDTO1));
@@ -93,7 +93,7 @@ class TrainingDTOServiceTest {
     void getAllTrainings_ShouldReturnEmptyList_WhenNoTrainings() {
         when(trainingDAO.findAll()).thenReturn(List.of());
 
-        List<TrainingDTO> trainingDTOS = trainingService.getAllTrainings();
+        List<TrainingDTO> trainingDTOS = trainingServiceImpl.getAllTrainings();
 
         assertNotNull(trainingDTOS);
         assertTrue(trainingDTOS.isEmpty());

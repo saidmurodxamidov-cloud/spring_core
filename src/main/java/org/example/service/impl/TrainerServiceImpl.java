@@ -1,4 +1,4 @@
-package org.example.service;
+package org.example.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.dao.TrainerDAO;
@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class TrainerService {
+public class TrainerServiceImpl {
 
     private TrainerDAO trainerDAO;
 

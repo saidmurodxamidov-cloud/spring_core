@@ -3,9 +3,9 @@ package org.example.facade;
 import org.example.model.TraineeDTO;
 import org.example.model.TrainerDTO;
 import org.example.model.TrainingDTO;
-import org.example.service.TraineeService;
-import org.example.service.TrainerService;
-import org.example.service.TrainingService;
+import org.example.service.impl.TraineeServiceImpl;
+import org.example.service.impl.TrainerServiceImpl;
+import org.example.service.impl.TrainingServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,13 +18,13 @@ import static org.mockito.Mockito.*;
 class GymFacadeTest {
 
     @Mock
-    private TraineeService traineeService;
+    private TraineeServiceImpl traineeServiceImpl;
 
     @Mock
-    private TrainerService trainerService;
+    private TrainerServiceImpl trainerServiceImpl;
 
     @Mock
-    private TrainingService trainingService;
+    private TrainingServiceImpl trainingServiceImpl;
 
     @InjectMocks
     private GymFacade gymFacade;
@@ -33,14 +33,14 @@ class GymFacadeTest {
     void createTrainee_ShouldCallService() {
         TraineeDTO traineeDTO = new TraineeDTO();
         gymFacade.createTrainee(traineeDTO);
-        verify(traineeService).createTrainee(traineeDTO);
+        verify(traineeServiceImpl).createTrainee(traineeDTO);
     }
 
     @Test
     void createTrainer_ShouldCallService() {
         TrainerDTO trainerDTO = new TrainerDTO();
         gymFacade.createTrainer(trainerDTO);
-        verify(trainerService).createTrainer(trainerDTO);
+        verify(trainerServiceImpl).createTrainer(trainerDTO);
     }
 
     @Test
@@ -51,30 +51,30 @@ class GymFacadeTest {
         trainingDTO.setTraineeId(2L);
 
         gymFacade.createTraining(trainingDTO);
-        verify(trainingService).createTraining(trainingDTO);
+        verify(trainingServiceImpl).createTraining(trainingDTO);
     }
 
     @Test
     void getTraineeById_ShouldDelegateToService() {
         gymFacade.getTraineeById(5L);
-        verify(traineeService).getTraineeById(5L);
+        verify(traineeServiceImpl).getTraineeById(5L);
     }
 
     @Test
     void getTrainingById_ShouldDelegateToService() {
         gymFacade.getTrainingById(3L);
-        verify(trainingService).getTrainingById(3L);
+        verify(trainingServiceImpl).getTrainingById(3L);
     }
 
     @Test
     void getAllTrainees_ShouldCallService() {
         gymFacade.getAllTrainees();
-        verify(traineeService).getAllTrainees();
+        verify(traineeServiceImpl).getAllTrainees();
     }
 
     @Test
     void getAllTrainers_ShouldCallService() {
         gymFacade.getAllTrainers();
-        verify(trainerService).getAllTrainers();
+        verify(trainerServiceImpl).getAllTrainers();
     }
 }

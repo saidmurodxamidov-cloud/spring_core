@@ -1,4 +1,4 @@
-package org.example.service;
+package org.example.service.impl;
 
 import org.example.entity.*;
 import org.example.exception.EntityNotFoundException;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class TrainingEntityServiceTest {
+class TrainingServiceImplJpaTest {
 
     @Mock
     private TrainingRepository trainingRepository;
@@ -40,7 +40,7 @@ class TrainingEntityServiceTest {
     private TrainingMapper trainingMapper;
 
     @InjectMocks
-    private TrainingEntityService service;
+    private TrainingServiceJpa service;
 
 
 

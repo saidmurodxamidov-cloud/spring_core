@@ -1,4 +1,4 @@
-package org.example.service;
+package org.example.service.impl;
 
 import org.example.dao.TrainerDAO;
 
@@ -23,7 +23,7 @@ class TrainerDTOServiceTest {
     @Mock
     private TrainerDAO trainerDAO;
     @InjectMocks
-    private TrainerService trainerService;
+    private TrainerServiceImpl trainerServiceImpl;
     private TrainerDTO trainerDTO;
 
     @BeforeEach
@@ -37,7 +37,7 @@ class TrainerDTOServiceTest {
 
     @Test
     void updateTrainer_ShouldInvokeDAO() {
-        trainerService.updateTrainer(trainerDTO);
+        trainerServiceImpl.updateTrainer(trainerDTO);
         verify(trainerDAO).update(trainerDTO);
     }
 
@@ -46,7 +46,7 @@ class TrainerDTOServiceTest {
     void getTrainerById_ShouldReturnTrainerFromDAO() {
         when(trainerDAO.findById(1L)).thenReturn(trainerDTO);
 
-        TrainerDTO result = trainerService.getTrainerById(1L);
+        TrainerDTO result = trainerServiceImpl.getTrainerById(1L);
 
         assertNotNull(result);
         assertEquals("Alice", result.getFirstName());
@@ -57,7 +57,7 @@ class TrainerDTOServiceTest {
     void getAllTrainers_ShouldReturnListFromDAO() {
         when(trainerDAO.findAll()).thenReturn(List.of(trainerDTO));
 
-        List<TrainerDTO> result = trainerService.getAllTrainers();
+        List<TrainerDTO> result = trainerServiceImpl.getAllTrainers();
 
         assertEquals(1, result.size());
         assertEquals("Alice", result.getFirst().getFirstName());

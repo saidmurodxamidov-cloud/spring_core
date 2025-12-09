@@ -1,19 +1,17 @@
-package org.example.service;
+package org.example.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.entity.UserEntity;
-import org.example.model.TrainingDTO;
 import org.example.repository.UserRepository;
+import org.example.service.UserService;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserEntityService {
+public class UserServiceJpa implements UserService {
 
     private final UserRepository userRepository;
 

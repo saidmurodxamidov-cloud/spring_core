@@ -1,4 +1,4 @@
-package org.example.service;
+package org.example.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +13,7 @@ import org.example.repository.TraineeRepository;
 import org.example.repository.TrainerRepository;
 import org.example.repository.TrainingRepository;
 import org.example.repository.TrainingTypeRepository;
+import org.example.service.TrainingService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,10 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.example.util.NormalizeUtil.normalize;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class TrainingEntityService {
+public class TrainingServiceJpa implements TrainingService {
 
     private final TrainingRepository trainingRepository;
     private final TrainerRepository trainerRepository;
@@ -32,7 +35,7 @@ public class TrainingEntityService {
     private final TrainingMapper trainingMapper;
 
     @Transactional
-    TrainingDTO createTraining(TrainingDTO trainingDTO){
+    public TrainingDTO createTraining(TrainingDTO trainingDTO){
         log.info("Creating training with name {}", trainingDTO.getTrainingName());
         TraineeEntity trainee = traineeRepository.findById((trainingDTO.getTraineeId()))
                 .orElseThrow(() -> new UsernameNotFoundException("trainee with id: " + trainingDTO.getTrainingId() + " does not exist"));
@@ -108,13 +111,5 @@ public class TrainingEntityService {
         log.debug("got successfully trainer {}, from = {},to = {}, traineeName = {} trainings",username,fromDate,toDate,traineeName);
 
         return trainings.stream().map(trainingMapper::toTraining).toList();
-    }
-
-
-    private String normalize(String value) {
-        if (value == null || value.isBlank()) {
-            return null;
-        }
-        return value.trim();
     }
 }

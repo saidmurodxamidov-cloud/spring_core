@@ -1,4 +1,4 @@
-package org.example.service;
+package org.example.service.impl;
 
 import org.example.dao.TraineeDAO;
 import org.example.model.TraineeDTO;
@@ -26,7 +26,7 @@ class TraineeDTOServiceTest {
     private TraineeDAO traineeDAO;
 
     @InjectMocks
-    private TraineeService traineeService;
+    private TraineeServiceImpl traineeServiceImpl;
 
     private TraineeDTO traineeDTO;
 
@@ -54,7 +54,7 @@ class TraineeDTOServiceTest {
 
             passwordGenMock.when(PasswordGenerator::generatePassword).thenReturn("p@ssword".toCharArray());
 
-            traineeService.createTrainee(traineeDTO);
+            traineeServiceImpl.createTrainee(traineeDTO);
 
             assertEquals("john.doe", traineeDTO.getUserName());
             assertArrayEquals("p@ssword".toCharArray(), traineeDTO.getPassword());
@@ -65,13 +65,13 @@ class TraineeDTOServiceTest {
 
     @Test
     void updateTrainee_ShouldCallDAOUpdate() {
-        traineeService.updateTrainee(traineeDTO);
+        traineeServiceImpl.updateTrainee(traineeDTO);
         verify(traineeDAO, times(1)).update(traineeDTO);
     }
 
     @Test
     void deleteTrainee_ShouldCallDAODelete() {
-        traineeService.deleteTrainee(1L);
+        traineeServiceImpl.deleteTrainee(1L);
         verify(traineeDAO, times(1)).delete(1L);
     }
 
@@ -79,7 +79,7 @@ class TraineeDTOServiceTest {
     void getTraineeById_ShouldReturnFromDAO() {
         when(traineeDAO.findById(1L)).thenReturn(traineeDTO);
 
-        TraineeDTO result = traineeService.getTraineeById(1L);
+        TraineeDTO result = traineeServiceImpl.getTraineeById(1L);
 
         assertNotNull(result);
         assertEquals("John", result.getFirstName());
@@ -90,7 +90,7 @@ class TraineeDTOServiceTest {
     void getAllTrainees_ShouldReturnListFromDAO() {
         when(traineeDAO.findAll()).thenReturn(List.of(traineeDTO));
 
-        List<TraineeDTO> result = traineeService.getAllTrainees();
+        List<TraineeDTO> result = traineeServiceImpl.getAllTrainees();
 
         assertEquals(1, result.size());
         assertEquals("John", result.get(0).getFirstName());

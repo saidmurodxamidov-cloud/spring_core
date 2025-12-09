@@ -1,4 +1,4 @@
-package org.example.service;
+package org.example.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,6 +7,7 @@ import org.example.mapper.TraineeMapper;
 import org.example.model.TraineeDTO;
 import org.example.repository.TraineeRepository;
 import org.example.repository.UserRepository;
+import org.example.service.TraineeService;
 import org.example.util.PasswordGenerator;
 import org.example.util.UsernameGenerator;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -20,7 +21,7 @@ import java.util.Set;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class TraineeEntityService {
+public class TraineeServiceJpa implements TraineeService {
     private final TraineeRepository traineeRepository;
     private final TraineeMapper traineeMapper;
     private final UserRepository userRepository;
