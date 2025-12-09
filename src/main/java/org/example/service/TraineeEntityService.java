@@ -72,14 +72,16 @@ public class TraineeEntityService {
 
     @Transactional
     public void updateTrainersList(String traineeUsername, List<String> trainersUsernames){
-        log.info("updating trainee: {}'s trainers", traineeUsername);
+        log.debug("updating trainee: {}'s trainers", traineeUsername);
         TraineeEntity trainee = traineeRepository.findByUserUserName(traineeUsername)
                 .orElseThrow(() -> new UsernameNotFoundException("trainee: " + traineeUsername + "does not exist"));
-        Set<TrainerEntity> newTrainers = trainersUsernames.stream().map(trainer -> trainerRepository.findByUserUserName(trainer)
-                .orElseThrow(() -> new UsernameNotFoundException("trainer: " + trainer + "does not exist!"))).collect(Collectors.toSet());
+
+        Set<TrainerEntity> newTrainers = trainerRepository.findByUserUserNameIn(trainersUsernames);
+        if (newTrainers.size() != trainersUsernames.size())
+            throw new IllegalArgumentException("Some trainer usernames do not exist");
         trainee.setTrainers(newTrainers);
         traineeRepository.save(trainee);
-        log.info("trainee {}'s trainers updated successfllly", traineeUsername);
+        log.info("trainee {}'s trainers updated successfully", traineeUsername);
     }
 }
 

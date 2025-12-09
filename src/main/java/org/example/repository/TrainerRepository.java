@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface TrainerRepository extends JpaRepository<TrainerEntity,Long> {
@@ -22,4 +23,6 @@ public interface TrainerRepository extends JpaRepository<TrainerEntity,Long> {
     List<TrainerEntity> findTrainersNotAssignedToTrainee(@Param("traineeUsername") String traineeUsername);
 
     List<TrainerEntity> findByUserIsActive(boolean isActive);
+
+    Set<TrainerEntity> findByUserUserNameIn(List<String> usernames);
 }
