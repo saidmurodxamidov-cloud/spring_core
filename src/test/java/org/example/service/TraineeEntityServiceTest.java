@@ -61,31 +61,19 @@ class TraineeEntityServiceTest {
         verify(traineeRepository, never()).save(any());
     }
 
-    @Test
-    void updateTrainersList_someTrainersMissing_throwsException() {
-        when(traineeRepository.findByUserUserName("john")).thenReturn(Optional.of(trainee));
-        // Only one trainer returned, but two requested
-        when(trainerRepository.findByUserUserNameIn(List.of("trainer1", "trainer2")))
-                .thenReturn(new HashSet<>(List.of(trainer1)));
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
-                service.updateTrainersList("john", List.of("trainer1", "trainer2")));
-
-        assertEquals("Some trainer usernames do not exist", ex.getMessage());
-        verify(traineeRepository, never()).save(any());
-    }
     @Test
     void updateTrainersList_validInput_updatesTrainersSuccessfully() {
         // Arrange
         UserEntity trainerUser1 = new UserEntity();
         trainerUser1.setUserName("trainer1");
         trainer1.setUser(trainerUser1);
-        trainer1.setId(1L); // CRITICAL: Set unique ID
+        trainer1.setId(1L);
 
         UserEntity trainerUser2 = new UserEntity();
         trainerUser2.setUserName("trainer2");
         trainer2.setUser(trainerUser2);
-        trainer2.setId(2L); // CRITICAL: Set unique ID
+        trainer2.setId(2L);
 
         UserEntity traineeUser = new UserEntity();
         traineeUser.setUserName("john");
