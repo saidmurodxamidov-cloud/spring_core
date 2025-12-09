@@ -66,9 +66,9 @@ public class TraineeEntityService {
                 .map(traineeMapper::toDTO)
                 .orElseThrow((() -> new UsernameNotFoundException("user not found with username: " + username)));
     }
-
+    @Transactional
     public void deleteByUsername(String username){
-        log.info("deleting user with username: {}" ,username);
+        log.debug("deleting user with username: {}" ,username);
         TraineeEntity trainee = traineeRepository.findByUserUserName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("user does not exist: " + username));
 

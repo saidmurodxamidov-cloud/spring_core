@@ -3,48 +3,39 @@ package org.example.service;
 import org.example.entity.TraineeEntity;
 import org.example.entity.UserEntity;
 import org.example.mapper.TraineeMapper;
-import org.example.model.TraineeDTO;
 import org.example.repository.TraineeRepository;
 import org.example.repository.UserRepository;
-import org.example.util.PasswordGenerator;
-import org.example.util.UsernameGenerator;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
-import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 class TraineeEntityServiceTest {
 
+    @Mock
     private TraineeRepository traineeRepository;
+
+    @Mock
     private TraineeMapper traineeMapper;
+
+    @Mock
     private UserRepository userRepository;
+
+    @Mock
     private BCryptPasswordEncoder bcrypt;
 
+    @InjectMocks
     private TraineeEntityService service;
 
-    @BeforeEach
-    void setUp() {
-        traineeRepository = mock(TraineeRepository.class);
-        traineeMapper = mock(TraineeMapper.class);
-        userRepository = mock(UserRepository.class);
-        bcrypt = mock(BCryptPasswordEncoder.class);
-
-        service = new TraineeEntityService(
-                traineeRepository,
-                traineeMapper,
-                userRepository,
-                bcrypt
-        );
-    }
     @Test
     void deleteByUsername_success() {
         // Arrange
@@ -83,6 +74,4 @@ class TraineeEntityServiceTest {
 
         verify(traineeRepository, never()).delete(any());
     }
-
-
 }
