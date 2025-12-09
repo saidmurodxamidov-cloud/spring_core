@@ -38,4 +38,5 @@ public class UserEntity {
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Role> roles = new HashSet<>();
+
 }
