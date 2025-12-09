@@ -54,7 +54,7 @@ public class TrainerEntityService {
         return trainerMapper.toDTO(trainer);
     }
     public TrainerDTO updateTrainer(TrainerDTO trainerDto){
-        log.info("updating trainer: {}", trainerDto.getUserName());
+        log.debug("updating trainer: {}", trainerDto.getUserName());
         TrainerEntity trainerEntity = trainerRepository.findByUserUserName(trainerDto.getUserName())
                 .orElseThrow(() -> new UsernameNotFoundException("trainer: " + trainerDto.getUserName() + " does not exist"));
         trainerMapper.updateFromDTO(trainerDto,trainerEntity);
