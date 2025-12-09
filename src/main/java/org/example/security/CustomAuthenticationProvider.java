@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -60,14 +61,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     }
 
     private List<GrantedAuthority> getAuthorities(UserEntity user) {
-        boolean isTrainer = trainerRepository.existsByUserUserName(user.getUserName());
-        boolean isTrainee = traineeRepository.existsByUserUserName(user.getUserName());
-
-        List<GrantedAuthority> authorities = new ArrayList<>();
-
-        if (isTrainer) authorities.add(new SimpleGrantedAuthority("ROLE_TRAINER"));
-        if (isTrainee) authorities.add(new SimpleGrantedAuthority("ROLE_TRAINEE"));
-
-        return authorities;
+        return user.getRoles().stream()
+                .map(role -> (GrantedAuthority) role)
+                .collect(Collectors.toList());
     }
+
 }

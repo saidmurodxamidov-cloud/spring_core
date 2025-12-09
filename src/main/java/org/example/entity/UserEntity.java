@@ -3,7 +3,9 @@ package org.example.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.example.converter.CharArrayToStringConverter;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -33,4 +35,7 @@ public class UserEntity {
     private char[] password;
 
     private boolean isActive;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<Role> roles = new HashSet<>();
 }
