@@ -77,8 +77,6 @@ public class TraineeEntityService {
                 .orElseThrow(() -> new UsernameNotFoundException("trainee: " + traineeUsername + "does not exist"));
 
         Set<TrainerEntity> newTrainers = trainerRepository.findByUserUserNameIn(trainersUsernames);
-        if (newTrainers.size() != trainersUsernames.size())
-            throw new IllegalArgumentException("Some trainer usernames do not exist");
         trainee.setTrainers(newTrainers);
         traineeRepository.save(trainee);
         log.info("trainee {}'s trainers updated successfully", traineeUsername);
