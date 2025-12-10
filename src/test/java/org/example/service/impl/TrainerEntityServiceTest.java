@@ -1,4 +1,4 @@
-package org.example.service;
+package org.example.service.impl;
 
 import org.example.entity.TrainerEntity;
 import org.example.entity.UserEntity;
@@ -7,6 +7,7 @@ import org.example.model.TrainerDTO;
 import org.example.repository.TrainerRepository;
 import org.example.repository.TrainingTypeRepository;
 import org.example.repository.UserRepository;
+import org.example.service.TrainingService;
 import org.example.util.UsernameGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,4 +1,4 @@
-package org.example.service;
+package org.example.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +8,7 @@ import org.example.model.TrainerDTO;
 import org.example.repository.TrainerRepository;
 import org.example.repository.TrainingTypeRepository;
 import org.example.repository.UserRepository;
+import org.example.service.TrainingService;
 import org.example.util.UsernameGenerator;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
