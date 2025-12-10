@@ -27,8 +27,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final TraineeRepository traineeRepository;
-    private final TrainerRepository trainerRepository;
+
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
