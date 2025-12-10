@@ -23,7 +23,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class TrainingEntityService {
+public class TrainingServiceJpa {
 
     private final TrainingRepository trainingRepository;
     private final TrainerRepository trainerRepository;

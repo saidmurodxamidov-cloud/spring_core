@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserEntityService {
+public class UserServiceJpa {
 
     private final UserRepository userRepository;
 

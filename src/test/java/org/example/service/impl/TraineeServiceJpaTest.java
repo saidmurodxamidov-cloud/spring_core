@@ -31,7 +31,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class TraineeEntityServiceTest {
+class TraineeServiceJpaTest {
 
     @Mock
     private TraineeRepository traineeRepository;
@@ -49,7 +49,7 @@ class TraineeEntityServiceTest {
     private BCryptPasswordEncoder bcrypt;
 
     @InjectMocks
-    private TraineeEntityService service;
+    private TraineeServiceJpa service;
 
     private TraineeEntity trainee;
     private TrainerEntity trainer1;
