@@ -1,21 +1,28 @@
 package org.example.service;
 
 import org.example.entity.TrainerEntity;
+
+import org.example.entity.UserEntity;
+
 import org.example.mapper.TrainerMapper;
 import org.example.model.TrainerDTO;
 import org.example.repository.TrainerRepository;
 import org.example.repository.TrainingTypeRepository;
 import org.example.repository.UserRepository;
 import org.example.util.UsernameGenerator;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,25 +36,34 @@ class TrainerEntityServiceTest {
     private TrainerRepository trainerRepository;
 
     @Mock
-    private TrainingTypeRepository trainingTypeRepository;
-
-    @Mock
     private UserRepository userRepository;
 
     @Mock
     private BCryptPasswordEncoder bcrypt;
 
-    @Mock
-    private TrainingService trainingService;
 
-    @Mock
-    private PasswordEncoder passwordEncoder;
 
     @Mock
     private TrainerMapper trainerMapper;
 
     @InjectMocks
     private TrainerEntityService service;
+    private TrainerDTO trainerDTO;
+    private TrainerEntity trainerEntity;
+
+    @BeforeEach
+    void setup() {
+        trainerDTO = new TrainerDTO();
+        trainerDTO.setFirstName("John");
+        trainerDTO.setLastName("Doe");
+        trainerDTO.setPassword("pass".toCharArray());
+
+        UserEntity user = new UserEntity();
+        user.setPassword("encodedPass".toCharArray());
+
+        trainerEntity = new TrainerEntity();
+        trainerEntity.setUser(user);
+    }
 
     @Test
     void createTrainer_success() {
@@ -81,5 +97,31 @@ class TrainerEntityServiceTest {
 
             verify(trainerRepository).save(trainerEntity);
         }
+    }
+
+
+
+
+
+    @Test
+    void testGetTrainerByUsernameSuccess() {
+        TrainerDTO expectedDTO = new TrainerDTO();
+        when(trainerRepository.findByUserUserName("john")).thenReturn(Optional.of(trainerEntity));
+        when(trainerMapper.toDTO(trainerEntity)).thenReturn(expectedDTO);
+
+        TrainerDTO result = service.getTrainerByUsername("john");
+
+        Assertions.assertNotNull(result);
+        Assertions.assertSame(expectedDTO, result);
+    }
+
+    @Test
+    void testGetTrainerByUsernameNotFound() {
+        when(trainerRepository.findByUserUserName("john")).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(
+                UsernameNotFoundException.class,
+                () -> service.getTrainerByUsername("john")
+        );
     }
 }

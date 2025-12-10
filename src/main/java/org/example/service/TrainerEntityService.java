@@ -9,9 +9,12 @@ import org.example.repository.TrainerRepository;
 import org.example.repository.TrainingTypeRepository;
 import org.example.repository.UserRepository;
 import org.example.util.UsernameGenerator;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
@@ -28,6 +31,7 @@ public class TrainerEntityService {
     private final PasswordEncoder passwordEncoder;
     private final TrainerMapper trainerMapper;
 
+    @Transactional
     public TrainerDTO createTrainer(TrainerDTO trainerDTO){
         Set<String> availableUsernames = userRepository.findAllUserNames();
         String password = bcrypt.encode(String.valueOf(trainerDTO.getPassword()));
@@ -41,4 +45,12 @@ public class TrainerEntityService {
         log.info("trainer {} created successfully", username);
         return trainerDTO;
     }
+
+    public TrainerDTO getTrainerByUsername(String username){
+        log.debug("getting trainer: {}" , username);
+        TrainerEntity trainer = trainerRepository.findByUserUserName(username)
+                .orElseThrow(() -> new UsernameNotFoundException("trainer " + username + " does not exist"));
+        return trainerMapper.toDTO(trainer);
+    }
+
 }

@@ -49,19 +49,6 @@ public class TraineeEntityService {
 
         return traineeDTO;
     }
-        public boolean authenticate(String username,String password){
-
-            TraineeEntity trainee = traineeRepository.findByUserUserName(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-            if(!trainee.getUser().isActive())
-                throw new IllegalStateException("user is not active: " + username);
-
-            boolean matches = bcrypt.matches(password,String.valueOf(trainee.getUser().getPassword()));
-            if(!matches)
-                throw new BadCredentialsException("wrong passwrod for user: " + username);
-
-            return true;
-        }
     @Transactional(readOnly = true)
     public TraineeDTO getTraineeByUsername(String username){
         log.debug("getting trainee with username: {}",username);

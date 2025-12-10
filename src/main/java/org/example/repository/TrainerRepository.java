@@ -24,5 +24,7 @@ public interface TrainerRepository extends JpaRepository<TrainerEntity,Long> {
 
     List<TrainerEntity> findByUserIsActive(boolean isActive);
 
+
     Set<TrainerEntity> findByUserUserNameIn(List<String> usernames);
+
 }
