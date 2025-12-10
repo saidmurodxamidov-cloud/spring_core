@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 import java.util.List;
 
 @Slf4j
@@ -32,15 +33,20 @@ public class TrainingEntityService {
 
     @Transactional
     TrainingDTO createTraining(TrainingDTO trainingDTO){
-        log.info("Creating training with name {}", trainingDTO.getTrainingName());
+        log.debug("Creating training with name {}", trainingDTO.getTrainingName());
+
         TraineeEntity trainee = traineeRepository.findById((trainingDTO.getTraineeId()))
                 .orElseThrow(() -> new UsernameNotFoundException("trainee with id: " + trainingDTO.getTrainingId() + " does not exist"));
 
         TrainerEntity trainer = trainerRepository.findById(trainingDTO.getTrainerId())
                 .orElseThrow(() -> new UsernameNotFoundException("trainer with id: " + trainingDTO.getTrainerId() + " not found"));
 
-        TrainingTypeEntity trainingType = trainingTypeRepository.findByTrainingTypeName(trainingDTO.getTrainingType().getTrainingTypeName())
-                .orElseThrow(EntityNotFoundException::new);
+        TrainingTypeEntity trainingType = trainingTypeRepository
+                .findByTrainingTypeName(trainingDTO.getTrainingType().getTrainingTypeName())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Training type not found: " + trainingDTO.getTrainingType().getTrainingTypeName()
+                ));
+
 
         TrainingEntity training = TrainingEntity.builder()
                 .trainee(trainee)
@@ -55,6 +61,7 @@ public class TrainingEntityService {
         log.info("training named {} created successfully", training.getTrainingName());
         return trainingDTO;
     }
+
     @Transactional(readOnly = true)
     public List<TrainingDTO> getAllTraineeTrainings(String username){
         log.debug("getting trainee: {}'s trainings",username);
@@ -71,5 +78,4 @@ public class TrainingEntityService {
         log.debug("successfully gotten trainings for trainer {}",username);
         return trainingMapper.toTrainingModels(trainee.getTrainings()).stream().toList();
     }
-
 }

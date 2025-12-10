@@ -14,8 +14,14 @@ public class UserMapperTest {
 
     @Test
     void testToDto() {
-        UserEntity entity = new UserEntity(1L, "John", "Doe", "jdoe", "pass".toCharArray(), true);
-
+        UserEntity entity = UserEntity.builder()
+                .id(1L)
+                .firstName("John")
+                .lastName("Doe")
+                .userName("jdoe")
+                .password("pass".toCharArray())
+                .isActive(true)
+                .build();
         UserDTO dto = mapper.toDto(entity);
 
         assertNotNull(dto);

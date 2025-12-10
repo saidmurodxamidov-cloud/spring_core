@@ -15,7 +15,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -111,7 +110,6 @@ class TrainingEntityServiceTest {
         assertThrows(EntityNotFoundException.class,
                 () -> service.createTraining(trainingDTO));
     }
-
 
     @Test
     void getAllTrainerTrainings_trainerNotFound() {
