@@ -15,7 +15,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -69,5 +71,13 @@ public class TrainerEntityService {
         trainer.getUser().setActive(active);
         trainerRepository.save(trainer);
         log.info("successfully updated active status to {} of {} trainer",active,username);
+    }
+    @Transactional(readOnly = true)
+    public List<TrainerDTO> getTrainersNotAssignedToTrainee(String traineeUsername) {
+        log.debug("Fetching trainers not assigned to trainee: {}", traineeUsername);
+        List<TrainerEntity> trainers = trainerRepository.findTrainersNotAssignedToTrainee(traineeUsername);
+        return trainers.stream()
+                .map(trainerMapper::toDTO)
+                .collect(Collectors.toList());
     }
 }
