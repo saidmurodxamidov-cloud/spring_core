@@ -2,6 +2,7 @@ package org.example.repository;
 
 import jakarta.validation.constraints.NotNull;
 import org.example.entity.TraineeEntity;
+import org.example.entity.TrainerEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,7 +18,6 @@ public interface TraineeRepository extends JpaRepository<TraineeEntity,Long> {
     void deleteByUserUserName(String username);
 
     List<TraineeEntity> findByUserIsActive(boolean isActive);
-
 
     boolean existsByUserUserName(String userName);
 }
