@@ -1,4 +1,4 @@
-package org.example.service.impl;
+package org.example.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.entity.UserEntity;

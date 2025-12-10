@@ -8,6 +8,7 @@ import org.example.model.TrainerDTO;
 import org.example.repository.TrainerRepository;
 import org.example.repository.TrainingTypeRepository;
 import org.example.repository.UserRepository;
+import org.example.service.TrainerService;
 import org.example.service.TrainingService;
 import org.example.util.UsernameGenerator;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,14 +24,11 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class TrainerServiceJpa {
+public class TrainerServiceJpa implements TrainerService {
 
     private final TrainerRepository trainerRepository;
-    private final TrainingTypeRepository trainingTypeRepository;
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bcrypt;
-    private final TrainingService trainingService;
-    private final PasswordEncoder passwordEncoder;
     private final TrainerMapper trainerMapper;
 
     @Transactional
