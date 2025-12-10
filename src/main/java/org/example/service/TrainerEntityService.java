@@ -9,8 +9,8 @@ import org.example.repository.TrainerRepository;
 import org.example.repository.TrainingTypeRepository;
 import org.example.repository.UserRepository;
 import org.example.util.UsernameGenerator;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -43,22 +43,6 @@ public class TrainerEntityService {
         log.info("trainer {} created successfully", username);
         return trainerDTO;
     }
-    public boolean authenticate(String username, String password) {
-        TrainerEntity trainer = trainerRepository.findByUserUserName(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Trainer not found: " + username));
-
-
-        if (!trainer.getUser().isActive()) {
-            throw new IllegalStateException("Trainer is not active: " + username);
-        }
-
-
-        if (!bcrypt.matches(password, String.valueOf(trainer.getUser().getPassword()))) {
-            throw new BadCredentialsException("Wrong password for trainer: " + username);
-        }
-
-        return true;
-    }
 
     public TrainerDTO getTrainerByUsername(String username){
         log.debug("getting trainer: {}" , username);
@@ -66,4 +50,5 @@ public class TrainerEntityService {
                 .orElseThrow(() -> new UsernameNotFoundException("trainer " + username + " does not exist"));
         return trainerMapper.toDTO(trainer);
     }
+
 }

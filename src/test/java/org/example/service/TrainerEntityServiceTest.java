@@ -1,7 +1,9 @@
 package org.example.service;
 
 import org.example.entity.TrainerEntity;
+
 import org.example.entity.UserEntity;
+
 import org.example.mapper.TrainerMapper;
 import org.example.model.TrainerDTO;
 import org.example.repository.TrainerRepository;
@@ -16,7 +18,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,26 +36,18 @@ class TrainerEntityServiceTest {
     private TrainerRepository trainerRepository;
 
     @Mock
-    private TrainingTypeRepository trainingTypeRepository;
-
-    @Mock
     private UserRepository userRepository;
 
     @Mock
     private BCryptPasswordEncoder bcrypt;
 
-    @Mock
-    private TrainingService trainingService;
 
-    @Mock
-    private PasswordEncoder passwordEncoder;
 
     @Mock
     private TrainerMapper trainerMapper;
 
     @InjectMocks
     private TrainerEntityService service;
-
     private TrainerDTO trainerDTO;
     private TrainerEntity trainerEntity;
 
@@ -105,52 +98,11 @@ class TrainerEntityServiceTest {
             verify(trainerRepository).save(trainerEntity);
         }
     }
-    @Test
-    void testAuthenticateSuccess() {
-        UserEntity user = new UserEntity();
-        user.setPassword("HASHED".toCharArray());
-        user.setActive(true);
-        trainerEntity.setUser(user);
-
-        when(trainerRepository.findByUserUserName("john")).thenReturn(Optional.of(trainerEntity));
-        when(bcrypt.matches("rawpass", "HASHED")).thenReturn(true);
-
-        boolean result = service.authenticate("john", "rawpass");
-
-        Assertions.assertTrue(result);
-    }
-
-    @Test
-    void testAuthenticateWrongPassword() {
-        UserEntity user = new UserEntity();
-        user.setPassword("HASHED".toCharArray());
-        user.setActive(true); // <- make sure user is active
-        trainerEntity.setUser(user);
-
-        when(trainerRepository.findByUserUserName("john")).thenReturn(Optional.of(trainerEntity));
-        when(bcrypt.matches("wrong", "HASHED")).thenReturn(false);
-
-        // Expect BadCredentialsException
-        Assertions.assertThrows(BadCredentialsException.class, () -> {
-            service.authenticate("john", "wrong");
-        });
-    }
 
 
 
-    @Test
-    void testAuthenticateTrainerNotFound() {
-        when(trainerRepository.findByUserUserName("unknown")).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(
-                UsernameNotFoundException.class,
-                () -> service.authenticate("unknown", "pass")
-        );
-    }
 
-    // -----------------------------------------
-    // getTrainerByUsername() tests
-    // -----------------------------------------
     @Test
     void testGetTrainerByUsernameSuccess() {
         TrainerDTO expectedDTO = new TrainerDTO();
@@ -172,5 +124,4 @@ class TrainerEntityServiceTest {
                 () -> service.getTrainerByUsername("john")
         );
     }
-
 }
