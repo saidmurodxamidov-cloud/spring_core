@@ -20,4 +20,5 @@ public interface TraineeRepository extends JpaRepository<TraineeEntity,Long> {
     List<TraineeEntity> findByUserIsActive(boolean isActive);
 
     boolean existsByUserUserName(String userName);
+
 }

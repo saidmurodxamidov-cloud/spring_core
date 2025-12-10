@@ -110,4 +110,10 @@ class TrainingEntityServiceTest {
         assertThrows(EntityNotFoundException.class,
                 () -> service.createTraining(trainingDTO));
     }
+
+    @Test
+    void getAllTrainerTrainings_trainerNotFound() {
+        when(trainerRepository.findByUserUserName("trainer1")).thenReturn(Optional.empty());
+        assertThrows(UsernameNotFoundException.class, () -> service.getAllTrainerTrainings("trainer1"));
+    }
 }
