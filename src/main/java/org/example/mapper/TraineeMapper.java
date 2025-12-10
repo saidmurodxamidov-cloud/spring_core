@@ -12,5 +12,13 @@ public interface TraineeMapper {
 
 
     TraineeEntity toEntity(TraineeDTO traineeDTO);
+
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "trainings", ignore = true)
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateEntity(TraineeDTO model, @MappingTarget TraineeEntity entity);
+
 }
 
