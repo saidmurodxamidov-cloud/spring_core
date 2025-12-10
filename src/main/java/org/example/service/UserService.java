@@ -1,4 +1,4 @@
 package org.example.service;
 
-public interface TrainerService {
+public interface UserService {
 }
