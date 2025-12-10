@@ -1,9 +1,7 @@
 package org.example.service;
 
 import org.example.entity.TrainerEntity;
-
 import org.example.entity.UserEntity;
-
 import org.example.mapper.TrainerMapper;
 import org.example.model.TrainerDTO;
 import org.example.repository.TrainerRepository;
@@ -36,12 +34,19 @@ class TrainerEntityServiceTest {
     private TrainerRepository trainerRepository;
 
     @Mock
+    private TrainingTypeRepository trainingTypeRepository;
+
+    @Mock
     private UserRepository userRepository;
 
     @Mock
     private BCryptPasswordEncoder bcrypt;
 
+    @Mock
+    private TrainingService trainingService;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @Mock
     private TrainerMapper trainerMapper;
@@ -140,6 +145,27 @@ class TrainerEntityServiceTest {
         );
 
         verify(trainerMapper, never()).updateFromDTO(any(), any());
+        verify(trainerRepository, never()).save(any());
+    }
+    @Test
+    void setActiveStatus_success() {
+        String username = "johnDoe";
+        trainerEntity.getUser().setActive(false);
+
+        when(trainerRepository.findByUserUserName(username)).thenReturn(Optional.of(trainerEntity));
+
+        service.setActiveStatus(username, true);
+
+        assertTrue(trainerEntity.getUser().isActive());
+        verify(trainerRepository).save(trainerEntity);
+    }
+
+    @Test
+    void setActiveStatus_trainerNotFound() {
+        String username = "unknown";
+        when(trainerRepository.findByUserUserName(username)).thenReturn(Optional.empty());
+
+        assertThrows(UsernameNotFoundException.class, () -> service.setActiveStatus(username, true));
         verify(trainerRepository, never()).save(any());
     }
 }

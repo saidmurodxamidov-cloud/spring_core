@@ -10,7 +10,6 @@ import org.example.repository.TrainingTypeRepository;
 import org.example.repository.UserRepository;
 import org.example.util.UsernameGenerator;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -52,6 +51,7 @@ public class TrainerEntityService {
                 .orElseThrow(() -> new UsernameNotFoundException("trainer " + username + " does not exist"));
         return trainerMapper.toDTO(trainer);
     }
+    @Transactional
     public TrainerDTO updateTrainer(TrainerDTO trainerDto){
         log.debug("updating trainer: {}", trainerDto.getUserName());
         TrainerEntity trainerEntity = trainerRepository.findByUserUserName(trainerDto.getUserName())
@@ -61,5 +61,13 @@ public class TrainerEntityService {
         log.info("trainer {} updated successfully", trainerDto.getUserName());
         return trainerDto;
     }
-
+    @Transactional
+    public void setActiveStatus(String username,boolean active){
+        log.debug("setting active to {} status to trainer {}", active, username);
+        TrainerEntity trainer = trainerRepository.findByUserUserName(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username + "trainer does not exist"));
+        trainer.getUser().setActive(active);
+        trainerRepository.save(trainer);
+        log.info("successfully updated active status to {} of {} trainer",active,username);
+    }
 }
