@@ -8,11 +8,9 @@ import org.mapstruct.Mapping;
 
 import java.util.Set;
 
-@Mapper(componentModel = "spring", uses = TrainingTypeMapper.class)
+@Mapper(componentModel = "spring", uses = {TrainingTypeMapper.class, TraineeMapper.class, TrainerMapper.class})
 public interface TrainingMapper {
     @Mapping(source = "trainingId",target = "id")
-    @Mapping(source = "trainerId", target = "trainer.id")
-    @Mapping(source = "traineeId", target = "trainee.id")
     TrainingEntity toEntity(TrainingDTO trainingDTO);
 
     @InheritInverseConfiguration

@@ -1,9 +1,8 @@
-package org.example.service.impl;
+package org.example.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.entity.UserEntity;
 import org.example.repository.UserRepository;
-import org.example.service.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -11,7 +10,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceJpa implements UserService {
+public class UserServiceJpa {
 
     private final UserRepository userRepository;
 

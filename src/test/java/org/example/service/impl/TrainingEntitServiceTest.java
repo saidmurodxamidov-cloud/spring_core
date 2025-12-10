@@ -16,13 +16,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class TrainingServiceImplJpaTest {
+class TrainingServiceJpaTest {
 
     @Mock
     private TrainingRepository trainingRepository;
@@ -116,7 +117,6 @@ class TrainingServiceImplJpaTest {
         assertThrows(EntityNotFoundException.class,
                 () -> service.createTraining(trainingDTO));
     }
-
 
     @Test
     void getAllTrainerTrainings_trainerNotFound() {

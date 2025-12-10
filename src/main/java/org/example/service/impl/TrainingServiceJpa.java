@@ -13,7 +13,6 @@ import org.example.repository.TraineeRepository;
 import org.example.repository.TrainerRepository;
 import org.example.repository.TrainingRepository;
 import org.example.repository.TrainingTypeRepository;
-import org.example.service.TrainingService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +25,7 @@ import static org.example.util.NormalizeUtil.normalize;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class TrainingServiceJpa implements TrainingService {
+public class TrainingServiceJpa {
 
     private final TrainingRepository trainingRepository;
     private final TrainerRepository trainerRepository;
@@ -35,16 +34,21 @@ public class TrainingServiceJpa implements TrainingService {
     private final TrainingMapper trainingMapper;
 
     @Transactional
-    public TrainingDTO createTraining(TrainingDTO trainingDTO){
-        log.info("Creating training with name {}", trainingDTO.getTrainingName());
+    TrainingDTO createTraining(TrainingDTO trainingDTO){
+        log.debug("Creating training with name {}", trainingDTO.getTrainingName());
+
         TraineeEntity trainee = traineeRepository.findById((trainingDTO.getTraineeId()))
                 .orElseThrow(() -> new UsernameNotFoundException("trainee with id: " + trainingDTO.getTrainingId() + " does not exist"));
 
         TrainerEntity trainer = trainerRepository.findById(trainingDTO.getTrainerId())
                 .orElseThrow(() -> new UsernameNotFoundException("trainer with id: " + trainingDTO.getTrainerId() + " not found"));
 
-        TrainingTypeEntity trainingType = trainingTypeRepository.findByTrainingTypeName(trainingDTO.getTrainingType().getTrainingTypeName())
-                .orElseThrow(EntityNotFoundException::new);
+        TrainingTypeEntity trainingType = trainingTypeRepository
+                .findByTrainingTypeName(trainingDTO.getTrainingType().getTrainingTypeName())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Training type not found: " + trainingDTO.getTrainingType().getTrainingTypeName()
+                ));
+
 
         TrainingEntity training = TrainingEntity.builder()
                 .trainee(trainee)

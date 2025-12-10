@@ -1,5 +1,4 @@
 package org.example.service;
-
 import org.example.model.TrainingDTO;
 
 import java.time.LocalDate;
