@@ -3,6 +3,7 @@ package org.example.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Past;
 import lombok.*;
+import org.hibernate.engine.spi.CascadeStyle;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -34,6 +35,6 @@ public class TraineeEntity {
     @ManyToMany(mappedBy = "trainees")
     private Set<TrainerEntity> trainers = new HashSet<>();
 
-    @OneToMany(mappedBy = "trainee")
+    @OneToMany(mappedBy = "trainee", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<TrainingEntity> trainings = new HashSet<>();
 }
