@@ -67,13 +67,34 @@ public class TraineeEntityService {
                 .orElseThrow((() -> new UsernameNotFoundException("user not found with username: " + username)));
     }
     @Transactional
-    public void deleteByUsername(String username){
-        log.debug("deleting user with username: {}" ,username);
+
+    public void deleteByUsername(String username) {
+        log.debug("deleting user with username: {}", username);
         TraineeEntity trainee = traineeRepository.findByUserUserName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("user does not exist: " + username));
 
         traineeRepository.delete(trainee);
-        log.info("user: {} is deleted successfully",username);
+        log.info("user: {} is deleted successfully", username);
+    }
+    public TraineeDTO setActiveStatus(String username, boolean active){
+        TraineeEntity trainee = traineeRepository.findByUserUserName(username)
+                .orElseThrow(() -> new UsernameNotFoundException("user not found with username: " + username));
+        trainee.getUser().setActive(active);
+
+        traineeRepository.save(trainee);
+        log.info("Trainee with username {}, set active status to {} successfully", username,active);
+        return traineeMapper.toDTO(trainee);
+    }
+
+    @Transactional
+    public TraineeDTO updateTrainee(String username, TraineeDTO updateDTO){
+        log.debug("updating trainee with username: {}",username);
+        TraineeEntity traineeEntity = traineeRepository.findByUserUserName(username)
+                .orElseThrow(() -> new EntityNotFoundException("trainee with username: " + username + "not found"));
+        traineeMapper.updateEntity(updateDTO,traineeEntity);
+        traineeRepository.save(traineeEntity);
+        log.info("updated successfully trainee with username: {}", username);
+        return updateDTO;
     }
 }
 
