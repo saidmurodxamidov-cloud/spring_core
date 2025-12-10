@@ -3,10 +3,12 @@ package org.example.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.entity.TraineeEntity;
+import org.example.entity.TrainerEntity;
 import org.example.exception.EntityNotFoundException;
 import org.example.mapper.TraineeMapper;
 import org.example.model.TraineeDTO;
 import org.example.repository.TraineeRepository;
+import org.example.repository.TrainerRepository;
 import org.example.repository.UserRepository;
 import org.example.util.PasswordGenerator;
 import org.example.util.UsernameGenerator;
@@ -16,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 
 @Slf4j
@@ -26,7 +29,7 @@ public class TraineeEntityService {
     private final TraineeMapper traineeMapper;
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bcrypt;
-
+    private final TrainerRepository trainerRepository;
 
     @Transactional
     public TraineeDTO createTrainee(TraineeDTO traineeDTO){
@@ -67,7 +70,17 @@ public class TraineeEntityService {
                 .orElseThrow((() -> new UsernameNotFoundException("user not found with username: " + username)));
     }
     @Transactional
+    public void updateTrainersList(String traineeUsername, List<String> trainersUsernames) {
+        log.debug("updating trainee: {}'s trainers", traineeUsername);
+        TraineeEntity trainee = traineeRepository.findByUserUserName(traineeUsername)
+                .orElseThrow(() -> new UsernameNotFoundException("trainee: " + traineeUsername + "does not exist"));
 
+        Set<TrainerEntity> newTrainers = trainerRepository.findByUserUserNameIn(trainersUsernames);
+        trainee.setTrainers(newTrainers);
+        traineeRepository.save(trainee);
+        log.info("trainee {}'s trainers updated successfully", traineeUsername);
+    }
+    @Transactional
     public void deleteByUsername(String username) {
         log.debug("deleting user with username: {}", username);
         TraineeEntity trainee = traineeRepository.findByUserUserName(username)
@@ -76,6 +89,8 @@ public class TraineeEntityService {
         traineeRepository.delete(trainee);
         log.info("user: {} is deleted successfully", username);
     }
+
+    @Transactional
     public TraineeDTO setActiveStatus(String username, boolean active){
         TraineeEntity trainee = traineeRepository.findByUserUserName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("user not found with username: " + username));
