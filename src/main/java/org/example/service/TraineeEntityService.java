@@ -3,6 +3,7 @@ package org.example.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.entity.TraineeEntity;
+import org.example.exception.EntityNotFoundException;
 import org.example.mapper.TraineeMapper;
 import org.example.model.TraineeDTO;
 import org.example.repository.TraineeRepository;
@@ -66,6 +67,15 @@ public class TraineeEntityService {
                 .orElseThrow((() -> new UsernameNotFoundException("user not found with username: " + username)));
     }
     @Transactional
+
+    public void deleteByUsername(String username) {
+        log.debug("deleting user with username: {}", username);
+        TraineeEntity trainee = traineeRepository.findByUserUserName(username)
+                .orElseThrow(() -> new UsernameNotFoundException("user does not exist: " + username));
+
+        traineeRepository.delete(trainee);
+        log.info("user: {} is deleted successfully", username);
+    }
     public TraineeDTO setActiveStatus(String username, boolean active){
         TraineeEntity trainee = traineeRepository.findByUserUserName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("user not found with username: " + username));
