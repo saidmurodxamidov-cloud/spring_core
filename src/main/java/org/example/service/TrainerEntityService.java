@@ -32,6 +32,7 @@ public class TrainerEntityService {
     private final PasswordEncoder passwordEncoder;
     private final TrainerMapper trainerMapper;
 
+    @Transactional
     public TrainerDTO createTrainer(TrainerDTO trainerDTO){
         Set<String> availableUsernames = userRepository.findAllUserNames();
         String password = bcrypt.encode(String.valueOf(trainerDTO.getPassword()));
@@ -46,12 +47,6 @@ public class TrainerEntityService {
         return trainerDTO;
     }
 
-    public boolean authenticate(String username,String password){
-        TrainerEntity trainer = trainerRepository.findByUserUserName(username)
-                .orElseThrow(() -> new UsernameNotFoundException("trainer " + username + " does not exist"));
-        return bcrypt.matches(password,String.valueOf(trainer.getUser().getPassword()));
-    }
-    @Transactional(readOnly = true)
     public TrainerDTO getTrainerByUsername(String username){
         log.debug("getting trainer: {}" , username);
         TrainerEntity trainer = trainerRepository.findByUserUserName(username)
@@ -60,7 +55,7 @@ public class TrainerEntityService {
     }
     @Transactional
     public TrainerDTO updateTrainer(TrainerDTO trainerDto){
-        log.info("updating trainer: {}", trainerDto.getUserName());
+        log.debug("updating trainer: {}", trainerDto.getUserName());
         TrainerEntity trainerEntity = trainerRepository.findByUserUserName(trainerDto.getUserName())
                 .orElseThrow(() -> new UsernameNotFoundException("trainer: " + trainerDto.getUserName() + " does not exist"));
         trainerMapper.updateFromDTO(trainerDto,trainerEntity);

@@ -105,46 +105,9 @@ class TrainerEntityServiceTest {
             verify(trainerRepository).save(trainerEntity);
         }
     }
-    @Test
-    void testAuthenticateSuccess() {
-        UserEntity user = new UserEntity();
-        user.setPassword("HASHED".toCharArray());
-        trainerEntity.setUser(user);
 
-        when(trainerRepository.findByUserUserName("john")).thenReturn(Optional.of(trainerEntity));
-        when(bcrypt.matches("rawpass", "HASHED")).thenReturn(true);
 
-        boolean result = service.authenticate("john", "rawpass");
 
-        Assertions.assertTrue(result);
-    }
-
-    @Test
-    void testAuthenticateWrongPassword() {
-        UserEntity user = new UserEntity();
-        user.setPassword("HASHED".toCharArray());
-        trainerEntity.setUser(user);
-
-        when(trainerRepository.findByUserUserName("john")).thenReturn(Optional.of(trainerEntity));
-        when(bcrypt.matches("wrong", "HASHED")).thenReturn(false);
-
-        boolean result = service.authenticate("john", "wrong");
-        Assertions.assertFalse(result);
-    }
-
-    @Test
-    void testAuthenticateTrainerNotFound() {
-        when(trainerRepository.findByUserUserName("unknown")).thenReturn(Optional.empty());
-
-        Assertions.assertThrows(
-                UsernameNotFoundException.class,
-                () -> service.authenticate("unknown", "pass")
-        );
-    }
-
-    // -----------------------------------------
-    // getTrainerByUsername() tests
-    // -----------------------------------------
     @Test
     void testGetTrainerByUsernameSuccess() {
         TrainerDTO expectedDTO = new TrainerDTO();
