@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
@@ -30,6 +31,7 @@ public class TrainerEntityService {
     private final PasswordEncoder passwordEncoder;
     private final TrainerMapper trainerMapper;
 
+    @Transactional
     public TrainerDTO createTrainer(TrainerDTO trainerDTO){
         Set<String> availableUsernames = userRepository.findAllUserNames();
         String password = bcrypt.encode(String.valueOf(trainerDTO.getPassword()));
