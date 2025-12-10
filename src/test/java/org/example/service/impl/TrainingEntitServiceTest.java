@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class TrainingEntityServiceTest {
+class TrainingServiceJpaTest {
 
     @Mock
     private TrainingRepository trainingRepository;
@@ -36,7 +36,7 @@ class TrainingEntityServiceTest {
     private TrainingTypeRepository trainingTypeRepository;
 
     @InjectMocks
-    private TrainingEntityService service;
+    private TrainingServiceJpa service;
 
     private TrainingDTO trainingDTO;
 

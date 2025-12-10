@@ -23,7 +23,7 @@ import java.util.Set;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class TraineeEntityService {
+public class TraineeServiceJpa {
     private final TraineeRepository traineeRepository;
     private final TraineeMapper traineeMapper;
     private final UserRepository userRepository;

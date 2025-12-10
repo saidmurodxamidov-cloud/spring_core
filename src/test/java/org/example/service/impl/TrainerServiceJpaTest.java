@@ -30,7 +30,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class TrainerEntityServiceTest {
+class TrainerServiceJpaTest {
 
     @Mock
     private TrainerRepository trainerRepository;
@@ -54,7 +54,7 @@ class TrainerEntityServiceTest {
     private TrainerMapper trainerMapper;
 
     @InjectMocks
-    private TrainerEntityService service;
+    private TrainerServiceJpa service;
 
     private TrainerDTO trainerDTO;
     private TrainerEntity trainerEntity;
