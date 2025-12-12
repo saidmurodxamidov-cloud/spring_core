@@ -10,6 +10,7 @@ import org.example.model.TraineeDTO;
 import org.example.repository.TraineeRepository;
 import org.example.repository.TrainerRepository;
 import org.example.repository.UserRepository;
+import org.example.service.TraineeService;
 import org.example.util.PasswordGenerator;
 import org.example.util.UsernameGenerator;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,7 +24,7 @@ import java.util.Set;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class TraineeServiceJpa {
+public class TraineeServiceJpa implements TraineeService {
     private final TraineeRepository traineeRepository;
     private final TraineeMapper traineeMapper;
     private final UserRepository userRepository;

@@ -38,7 +38,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         UserEntity user = userRepository.findByUserName(username)
                 .orElseThrow(() -> new BadCredentialsException("Invalid username or password"));
 
-        if (!passwordEncoder.matches(password, String.valueOf(user.getPassword()))) {
+        if (!passwordEncoder.matches(password, new String(user.getPassword()))) {
             log.error("Invalid password for user: {}", username);
             throw new BadCredentialsException("Invalid username or password");
         }

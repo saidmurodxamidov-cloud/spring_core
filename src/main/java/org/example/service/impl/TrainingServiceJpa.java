@@ -13,6 +13,7 @@ import org.example.repository.TraineeRepository;
 import org.example.repository.TrainerRepository;
 import org.example.repository.TrainingRepository;
 import org.example.repository.TrainingTypeRepository;
+import org.example.service.TrainingService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +26,7 @@ import static org.example.util.NormalizeUtil.normalize;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class TrainingServiceJpa {
+public class TrainingServiceJpa implements TrainingService {
 
     private final TrainingRepository trainingRepository;
     private final TrainerRepository trainerRepository;
@@ -34,7 +35,7 @@ public class TrainingServiceJpa {
     private final TrainingMapper trainingMapper;
 
     @Transactional
-    TrainingDTO createTraining(TrainingDTO trainingDTO){
+    public TrainingDTO createTraining(TrainingDTO trainingDTO){
         log.debug("Creating training with name {}", trainingDTO.getTrainingName());
 
         TraineeEntity trainee = traineeRepository.findById((trainingDTO.getTraineeId()))
