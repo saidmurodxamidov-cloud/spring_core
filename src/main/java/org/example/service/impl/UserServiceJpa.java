@@ -21,6 +21,7 @@ public class UserServiceJpa implements UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bcrypt;
 
+    @Transactional(readOnly = true)
     public boolean passwordMatches(String username,String password){
         Optional<UserEntity> userOptional = userRepository.findByUserName(username);
         if(userOptional.isEmpty())
@@ -31,13 +32,15 @@ public class UserServiceJpa implements UserService {
 
 
     @Transactional
+    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN') or hasRole('TRAINER')")
     public boolean changePassword(String userName,String newPassword){
+        log.debug("changing password of user: {}",userName);
         Optional<UserEntity> userOptional = userRepository.findByUserName(userName);
         if(userOptional.isEmpty())
             return false;
         UserEntity user = userOptional.get();
-        user.setPasswordHash(newPassword);
-        userRepository.save(user);
+        user.setPasswordHash(bcrypt.encode(newPassword));
+        log.info("changed password of user {} successfully" ,user);
         return true;
     }
     @Transactional
@@ -45,7 +48,6 @@ public class UserServiceJpa implements UserService {
     public boolean toggleUserActiveStatus(String username) {
         UserEntity user = userRepository.findByUserName(username).orElseThrow(() -> new UsernameNotFoundException(username + ": user does exist"));
         user.setActive(!user.isActive());
-
         return user.isActive();
     }
 }
