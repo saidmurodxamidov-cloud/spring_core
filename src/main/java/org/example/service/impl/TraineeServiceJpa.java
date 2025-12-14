@@ -39,10 +39,10 @@ public class TraineeServiceJpa implements TraineeService {
         String password = new String(PasswordGenerator.generatePassword());
         String username = UsernameGenerator.generateUsername(traineeDTO.getFirstName(), traineeDTO.getLastName(),availableUsernames);
         String encodedPassword = bcrypt.encode(password);
-        traineeDTO.setPassword(encodedPassword.toCharArray());
         traineeDTO.setUserName(username);
         log.info("creating trainee with username {}", traineeDTO.getUserName());
         TraineeEntity traineeEntity = traineeMapper.toEntity(traineeDTO);
+        traineeEntity.getUser().setPasswordHash(encodedPassword);
         traineeEntity.getUser().setRoles(new HashSet<>());
         traineeEntity.getUser().getRoles().add(Role.TRAINEE);
         traineeRepository.save(traineeEntity);

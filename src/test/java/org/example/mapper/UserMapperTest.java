@@ -19,7 +19,7 @@ public class UserMapperTest {
                 .firstName("John")
                 .lastName("Doe")
                 .userName("jdoe")
-                .password("pass".toCharArray())
+                .passwordHash("pass")
                 .isActive(true)
                 .build();
         UserDTO dto = mapper.toDto(entity);
@@ -27,7 +27,6 @@ public class UserMapperTest {
         assertNotNull(dto);
         assertEquals(entity.getId(), dto.getUserId());
         assertEquals(entity.getFirstName(), dto.getFirstName());
-        assertArrayEquals(entity.getPassword(), dto.getPassword());
     }
 
     @Test
@@ -39,6 +38,5 @@ public class UserMapperTest {
         assertNotNull(entity);
         assertEquals(dto.getUserId(), entity.getId());
         assertEquals(dto.getLastName(), entity.getLastName());
-        assertArrayEquals(dto.getPassword(), entity.getPassword());
     }
 }

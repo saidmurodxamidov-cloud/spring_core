@@ -68,7 +68,7 @@ class TrainerServiceJpaTest {
         trainerDTO.setPassword("pass".toCharArray());
 
         UserEntity user = new UserEntity();
-        user.setPassword("encodedPass".toCharArray());
+        user.setPasswordHash("encodedPass");
 
         trainerEntity = new TrainerEntity();
         trainerEntity.setUser(user);

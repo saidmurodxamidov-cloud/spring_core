@@ -30,7 +30,7 @@ class TrainerMapperTest {
                 .firstName("Michael")
                 .lastName("Jordan")
                 .userName("michael.jordan")
-                .password("password123".toCharArray())
+                .passwordHash("password123")
                 .isActive(true)
                 .build();
 

@@ -27,13 +27,12 @@ public interface TrainerMapper {
                 .lastName(dto.getLastName())
                 .isActive(dto.isActive())
                 .userName(dto.getUserName())
-                .password(dto.getPassword())
                 .build();
 
     }
     @Mapping(source = "specialization", target = "specializations")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user.userName", ignore = true)
-    @Mapping(target = "user.password", ignore = true)
+    @Mapping(target = "user.passwordHash", ignore = true)
     void updateFromDTO(TrainerDTO trainerDTO, @MappingTarget TrainerEntity entity);
 }

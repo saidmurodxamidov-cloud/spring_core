@@ -27,7 +27,7 @@ class TraineeDTOMapperTest {
                 .firstName("Alice")
                 .lastName("Williams")
                 .userName("alice.williams")
-                .password("password123".toCharArray())
+                .passwordHash("password123")
                 .isActive(true)
                 .build();
 
@@ -59,7 +59,6 @@ class TraineeDTOMapperTest {
         assertEquals("Alice", dto.getFirstName());
         assertEquals("Williams", dto.getLastName());
         assertEquals("alice.williams", dto.getUserName());
-        assertArrayEquals("password123".toCharArray(), dto.getPassword());
         assertTrue(dto.isActive());
         assertEquals(LocalDate.of(1995, 5, 15), dto.getDateOfBirth());
         assertEquals("123 Main Street", dto.getAddress());

@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.entity.UserEntity;
 import org.example.repository.UserRepository;
 import org.example.service.UserService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,25 +18,27 @@ import java.util.Optional;
 public class UserServiceJpa implements UserService {
 
     private final UserRepository userRepository;
-
+    private final BCryptPasswordEncoder bcrypt;
 
     public boolean passwordMatches(String username,String password){
         Optional<UserEntity> userOptional = userRepository.findByUserName(username);
         if(userOptional.isEmpty())
             return false;
         UserEntity user = userOptional.get();
-        return Arrays.equals(password.toCharArray(),user.getPassword());
+        return bcrypt.matches(password,user.getPasswordHash());
     }
+
+
     @Transactional
-    public boolean changePassword(String userName,String oldPassword,String newPassword){
+    public boolean changePassword(String userName,String newPassword){
         Optional<UserEntity> userOptional = userRepository.findByUserName(userName);
         if(userOptional.isEmpty())
             return false;
         UserEntity user = userOptional.get();
-        if(!Arrays.equals(user.getPassword(),oldPassword.toCharArray())){
-            return false;
-        }
-        user.setPassword(newPassword.toCharArray());
+//        if(!bcrypt.matches()){
+//            return false;
+//        }
+        user.setPasswordHash(newPassword);
         userRepository.save(user);
         return true;
     }

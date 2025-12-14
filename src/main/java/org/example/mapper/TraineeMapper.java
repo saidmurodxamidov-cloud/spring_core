@@ -13,6 +13,7 @@ public interface TraineeMapper {
     TraineeDTO toDTO(TraineeEntity entity);
 
 
+    @Mapping(target = "user.passwordHash",ignore = true)
     @Mapping(target = "user", source = ".")
     TraineeEntity toEntity(TraineeDTO traineeDTO);
 
@@ -25,7 +26,6 @@ public interface TraineeMapper {
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setUserName(dto.getUserName());
-        user.setPassword(dto.getPassword());
         user.setActive(dto.isActive());
         return user;
     }

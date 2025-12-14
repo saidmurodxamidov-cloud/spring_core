@@ -32,7 +32,7 @@ public class UserEntity {
     private String userName;
 
     @ToString.Exclude
-    private char[] password;
+    private String passwordHash;
 
     private boolean isActive;
 

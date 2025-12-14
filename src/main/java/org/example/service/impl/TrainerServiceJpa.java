@@ -39,11 +39,11 @@ public class TrainerServiceJpa implements TrainerService {
         String password = bcrypt.encode(String.valueOf(trainerDTO.getPassword()));
         String username = UsernameGenerator.generateUsername(trainerDTO.getFirstName(),trainerDTO.getLastName(),availableUsernames);
         log.info("creating trainer with username {}", username);
-        trainerDTO.setPassword(password.toCharArray());
         trainerDTO.setUserName(username);
 
         TrainerEntity trainer = trainerMapper.toEntity(trainerDTO);
         trainer.getUser().setRoles(new HashSet<>());
+        trainer.getUser().setPasswordHash(password);
         trainer.getUser().getRoles().add(Role.TRAINER);
         trainerRepository.save(trainer);
         log.info("trainer {} created successfully", username);
