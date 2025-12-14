@@ -1,6 +1,6 @@
 package org.example.service;
 
-import org.example.model.TrainerDTO;
+import org.example.persistence.model.TrainerDTO;
 import java.util.List;
 
 public interface TrainerService {

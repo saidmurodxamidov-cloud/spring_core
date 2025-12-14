@@ -1,9 +1,8 @@
-package org.example.entity;
+package org.example.persistence.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Past;
 import lombok.*;
-import org.hibernate.engine.spi.CascadeStyle;
 
 import java.time.LocalDate;
 import java.util.HashSet;

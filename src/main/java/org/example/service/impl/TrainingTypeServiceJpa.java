@@ -3,11 +3,10 @@ package org.example.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.entity.TrainingTypeEntity;
-import org.example.exception.EntityNotFoundException;
+import org.example.persistence.entity.TrainingTypeEntity;
 import org.example.mapper.TrainingTypeMapper;
-import org.example.model.TrainingTypeDTO;
-import org.example.repository.TrainingTypeRepository;
+import org.example.persistence.model.TrainingTypeDTO;
+import org.example.persistence.repository.TrainingTypeRepository;
 import org.example.service.TrainingTypeService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

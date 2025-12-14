@@ -1,9 +1,8 @@
 package org.example.mapper;
 
-import org.example.entity.TrainerEntity;
-import org.example.entity.UserEntity;
-import org.example.model.TrainerDTO;
-import org.example.model.UserDTO;
+import org.example.persistence.entity.TrainerEntity;
+import org.example.persistence.entity.UserEntity;
+import org.example.persistence.model.TrainerDTO;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring",uses = {UserMapper.class})

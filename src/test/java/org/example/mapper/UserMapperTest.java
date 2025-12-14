@@ -1,8 +1,8 @@
 package org.example.mapper;
 
-import org.example.entity.UserEntity;
+import org.example.persistence.entity.UserEntity;
 
-import org.example.model.UserDTO;
+import org.example.persistence.model.UserDTO;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 

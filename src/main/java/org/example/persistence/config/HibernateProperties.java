@@ -1,4 +1,4 @@
-package org.example.config;
+package org.example.persistence.config;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

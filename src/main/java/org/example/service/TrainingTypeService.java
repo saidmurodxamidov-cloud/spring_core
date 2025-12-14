@@ -1,6 +1,6 @@
 package org.example.service;
 
-import org.example.model.TrainingTypeDTO;
+import org.example.persistence.model.TrainingTypeDTO;
 
 import java.util.List;
 

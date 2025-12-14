@@ -1,5 +1,5 @@
 package org.example.service;
-import org.example.model.TraineeDTO;
+import org.example.persistence.model.TraineeDTO;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package org.example.model;
+package org.example.persistence.model;
 import jakarta.validation.constraints.Past;
 import lombok.*;
 

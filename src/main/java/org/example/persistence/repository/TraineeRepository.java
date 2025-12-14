@@ -1,6 +1,6 @@
-package org.example.repository;
+package org.example.persistence.repository;
 
-import org.example.entity.TraineeEntity;
+import org.example.persistence.entity.TraineeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

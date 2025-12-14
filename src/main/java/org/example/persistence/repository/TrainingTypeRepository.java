@@ -1,6 +1,6 @@
-package org.example.repository;
+package org.example.persistence.repository;
 
-import org.example.entity.TrainingTypeEntity;
+import org.example.persistence.entity.TrainingTypeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -2,18 +2,19 @@ package org.example.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.entity.TraineeEntity;
-import org.example.entity.TrainerEntity;
-import org.example.entity.TrainingEntity;
-import org.example.entity.TrainingTypeEntity;
+import org.example.persistence.entity.TraineeEntity;
+import org.example.persistence.entity.TrainerEntity;
+import org.example.persistence.entity.TrainingEntity;
+import org.example.persistence.entity.TrainingTypeEntity;
 import org.example.exception.EntityNotFoundException;
 import org.example.mapper.TrainingMapper;
-import org.example.model.TrainingDTO;
-import org.example.repository.TraineeRepository;
-import org.example.repository.TrainerRepository;
-import org.example.repository.TrainingRepository;
-import org.example.repository.TrainingTypeRepository;
+import org.example.persistence.model.TrainingDTO;
+import org.example.persistence.repository.TraineeRepository;
+import org.example.persistence.repository.TrainerRepository;
+import org.example.persistence.repository.TrainingRepository;
+import org.example.persistence.repository.TrainingTypeRepository;
 import org.example.service.TrainingService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +36,7 @@ public class TrainingServiceJpa implements TrainingService {
     private final TrainingMapper trainingMapper;
 
     @Transactional
+    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN') or hasRole('TRAINER')")
     public TrainingDTO createTraining(TrainingDTO trainingDTO){
         log.debug("Creating training with name {}", trainingDTO.getTrainingName());
 
@@ -65,6 +67,7 @@ public class TrainingServiceJpa implements TrainingService {
         return trainingMapper.toTraining(training);
     }
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN') or hasRole('TRAINER')")
     public List<TrainingDTO> getAllTraineeTrainings(String username){
         log.debug("getting trainee: {}'s trainings",username);
         TraineeEntity trainee = traineeRepository.findByUserUserName(username)
@@ -73,6 +76,7 @@ public class TrainingServiceJpa implements TrainingService {
         return trainingMapper.toTrainingModels(trainee.getTrainings()).stream().toList();
     }
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN') or hasRole('TRAINER')")
     public List<TrainingDTO> getAllTrainerTrainings(String username){
         log.debug("getting trainer: {}'s trainings",username);
         TrainerEntity trainee = trainerRepository.findByUserUserName(username)
@@ -82,6 +86,7 @@ public class TrainingServiceJpa implements TrainingService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN') or hasRole('TRAINER')")
     public List<TrainingDTO> getTraineeTrainings(String username, LocalDate fromDate, LocalDate toDate, String trainerName, String trainingTypeName){
         log.debug("getting trainee {}, from = {},to = {}, trainerName = {}, trainingTypeName = {} trainings",username,fromDate,toDate,trainerName,trainingTypeName);
 
@@ -102,6 +107,7 @@ public class TrainingServiceJpa implements TrainingService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN') or hasRole('TRAINER')")
     public List<TrainingDTO> getTrainerTrainings(String username,
                                                  LocalDate fromDate,
                                                  LocalDate toDate,

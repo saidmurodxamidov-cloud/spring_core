@@ -1,4 +1,4 @@
-package org.example.model;
+package org.example.persistence.model;
 
 public enum TrainingType {
     YOGA,STRENGTH,GYM,CARDIO

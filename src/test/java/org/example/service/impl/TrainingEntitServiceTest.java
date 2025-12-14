@@ -1,12 +1,17 @@
 package org.example.service.impl;
 
-import org.example.entity.*;
 import org.example.exception.EntityNotFoundException;
 import org.example.mapper.TrainingMapper;
-import org.example.model.TrainerDTO;
-import org.example.model.TrainingDTO;
-import org.example.model.TrainingTypeDTO;
-import org.example.repository.*;
+import org.example.persistence.model.TrainingDTO;
+import org.example.persistence.model.TrainingTypeDTO;
+import org.example.persistence.entity.TraineeEntity;
+import org.example.persistence.entity.TrainerEntity;
+import org.example.persistence.entity.TrainingEntity;
+import org.example.persistence.entity.TrainingTypeEntity;
+import org.example.persistence.repository.TraineeRepository;
+import org.example.persistence.repository.TrainerRepository;
+import org.example.persistence.repository.TrainingRepository;
+import org.example.persistence.repository.TrainingTypeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

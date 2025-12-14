@@ -1,8 +1,7 @@
-package org.example.entity;
+package org.example.persistence.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.validator.constraints.UniqueElements;
 
 import java.util.HashSet;
 import java.util.Set;

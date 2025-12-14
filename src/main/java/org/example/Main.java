@@ -5,10 +5,11 @@ import org.example.config.*;
 import org.example.mapper.TraineeMapper;
 import org.example.mapper.TrainerMapper;
 import org.example.mapper.TrainingMapper;
-import org.example.model.*;
+import org.example.persistence.model.*;
 import org.example.security.AuthService;
 import org.example.service.*;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -41,9 +42,10 @@ public class Main {
             TrainingMapper trainingMapper = context.getBean(TrainingMapper.class);
             UserService userService =
                     context.getBean(UserService.class);
-            TraineeMapper traineeMapper = context.getBean(TraineeMapper.class);
-            TrainerMapper trainerMapper = context.getBean(TrainerMapper.class);
+
             AuthService authService = context.getBean(AuthService.class);
+
+            authService.login("alex.jipacha4","trainerPass");
 
             TrainingTypeDTO trainingTypeDTO = new TrainingTypeDTO();
             trainingTypeDTO.setTrainingTypeName("YOGA");
@@ -83,8 +85,8 @@ public class Main {
             TrainerDTO trainer = new TrainerDTO();
             trainer.setUserId(3L);
             trainer.setFirstName("alex");
-            trainer.setLastName("bumba");
-            trainer.setUserName("bobtrainer");
+            trainer.setLastName("jipacha");
+            trainer.setUserName("polatcha");
             trainer.setPassword("trainerPass".toCharArray());
             trainer.setActive(true);
             trainer.setSpecialization(Set.of(yogaType, strengthType));
@@ -112,10 +114,12 @@ public class Main {
 
             training = trainingService.createTraining(training);
             System.out.println(training);
-            System.out.println(trainingMapper.toEntity(training));
-            System.out.println(trainingMapper.toTraining(trainingMapper.toEntity(training)));
             System.out.println(trainingService.getAllTraineeTrainings(trainee.getUserName()));
+
             System.out.println(trainerService.getTrainersNotAssignedToTrainee(trainee.getUserName()));
+
+
+            System.out.println(SecurityContextHolder.getContext().getAuthentication());
         } catch (Exception e) {
             log.error("Application failed to start", e);
             System.exit(1);

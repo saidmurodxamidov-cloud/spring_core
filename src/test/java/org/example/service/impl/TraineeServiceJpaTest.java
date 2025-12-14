@@ -1,13 +1,13 @@
 package org.example.service.impl;
 
-import org.example.entity.TraineeEntity;
-import org.example.entity.TrainerEntity;
-import org.example.entity.UserEntity;
+import org.example.persistence.entity.TraineeEntity;
+import org.example.persistence.entity.TrainerEntity;
+import org.example.persistence.entity.UserEntity;
 import org.example.mapper.TraineeMapper;
-import org.example.model.TraineeDTO;
-import org.example.repository.TraineeRepository;
-import org.example.repository.TrainerRepository;
-import org.example.repository.UserRepository;
+import org.example.persistence.model.TraineeDTO;
+import org.example.persistence.repository.TraineeRepository;
+import org.example.persistence.repository.TrainerRepository;
+import org.example.persistence.repository.UserRepository;
 import org.example.util.PasswordGenerator;
 import org.example.util.UsernameGenerator;
 import org.junit.jupiter.api.BeforeEach;

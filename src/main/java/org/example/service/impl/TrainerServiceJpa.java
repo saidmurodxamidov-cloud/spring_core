@@ -2,19 +2,17 @@ package org.example.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.entity.Role;
-import org.example.entity.TrainerEntity;
+import org.example.persistence.entity.Role;
+import org.example.persistence.entity.TrainerEntity;
 import org.example.mapper.TrainerMapper;
-import org.example.model.TrainerDTO;
-import org.example.repository.TrainerRepository;
-import org.example.repository.TrainingTypeRepository;
-import org.example.repository.UserRepository;
+import org.example.persistence.model.TrainerDTO;
+import org.example.persistence.repository.TrainerRepository;
+import org.example.persistence.repository.UserRepository;
 import org.example.service.TrainerService;
-import org.example.service.TrainingService;
 import org.example.util.UsernameGenerator;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,7 +47,7 @@ public class TrainerServiceJpa implements TrainerService {
         log.info("trainer {} created successfully", username);
         return trainerMapper.toDTO(trainer);
     }
-
+    @PreAuthorize("hasRole('TRAINER') or hasRole('ADMIN')")
     public TrainerDTO getTrainerByUsername(String username){
         log.debug("getting trainer: {}" , username);
         TrainerEntity trainer = trainerRepository.findByUserUserName(username)
@@ -57,6 +55,7 @@ public class TrainerServiceJpa implements TrainerService {
         return trainerMapper.toDTO(trainer);
     }
     @Transactional
+    @PreAuthorize("hasRole('TRAINER') or hasRole('ADMIN')")
     public TrainerDTO updateTrainer(TrainerDTO trainerDto){
         log.debug("updating trainer: {}", trainerDto.getUserName());
         TrainerEntity trainerEntity = trainerRepository.findByUserUserName(trainerDto.getUserName())
@@ -68,6 +67,7 @@ public class TrainerServiceJpa implements TrainerService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('TRAINER') or hasRole('ADMIN')")
     public List<TrainerDTO> getTrainersNotAssignedToTrainee(String traineeUsername) {
         log.debug("Fetching trainers not assigned to trainee: {}", traineeUsername);
         List<TrainerEntity> trainers = trainerRepository.findTrainersNotAssignedToTrainee(traineeUsername);

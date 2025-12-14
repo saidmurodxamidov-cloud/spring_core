@@ -1,10 +1,10 @@
 package org.example.mapper;
 
-import org.example.entity.TrainerEntity;
-import org.example.entity.TrainingTypeEntity;
-import org.example.entity.UserEntity;
-import org.example.model.TrainerDTO;
-import org.example.model.TrainingTypeDTO;
+import org.example.persistence.entity.TrainerEntity;
+import org.example.persistence.entity.TrainingTypeEntity;
+import org.example.persistence.entity.UserEntity;
+import org.example.persistence.model.TrainerDTO;
+import org.example.persistence.model.TrainingTypeDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
