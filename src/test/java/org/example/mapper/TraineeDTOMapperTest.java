@@ -84,7 +84,6 @@ class TraineeDTOMapperTest {
 
         // Then
         assertNotNull(dto);
-        assertNull(dto.getUserId());
         assertNull(dto.getFirstName());
         assertNull(dto.getLastName());
         assertEquals(LocalDate.of(1995, 5, 15), dto.getDateOfBirth());

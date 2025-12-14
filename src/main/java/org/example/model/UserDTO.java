@@ -9,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"userId"})
+@ToString
 public class UserDTO {
     private Long userId;
     @NotNull(message = "name should be present")
@@ -17,6 +18,7 @@ public class UserDTO {
     private String lastName;
     @NotNull
     private String userName;
+    @ToString.Exclude
     private char[] password;
     private boolean isActive;
 }

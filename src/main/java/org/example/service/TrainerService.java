@@ -11,7 +11,5 @@ public interface TrainerService {
 
     TrainerDTO updateTrainer(TrainerDTO trainerDto);
 
-    void setActiveStatus(String username, boolean active);
-
     List<TrainerDTO> getTrainersNotAssignedToTrainee(String traineeUsername);
 }

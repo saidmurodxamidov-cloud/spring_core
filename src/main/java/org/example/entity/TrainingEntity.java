@@ -26,7 +26,6 @@ public class TrainingEntity {
     private String trainingName;
     private LocalDate date;
     @NotNull
-    @PositiveOrZero
     private Duration trainingDuration;
 
     @ManyToOne

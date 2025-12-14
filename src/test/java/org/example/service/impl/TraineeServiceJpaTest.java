@@ -181,14 +181,22 @@ class TraineeServiceJpaTest {
 
             when(traineeMapper.toEntity(any(TraineeDTO.class))).thenReturn(entity);
 
+            TraineeDTO mappedDto = new TraineeDTO();
+            mappedDto.setUserName("jdoe3");
+            mappedDto.setPassword("encodedPassword".toCharArray());
+
+            when(traineeMapper.toDTO(any(TraineeEntity.class))).thenReturn(mappedDto);
+
             TraineeDTO result = service.createTrainee(dto);
 
+            assertNotNull(result);
             assertEquals("jdoe3", result.getUserName());
             assertEquals("encodedPassword", String.valueOf(result.getPassword()));
 
             verify(traineeRepository).save(entity);
         }
     }
+
     @Test
     void getTraineeByUsername_success() {
         TraineeEntity entity = new TraineeEntity();
@@ -210,44 +218,6 @@ class TraineeServiceJpaTest {
         assertThrows(
                 UsernameNotFoundException.class,
                 () -> service.getTraineeByUsername("john")
-        );
-    }
-
-    // ------------------ setActiveStatus tests ------------------
-    @Test
-    void setActiveStatus_success() {
-        String username = "john";
-
-        UserEntity user = new UserEntity();
-        user.setActive(false);
-        user.setUserName(username);
-
-        TraineeEntity trainee = new TraineeEntity();
-        trainee.setUser(user);
-
-        TraineeDTO dto = new TraineeDTO();
-        dto.setUserName(username);
-
-        when(traineeRepository.findByUserUserName(username))
-                .thenReturn(Optional.of(trainee));
-        when(traineeMapper.toDTO(trainee)).thenReturn(dto);
-
-        TraineeDTO result = service.setActiveStatus(username, true);
-
-        assertTrue(trainee.getUser().isActive());
-        assertEquals(dto, result);
-
-        verify(traineeRepository).save(trainee);
-    }
-
-    @Test
-    void setActiveStatus_userNotFound() {
-        when(traineeRepository.findByUserUserName("john"))
-                .thenReturn(Optional.empty());
-
-        assertThrows(
-                UsernameNotFoundException.class,
-                () -> service.setActiveStatus("john", true)
         );
     }
 }

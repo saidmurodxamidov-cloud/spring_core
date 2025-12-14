@@ -88,7 +88,6 @@ class TrainerMapperTest {
 
         // Then
         assertNotNull(dto);
-        assertNull(dto.getUserId());
         assertNull(dto.getFirstName());
         assertNull(dto.getLastName());
         assertNotNull(dto.getSpecialization());

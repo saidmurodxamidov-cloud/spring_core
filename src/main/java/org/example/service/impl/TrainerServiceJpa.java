@@ -2,6 +2,7 @@ package org.example.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.entity.Role;
 import org.example.entity.TrainerEntity;
 import org.example.mapper.TrainerMapper;
 import org.example.model.TrainerDTO;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -41,9 +43,11 @@ public class TrainerServiceJpa implements TrainerService {
         trainerDTO.setUserName(username);
 
         TrainerEntity trainer = trainerMapper.toEntity(trainerDTO);
+        trainer.getUser().setRoles(new HashSet<>());
+        trainer.getUser().getRoles().add(Role.TRAINER);
         trainerRepository.save(trainer);
         log.info("trainer {} created successfully", username);
-        return trainerDTO;
+        return trainerMapper.toDTO(trainer);
     }
 
     public TrainerDTO getTrainerByUsername(String username){
@@ -62,15 +66,7 @@ public class TrainerServiceJpa implements TrainerService {
         log.info("trainer {} updated successfully", trainerDto.getUserName());
         return trainerDto;
     }
-    @Transactional
-    public void setActiveStatus(String username,boolean active){
-        log.debug("setting active to {} status to trainer {}", active, username);
-        TrainerEntity trainer = trainerRepository.findByUserUserName(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username + "trainer does not exist"));
-        trainer.getUser().setActive(active);
-        trainerRepository.save(trainer);
-        log.info("successfully updated active status to {} of {} trainer",active,username);
-    }
+
     @Transactional(readOnly = true)
     public List<TrainerDTO> getTrainersNotAssignedToTrainee(String traineeUsername) {
         log.debug("Fetching trainers not assigned to trainee: {}", traineeUsername);

@@ -2,6 +2,7 @@ package org.example.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.entity.Role;
 import org.example.entity.TraineeEntity;
 import org.example.entity.TrainerEntity;
 import org.example.exception.EntityNotFoundException;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -39,15 +41,15 @@ public class TraineeServiceJpa implements TraineeService {
         String encodedPassword = bcrypt.encode(password);
         traineeDTO.setPassword(encodedPassword.toCharArray());
         traineeDTO.setUserName(username);
-
         log.info("creating trainee with username {}", traineeDTO.getUserName());
-
         TraineeEntity traineeEntity = traineeMapper.toEntity(traineeDTO);
+        traineeEntity.getUser().setRoles(new HashSet<>());
+        traineeEntity.getUser().getRoles().add(Role.TRAINEE);
         traineeRepository.save(traineeEntity);
 
         log.info("trainee created successfully with username: {}", traineeEntity.getUser().getUserName());
 
-        return traineeDTO;
+        return traineeMapper.toDTO(traineeEntity);
     }
     @Transactional(readOnly = true)
     public TraineeDTO getTraineeByUsername(String username){
@@ -76,18 +78,6 @@ public class TraineeServiceJpa implements TraineeService {
         traineeRepository.delete(trainee);
         log.info("user: {} is deleted successfully", username);
     }
-
-    @Transactional
-    public TraineeDTO setActiveStatus(String username, boolean active){
-        TraineeEntity trainee = traineeRepository.findByUserUserName(username)
-                .orElseThrow(() -> new UsernameNotFoundException("user not found with username: " + username));
-        trainee.getUser().setActive(active);
-
-        traineeRepository.save(trainee);
-        log.info("Trainee with username {}, set active status to {} successfully", username,active);
-        return traineeMapper.toDTO(trainee);
-    }
-
     @Transactional
     public TraineeDTO updateTrainee(String username, TraineeDTO updateDTO){
         log.debug("updating trainee with username: {}",username);

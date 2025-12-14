@@ -62,7 +62,7 @@ public class TrainingServiceJpa implements TrainingService {
 
         trainingRepository.save(training);
         log.info("training named {} created successfully", training.getTrainingName());
-        return trainingDTO;
+        return trainingMapper.toTraining(training);
     }
     @Transactional(readOnly = true)
     public List<TrainingDTO> getAllTraineeTrainings(String username){

@@ -28,7 +28,7 @@ public class TraineeEntity {
     private String address;
 
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
