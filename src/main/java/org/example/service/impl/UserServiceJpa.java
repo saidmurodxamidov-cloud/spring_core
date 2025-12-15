@@ -1,36 +1,53 @@
-package org.example.service;
+package org.example.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.example.entity.UserEntity;
-import org.example.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.example.persistence.entity.UserEntity;
+import org.example.persistence.repository.UserRepository;
+import org.example.service.UserService;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceJpa {
+@Slf4j
+public class UserServiceJpa implements UserService {
 
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bcrypt;
 
+    @Transactional(readOnly = true)
     public boolean passwordMatches(String username,String password){
         Optional<UserEntity> userOptional = userRepository.findByUserName(username);
         if(userOptional.isEmpty())
             return false;
         UserEntity user = userOptional.get();
-        return Arrays.equals(password.toCharArray(),user.getPassword());
+        return bcrypt.matches(password,user.getPasswordHash());
     }
-    public boolean changePassword(String userName,String oldPassword,String newPassword){
+
+
+    @Transactional
+    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN') or hasRole('TRAINER')")
+    public boolean changePassword(String userName,String newPassword){
+        log.debug("changing password of user: {}",userName);
         Optional<UserEntity> userOptional = userRepository.findByUserName(userName);
         if(userOptional.isEmpty())
             return false;
         UserEntity user = userOptional.get();
-        if(!Arrays.equals(user.getPassword(),oldPassword.toCharArray())){
-            return false;
-        }
-        user.setPassword(newPassword.toCharArray());
-        userRepository.save(user);
+        user.setPasswordHash(bcrypt.encode(newPassword));
+        log.info("changed password of user {} successfully" ,user);
         return true;
+    }
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
+    public boolean toggleUserActiveStatus(String username) {
+        UserEntity user = userRepository.findByUserName(username).orElseThrow(() -> new UsernameNotFoundException(username + ": user does exist"));
+        user.setActive(!user.isActive());
+        return user.isActive();
     }
 }

@@ -1,12 +1,13 @@
 package org.example.service.impl;
 
-import org.example.entity.TrainerEntity;
-import org.example.entity.UserEntity;
+import org.example.persistence.entity.Role;
+import org.example.persistence.entity.TrainerEntity;
+import org.example.persistence.entity.UserEntity;
 import org.example.mapper.TrainerMapper;
-import org.example.model.TrainerDTO;
-import org.example.repository.TrainerRepository;
-import org.example.repository.TrainingTypeRepository;
-import org.example.repository.UserRepository;
+import org.example.persistence.model.TrainerDTO;
+import org.example.persistence.repository.TrainerRepository;
+import org.example.persistence.repository.TrainingTypeRepository;
+import org.example.persistence.repository.UserRepository;
 import org.example.service.TrainingService;
 import org.example.util.UsernameGenerator;
 import org.junit.jupiter.api.Assertions;
@@ -67,7 +68,7 @@ class TrainerServiceJpaTest {
         trainerDTO.setPassword("pass".toCharArray());
 
         UserEntity user = new UserEntity();
-        user.setPassword("encodedPass".toCharArray());
+        user.setPasswordHash("encodedPass");
 
         trainerEntity = new TrainerEntity();
         trainerEntity.setUser(user);
@@ -82,15 +83,26 @@ class TrainerServiceJpaTest {
         dto.setLastName("Doe");
         dto.setPassword("rawPass".toCharArray());
 
+        // Mock existing usernames
         Set<String> existingUsernames = Set.of("john1", "john2");
         when(userRepository.findAllUserNames()).thenReturn(existingUsernames);
 
+        // Mock password encoding
         when(bcrypt.encode("rawPass")).thenReturn("encodedPass");
 
+        // Prepare TrainerEntity with initialized UserEntity
         TrainerEntity trainerEntity = new TrainerEntity();
+        trainerEntity.setUser(new UserEntity()); // important to avoid NPE
+
         when(trainerMapper.toEntity(any(TrainerDTO.class))).thenReturn(trainerEntity);
 
-        // Mock static method for UsernameGenerator
+        // Prepare expected DTO after mapping back
+        TrainerDTO mappedDto = new TrainerDTO();
+        mappedDto.setUserName("johnDoe3");
+        mappedDto.setPassword("encodedPass".toCharArray());
+        when(trainerMapper.toDTO(any(TrainerEntity.class))).thenReturn(mappedDto);
+
+        // Mock static UsernameGenerator
         try (MockedStatic<UsernameGenerator> usernameMock = mockStatic(UsernameGenerator.class)) {
             usernameMock.when(() ->
                     UsernameGenerator.generateUsername(eq("John"), eq("Doe"), anySet())
@@ -100,10 +112,15 @@ class TrainerServiceJpaTest {
             TrainerDTO result = service.createTrainer(dto);
 
             // Assert
+            assertNotNull(result);
             assertEquals("johnDoe3", result.getUserName());
             assertEquals("encodedPass", String.valueOf(result.getPassword()));
 
             verify(trainerRepository).save(trainerEntity);
+            verify(trainerMapper).toDTO(trainerEntity);
+
+            // Optional: also assert that role was added
+            assertTrue(trainerEntity.getUser().getRoles().contains(Role.TRAINER));
         }
     }
 
@@ -148,27 +165,9 @@ class TrainerServiceJpaTest {
         verify(trainerMapper, never()).updateFromDTO(any(), any());
         verify(trainerRepository, never()).save(any());
     }
-    @Test
-    void setActiveStatus_success() {
-        String username = "johnDoe";
-        trainerEntity.getUser().setActive(false);
 
-        when(trainerRepository.findByUserUserName(username)).thenReturn(Optional.of(trainerEntity));
 
-        service.setActiveStatus(username, true);
 
-        assertTrue(trainerEntity.getUser().isActive());
-        verify(trainerRepository).save(trainerEntity);
-    }
-
-    @Test
-    void setActiveStatus_trainerNotFound() {
-        String username = "unknown";
-        when(trainerRepository.findByUserUserName(username)).thenReturn(Optional.empty());
-
-        assertThrows(UsernameNotFoundException.class, () -> service.setActiveStatus(username, true));
-        verify(trainerRepository, never()).save(any());
-    }
     @Test
     void getTrainersNotAssignedToTrainee_success() {
         String traineeUsername = "trainee1";

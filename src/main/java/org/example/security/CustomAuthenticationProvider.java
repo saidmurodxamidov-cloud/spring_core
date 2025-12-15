@@ -2,21 +2,17 @@ package org.example.security;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.entity.UserEntity;
-import org.example.repository.TraineeRepository;
-import org.example.repository.TrainerRepository;
-import org.example.repository.UserRepository;
+import org.example.persistence.entity.UserEntity;
+import org.example.persistence.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,14 +34,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         UserEntity user = userRepository.findByUserName(username)
                 .orElseThrow(() -> new BadCredentialsException("Invalid username or password"));
 
-        if (!passwordEncoder.matches(password, String.valueOf(user.getPassword()))) {
+        if (!passwordEncoder.matches(password, user.getPasswordHash())) {
             log.error("Invalid password for user: {}", username);
             throw new BadCredentialsException("Invalid username or password");
-        }
-
-        if (!user.isActive()) {
-            log.error("UserEntity account is inactive: {}", username);
-            throw new BadCredentialsException("UserEntity account is inactive");
         }
 
         List<GrantedAuthority> authorities = getAuthorities(user);

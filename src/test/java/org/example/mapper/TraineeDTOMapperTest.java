@@ -1,8 +1,8 @@
 package org.example.mapper;
 
-import org.example.entity.TraineeEntity;
-import org.example.entity.UserEntity;
-import org.example.model.TraineeDTO;
+import org.example.persistence.entity.TraineeEntity;
+import org.example.persistence.entity.UserEntity;
+import org.example.persistence.model.TraineeDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -27,7 +27,7 @@ class TraineeDTOMapperTest {
                 .firstName("Alice")
                 .lastName("Williams")
                 .userName("alice.williams")
-                .password("password123".toCharArray())
+                .passwordHash("password123")
                 .isActive(true)
                 .build();
 
@@ -59,7 +59,6 @@ class TraineeDTOMapperTest {
         assertEquals("Alice", dto.getFirstName());
         assertEquals("Williams", dto.getLastName());
         assertEquals("alice.williams", dto.getUserName());
-        assertArrayEquals("password123".toCharArray(), dto.getPassword());
         assertTrue(dto.isActive());
         assertEquals(LocalDate.of(1995, 5, 15), dto.getDateOfBirth());
         assertEquals("123 Main Street", dto.getAddress());
@@ -84,7 +83,6 @@ class TraineeDTOMapperTest {
 
         // Then
         assertNotNull(dto);
-        assertNull(dto.getUserId());
         assertNull(dto.getFirstName());
         assertNull(dto.getLastName());
         assertEquals(LocalDate.of(1995, 5, 15), dto.getDateOfBirth());

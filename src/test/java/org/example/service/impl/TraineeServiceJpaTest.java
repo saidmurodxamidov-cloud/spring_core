@@ -1,13 +1,13 @@
 package org.example.service.impl;
 
-import org.example.entity.TraineeEntity;
-import org.example.entity.TrainerEntity;
-import org.example.entity.UserEntity;
+import org.example.persistence.entity.TraineeEntity;
+import org.example.persistence.entity.TrainerEntity;
+import org.example.persistence.entity.UserEntity;
 import org.example.mapper.TraineeMapper;
-import org.example.model.TraineeDTO;
-import org.example.repository.TraineeRepository;
-import org.example.repository.TrainerRepository;
-import org.example.repository.UserRepository;
+import org.example.persistence.model.TraineeDTO;
+import org.example.persistence.repository.TraineeRepository;
+import org.example.persistence.repository.TrainerRepository;
+import org.example.persistence.repository.UserRepository;
 import org.example.util.PasswordGenerator;
 import org.example.util.UsernameGenerator;
 import org.junit.jupiter.api.BeforeEach;
@@ -181,14 +181,22 @@ class TraineeServiceJpaTest {
 
             when(traineeMapper.toEntity(any(TraineeDTO.class))).thenReturn(entity);
 
+            TraineeDTO mappedDto = new TraineeDTO();
+            mappedDto.setUserName("jdoe3");
+            mappedDto.setPassword("encodedPassword".toCharArray());
+
+            when(traineeMapper.toDTO(any(TraineeEntity.class))).thenReturn(mappedDto);
+
             TraineeDTO result = service.createTrainee(dto);
 
+            assertNotNull(result);
             assertEquals("jdoe3", result.getUserName());
             assertEquals("encodedPassword", String.valueOf(result.getPassword()));
 
             verify(traineeRepository).save(entity);
         }
     }
+
     @Test
     void getTraineeByUsername_success() {
         TraineeEntity entity = new TraineeEntity();
@@ -210,44 +218,6 @@ class TraineeServiceJpaTest {
         assertThrows(
                 UsernameNotFoundException.class,
                 () -> service.getTraineeByUsername("john")
-        );
-    }
-
-    // ------------------ setActiveStatus tests ------------------
-    @Test
-    void setActiveStatus_success() {
-        String username = "john";
-
-        UserEntity user = new UserEntity();
-        user.setActive(false);
-        user.setUserName(username);
-
-        TraineeEntity trainee = new TraineeEntity();
-        trainee.setUser(user);
-
-        TraineeDTO dto = new TraineeDTO();
-        dto.setUserName(username);
-
-        when(traineeRepository.findByUserUserName(username))
-                .thenReturn(Optional.of(trainee));
-        when(traineeMapper.toDTO(trainee)).thenReturn(dto);
-
-        TraineeDTO result = service.setActiveStatus(username, true);
-
-        assertTrue(trainee.getUser().isActive());
-        assertEquals(dto, result);
-
-        verify(traineeRepository).save(trainee);
-    }
-
-    @Test
-    void setActiveStatus_userNotFound() {
-        when(traineeRepository.findByUserUserName("john"))
-                .thenReturn(Optional.empty());
-
-        assertThrows(
-                UsernameNotFoundException.class,
-                () -> service.setActiveStatus("john", true)
         );
     }
 }

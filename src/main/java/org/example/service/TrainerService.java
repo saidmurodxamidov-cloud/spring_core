@@ -1,6 +1,6 @@
 package org.example.service;
 
-import org.example.model.TrainerDTO;
+import org.example.persistence.model.TrainerDTO;
 import java.util.List;
 
 public interface TrainerService {
@@ -10,8 +10,6 @@ public interface TrainerService {
     TrainerDTO getTrainerByUsername(String username);
 
     TrainerDTO updateTrainer(TrainerDTO trainerDto);
-
-    void setActiveStatus(String username, boolean active);
 
     List<TrainerDTO> getTrainersNotAssignedToTrainee(String traineeUsername);
 }

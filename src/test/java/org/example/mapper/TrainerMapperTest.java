@@ -1,10 +1,10 @@
 package org.example.mapper;
 
-import org.example.entity.TrainerEntity;
-import org.example.entity.TrainingTypeEntity;
-import org.example.entity.UserEntity;
-import org.example.model.TrainerDTO;
-import org.example.model.TrainingTypeDTO;
+import org.example.persistence.entity.TrainerEntity;
+import org.example.persistence.entity.TrainingTypeEntity;
+import org.example.persistence.entity.UserEntity;
+import org.example.persistence.model.TrainerDTO;
+import org.example.persistence.model.TrainingTypeDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -30,7 +30,7 @@ class TrainerMapperTest {
                 .firstName("Michael")
                 .lastName("Jordan")
                 .userName("michael.jordan")
-                .password("password123".toCharArray())
+                .passwordHash("password123")
                 .isActive(true)
                 .build();
 
@@ -88,7 +88,6 @@ class TrainerMapperTest {
 
         // Then
         assertNotNull(dto);
-        assertNull(dto.getUserId());
         assertNull(dto.getFirstName());
         assertNull(dto.getLastName());
         assertNotNull(dto.getSpecialization());

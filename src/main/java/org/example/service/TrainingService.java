@@ -1,5 +1,5 @@
 package org.example.service;
-import org.example.model.TrainingDTO;
+import org.example.persistence.model.TrainingDTO;
 
 import java.time.LocalDate;
 import java.util.List;

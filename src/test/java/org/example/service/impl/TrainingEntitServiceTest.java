@@ -1,11 +1,17 @@
 package org.example.service.impl;
 
-import org.example.entity.*;
 import org.example.exception.EntityNotFoundException;
 import org.example.mapper.TrainingMapper;
-import org.example.model.TrainingDTO;
-import org.example.model.TrainingTypeDTO;
-import org.example.repository.*;
+import org.example.persistence.model.TrainingDTO;
+import org.example.persistence.model.TrainingTypeDTO;
+import org.example.persistence.entity.TraineeEntity;
+import org.example.persistence.entity.TrainerEntity;
+import org.example.persistence.entity.TrainingEntity;
+import org.example.persistence.entity.TrainingTypeEntity;
+import org.example.persistence.repository.TraineeRepository;
+import org.example.persistence.repository.TrainerRepository;
+import org.example.persistence.repository.TrainingRepository;
+import org.example.persistence.repository.TrainingTypeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -63,7 +69,7 @@ class TrainingServiceJpaTest {
 
     @Test
     void createTraining_success() {
-        // Mock entities returned by repositories
+        // Arrange
         TraineeEntity trainee = new TraineeEntity();
         trainee.setId(10L);
 
@@ -73,22 +79,46 @@ class TrainingServiceJpaTest {
         TrainingTypeEntity type = new TrainingTypeEntity();
         type.setTrainingTypeName("Cardio");
 
+        // DTO to pass to service
+        TrainingDTO trainingDTO = new TrainingDTO();
+        trainingDTO.setTraineeId(10L);
+        trainingDTO.setTrainerId(5L);
+        trainingDTO.setTrainingName("Morning Workout");
+        TrainingTypeDTO dto = new TrainingTypeDTO();
+        dto.setTrainingTypeName("Cardio");
+        trainingDTO.setTrainingType(dto);
+        trainingDTO.setTrainingDuration(Duration.ofMinutes(60));
+
         // Mock repository calls
         when(traineeRepository.findById(10L)).thenReturn(Optional.of(trainee));
         when(trainerRepository.findById(5L)).thenReturn(Optional.of(trainer));
         when(trainingTypeRepository.findByTrainingTypeName("Cardio"))
                 .thenReturn(Optional.of(type));
 
-        // Mock save behavior
-        when(trainingRepository.save(any(TrainingEntity.class))).thenAnswer(inv -> inv.getArgument(0));
+        // Mock save
+        when(trainingRepository.save(any(TrainingEntity.class)))
+                .thenAnswer(inv -> inv.getArgument(0));
 
-        // Execute
+        // Mock mapper
+        TrainingDTO mappedDto = new TrainingDTO();
+        mappedDto.setTrainingName("Morning Workout");
+        mappedDto.setTrainingDuration(Duration.ofMinutes(60));
+
+        mappedDto.setTrainingType(dto);
+
+        when(trainingMapper.toTraining(any(TrainingEntity.class)))
+                .thenReturn(mappedDto);
+
+        // Act
         TrainingDTO result = service.createTraining(trainingDTO);
 
-        // Verify
+        // Assert
+        assertNotNull(result);
         assertEquals("Morning Workout", result.getTrainingName());
         verify(trainingRepository, times(1)).save(any(TrainingEntity.class));
+        verify(trainingMapper).toTraining(any(TrainingEntity.class));
     }
+
 
     @Test
     void createTraining_throwsWhenTraineeNotFound() {

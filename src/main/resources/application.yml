@@ -10,7 +10,7 @@ db:
 hibernate:
   ddl-auto: update
   dialect: org.hibernate.dialect.PostgreSQLDialect
-  show-sql: true
+  show-sql: false
   format-sql: true
   jdbc:
     lob:

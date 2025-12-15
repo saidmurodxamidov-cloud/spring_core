@@ -1,7 +1,7 @@
 package org.example.mapper;
 
-import org.example.entity.UserEntity;
-import org.example.model.UserDTO;
+import org.example.persistence.entity.UserEntity;
+import org.example.persistence.model.UserDTO;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
@@ -18,7 +18,7 @@ public class UserDTOMapperTest {
                 .firstName("John")
                 .lastName("Doe")
                 .userName("jdoe")
-                .password("pass".toCharArray())
+                .passwordHash("pass")
                 .isActive(true)
                 .build();
 
@@ -27,7 +27,6 @@ public class UserDTOMapperTest {
         assertNotNull(dto);
         assertEquals(entity.getId(), dto.getUserId());
         assertEquals(entity.getFirstName(), dto.getFirstName());
-        assertArrayEquals(entity.getPassword(), dto.getPassword());
     }
 
     @Test
@@ -39,6 +38,5 @@ public class UserDTOMapperTest {
         assertNotNull(entity);
         assertEquals(dto.getUserId(), entity.getId());
         assertEquals(dto.getLastName(), entity.getLastName());
-        assertArrayEquals(dto.getPassword(), entity.getPassword());
     }
 }

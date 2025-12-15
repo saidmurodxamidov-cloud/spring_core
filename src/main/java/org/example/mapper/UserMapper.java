@@ -1,7 +1,7 @@
 package org.example.mapper;
 
-import org.example.entity.UserEntity;
-import org.example.model.UserDTO;
+import org.example.persistence.entity.UserEntity;
+import org.example.persistence.model.UserDTO;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
