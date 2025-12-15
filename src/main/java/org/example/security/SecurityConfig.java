@@ -4,7 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -31,19 +32,20 @@ public class SecurityConfig {
         return authenticationManagerBuilder.build();
     }
 
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector,
+                                           JwtAuthenticationFilter jwtFilter) throws Exception {
+
         MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
 
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                // API endpoints
                                 mvcMatcherBuilder.pattern("/api/trainers/register"),
                                 mvcMatcherBuilder.pattern("/api/trainees/register"),
                                 mvcMatcherBuilder.pattern("/api/training-types/**"),
-                                // Swagger/OpenAPI endpoints
                                 mvcMatcherBuilder.pattern("/v3/api-docs/**"),
                                 mvcMatcherBuilder.pattern("/swagger-ui/**"),
                                 mvcMatcherBuilder.pattern("/swagger-ui.html"),
@@ -53,11 +55,13 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                );
+                )
+                // ADD JWT filter BEFORE UsernamePasswordAuthenticationFilter
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
 }
