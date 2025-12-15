@@ -12,6 +12,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 @Configuration
 @EnableWebSecurity
@@ -30,12 +32,25 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
+        MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
+
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/trainers/register", "/api/trainees/register",
-                                "/api/training-types/**").permitAll()
+                        .requestMatchers(
+                                // API endpoints
+                                mvcMatcherBuilder.pattern("/api/trainers/register"),
+                                mvcMatcherBuilder.pattern("/api/trainees/register"),
+                                mvcMatcherBuilder.pattern("/api/training-types/**"),
+                                // Swagger/OpenAPI endpoints
+                                mvcMatcherBuilder.pattern("/v3/api-docs/**"),
+                                mvcMatcherBuilder.pattern("/swagger-ui/**"),
+                                mvcMatcherBuilder.pattern("/swagger-ui.html"),
+                                mvcMatcherBuilder.pattern("/webjars/**"),
+                                mvcMatcherBuilder.pattern("/swagger-resources/**"),
+                                mvcMatcherBuilder.pattern("/configuration/**")
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())
