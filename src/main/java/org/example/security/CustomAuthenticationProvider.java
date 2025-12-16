@@ -32,16 +32,24 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         log.info("Authenticating user: {}", username);
 
         UserEntity user = userRepository.findByUserName(username)
-                .orElseThrow(() -> new BadCredentialsException("Invalid username or password"));
+                .orElseThrow(() -> {
+                    log.error("User not found: {}", username);
+                    return new BadCredentialsException("Invalid username or password");
+                });
 
         if (!passwordEncoder.matches(password, user.getPasswordHash())) {
             log.error("Invalid password for user: {}", username);
             throw new BadCredentialsException("Invalid username or password");
         }
 
-        List<GrantedAuthority> authorities = getAuthorities(user);
+        // getRoles() returns List<Role>, which implements GrantedAuthority
+        List<GrantedAuthority> authorities = user.getRoles().stream()
+                .map(role -> (GrantedAuthority) role)
+                .collect(Collectors.toList());
 
-        log.info("UserEntity authenticated successfully: {}", username);
+        log.info("User authenticated: {} with roles: {}", username,
+                authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+
         return new UsernamePasswordAuthenticationToken(username, password, authorities);
     }
 
@@ -49,11 +57,4 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     public boolean supports(Class<?> authentication) {
         return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
-
-    private List<GrantedAuthority> getAuthorities(UserEntity user) {
-        return user.getRoles().stream()
-                .map(role -> (GrantedAuthority) role)
-                .collect(Collectors.toList());
-    }
-
 }

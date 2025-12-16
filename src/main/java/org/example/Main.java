@@ -2,8 +2,6 @@ package org.example;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.config.*;
-import org.example.mapper.TraineeMapper;
-import org.example.mapper.TrainerMapper;
 import org.example.mapper.TrainingMapper;
 import org.example.persistence.model.*;
 import org.example.security.AuthService;
@@ -93,8 +91,8 @@ public class Main {
 
             strengthType = trainingTypeService.create(strengthType);
             yogaType = trainingTypeService.create(yogaType);
-            trainee = traineeService.createTrainee(trainee);
-            trainer = trainerService.createTrainer(trainer);
+//            trainee = traineeService.createTrainee(trainee);
+//            trainer = trainerService.createTrainer(trainer);
             System.out.println(strengthType);
             System.out.println(trainee);
             System.out.println(trainer);
@@ -112,7 +110,7 @@ public class Main {
                     Duration.ofMinutes(60)
             );
 
-            training = trainingService.createTraining(training);
+//            training = trainingService.createTraining(training);
             System.out.println(training);
             System.out.println(trainingService.getAllTraineeTrainings(trainee.getUserName()));
 

@@ -6,6 +6,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,17 +16,20 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;
+    private final UserDetailsService userDetailsService;
+    private final JwtService jwtService;
 
-
-    public void login(String username, String password) {
+    public String login(String username, String password) {
         UsernamePasswordAuthenticationToken authRequest =
                 new UsernamePasswordAuthenticationToken(username, password);
 
-        Authentication authResult = authenticationManager.authenticate(authRequest);
+        authenticationManager.authenticate(authRequest);
 
-        SecurityContextHolder.getContext().setAuthentication(authResult);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        String token = jwtService.generateToken(userDetails);
 
-        log.debug("User {} logged in successfully", username);
+        log.debug("User {} logged in successfully with JWT", username);
+        return token;
     }
 
     public void logout() {
@@ -32,4 +37,3 @@ public class AuthService {
         log.debug("Logged out successfully");
     }
 }
-

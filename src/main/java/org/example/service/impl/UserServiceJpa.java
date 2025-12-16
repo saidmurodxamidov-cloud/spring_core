@@ -32,19 +32,26 @@ public class UserServiceJpa implements UserService {
 
 
     @Transactional
-    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN') or hasRole('TRAINER')")
-    public boolean changePassword(String userName,String newPassword){
-        log.debug("changing password of user: {}",userName);
-        Optional<UserEntity> userOptional = userRepository.findByUserName(userName);
-        if(userOptional.isEmpty())
-            return false;
-        UserEntity user = userOptional.get();
+//    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN') or hasRole('TRAINER')")
+    public boolean changePassword(String usernameFromToken, String oldPassword, String newPassword) {
+        log.debug("Changing password for user: {}", usernameFromToken);
+
+        UserEntity user = userRepository.findByUserName(usernameFromToken)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        // Verify old password
+        if (!bcrypt.matches(oldPassword, user.getPasswordHash())) {
+            throw new IllegalArgumentException("Old password is incorrect");
+        }
+
+        // Update with new password
         user.setPasswordHash(bcrypt.encode(newPassword));
-        log.info("changed password of user {} successfully" ,user);
+        log.info("Password changed successfully for user {}", usernameFromToken);
         return true;
     }
+
     @Transactional
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public boolean toggleUserActiveStatus(String username) {
         UserEntity user = userRepository.findByUserName(username).orElseThrow(() -> new UsernameNotFoundException(username + ": user does exist"));
         user.setActive(!user.isActive());

@@ -21,7 +21,6 @@ public class OpenApiConfig {
                         .title("My Spring Core API")
                         .description("Swagger for Spring MVC (no Boot)")
                         .version("1.0"))
-                // Add security requirement globally
                 .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME))
                 .components(new Components()
                         .addSecuritySchemes(SECURITY_SCHEME_NAME,

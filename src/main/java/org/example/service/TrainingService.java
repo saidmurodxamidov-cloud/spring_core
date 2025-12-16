@@ -1,4 +1,5 @@
 package org.example.service;
+import org.example.dto.request.TrainingRequest;
 import org.example.persistence.model.TrainingDTO;
 
 import java.time.LocalDate;
@@ -6,7 +7,7 @@ import java.util.List;
 
 public interface TrainingService {
 
-    TrainingDTO createTraining(TrainingDTO trainingDTO);
+    TrainingDTO createTraining(TrainingRequest trainingRequest);
 
     List<TrainingDTO> getAllTraineeTrainings(String username);
 

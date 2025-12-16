@@ -2,6 +2,7 @@ package org.example.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.dto.request.TrainingRequest;
 import org.example.persistence.entity.TraineeEntity;
 import org.example.persistence.entity.TrainerEntity;
 import org.example.persistence.entity.TrainingEntity;
@@ -14,11 +15,12 @@ import org.example.persistence.repository.TrainerRepository;
 import org.example.persistence.repository.TrainingRepository;
 import org.example.persistence.repository.TrainingTypeRepository;
 import org.example.service.TrainingService;
-import org.springframework.security.access.prepost.PreAuthorize;
+//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -36,30 +38,30 @@ public class TrainingServiceJpa implements TrainingService {
     private final TrainingMapper trainingMapper;
 
     @Transactional
-    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN') or hasRole('TRAINER')")
-    public TrainingDTO createTraining(TrainingDTO trainingDTO){
-        log.debug("Creating training with name {}", trainingDTO.getTrainingName());
+//    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN') or hasRole('TRAINER')")
+    public TrainingDTO createTraining(TrainingRequest trainingRequest){
+        log.debug("Creating training with name {}", trainingRequest.getTrainingName());
 
-        TraineeEntity trainee = traineeRepository.findById((trainingDTO.getTraineeId()))
-                .orElseThrow(() -> new UsernameNotFoundException("trainee with id: " + trainingDTO.getTrainingId() + " does not exist"));
+        TraineeEntity trainee = traineeRepository.findByUserUserName((trainingRequest.getTraineeUsername()))
+                .orElseThrow(() -> new UsernameNotFoundException("trainee: " + trainingRequest.getTraineeUsername() + " does not exist"));
 
-        TrainerEntity trainer = trainerRepository.findById(trainingDTO.getTrainerId())
-                .orElseThrow(() -> new UsernameNotFoundException("trainer with id: " + trainingDTO.getTrainerId() + " not found"));
+        TrainerEntity trainer = trainerRepository.findByUserUserName(trainingRequest.getTrainerUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("trainer with: " + trainingRequest.getTrainerUsername() + " not found"));
 
         TrainingTypeEntity trainingType = trainingTypeRepository
-                .findByTrainingTypeName(trainingDTO.getTrainingType().getTrainingTypeName())
+                .findByTrainingTypeName(trainingRequest.getTrainingName())
                 .orElseThrow(() -> new EntityNotFoundException(
-                        "Training type not found: " + trainingDTO.getTrainingType().getTrainingTypeName()
+                        "Training type not found: " + trainingRequest.getTrainingName()
                 ));
 
 
         TrainingEntity training = TrainingEntity.builder()
                 .trainee(trainee)
                 .trainer(trainer)
-                .trainingName(trainingDTO.getTrainingName())
+                .trainingName(trainingRequest.getTrainingName())
                 .trainingType(trainingType)
-                .trainingDuration(trainingDTO.getTrainingDuration())
-                .date(trainingDTO.getDate())
+                .trainingDuration(Duration.ofMinutes(trainingRequest.getDurationInMinutes()))
+                .date(trainingRequest.getTrainingDate())
                 .build();
 
         trainingRepository.save(training);
@@ -67,7 +69,7 @@ public class TrainingServiceJpa implements TrainingService {
         return trainingMapper.toTraining(training);
     }
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN') or hasRole('TRAINER')")
+//    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN') or hasRole('TRAINER')")
     public List<TrainingDTO> getAllTraineeTrainings(String username){
         log.debug("getting trainee: {}'s trainings",username);
         TraineeEntity trainee = traineeRepository.findByUserUserName(username)
@@ -76,7 +78,7 @@ public class TrainingServiceJpa implements TrainingService {
         return trainingMapper.toTrainingModels(trainee.getTrainings()).stream().toList();
     }
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN') or hasRole('TRAINER')")
+//    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN') or hasRole('TRAINER')")
     public List<TrainingDTO> getAllTrainerTrainings(String username){
         log.debug("getting trainer: {}'s trainings",username);
         TrainerEntity trainee = trainerRepository.findByUserUserName(username)
@@ -86,7 +88,7 @@ public class TrainingServiceJpa implements TrainingService {
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN') or hasRole('TRAINER')")
+//    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN') or hasRole('TRAINER')")
     public List<TrainingDTO> getTraineeTrainings(String username, LocalDate fromDate, LocalDate toDate, String trainerName, String trainingTypeName){
         log.debug("getting trainee {}, from = {},to = {}, trainerName = {}, trainingTypeName = {} trainings",username,fromDate,toDate,trainerName,trainingTypeName);
 
@@ -107,7 +109,7 @@ public class TrainingServiceJpa implements TrainingService {
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN') or hasRole('TRAINER')")
+//    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN') or hasRole('TRAINER')")
     public List<TrainingDTO> getTrainerTrainings(String username,
                                                  LocalDate fromDate,
                                                  LocalDate toDate,

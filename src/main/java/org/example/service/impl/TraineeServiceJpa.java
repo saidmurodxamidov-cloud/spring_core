@@ -2,6 +2,8 @@ package org.example.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.dto.request.TraineeRegistrationRequest;
+import org.example.dto.response.AuthResponse;
 import org.example.persistence.entity.Role;
 import org.example.persistence.entity.TraineeEntity;
 import org.example.persistence.entity.TrainerEntity;
@@ -14,7 +16,7 @@ import org.example.persistence.repository.UserRepository;
 import org.example.service.TraineeService;
 import org.example.util.PasswordGenerator;
 import org.example.util.UsernameGenerator;
-import org.springframework.security.access.prepost.PreAuthorize;
+//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -35,25 +37,31 @@ public class TraineeServiceJpa implements TraineeService {
     private final TrainerRepository trainerRepository;
 
     @Transactional
-    public TraineeDTO createTrainee(TraineeDTO traineeDTO){
+    public AuthResponse createTrainee(TraineeRegistrationRequest traineeRegistrationRequest){
         Set<String> availableUsernames = userRepository.findAllUserNames();
         String password = new String(PasswordGenerator.generatePassword());
-        String username = UsernameGenerator.generateUsername(traineeDTO.getFirstName(), traineeDTO.getLastName(),availableUsernames);
+        String username = UsernameGenerator.generateUsername(traineeRegistrationRequest.getFirstname(), traineeRegistrationRequest.getLastname(),availableUsernames);
         String encodedPassword = bcrypt.encode(password);
-        traineeDTO.setUserName(username);
-        log.info("creating trainee with username {}", traineeDTO.getUserName());
+
+        TraineeDTO traineeDTO = new TraineeDTO(null,traineeRegistrationRequest.getFirstname()
+                ,traineeRegistrationRequest.getLastname(),username,null
+                ,true,traineeRegistrationRequest.getDateOfBirth(),
+                traineeRegistrationRequest.getAddress());
+
+
+        log.info("creating trainee with username {}", username);
         TraineeEntity traineeEntity = traineeMapper.toEntity(traineeDTO);
         traineeEntity.getUser().setPasswordHash(encodedPassword);
         traineeEntity.getUser().setRoles(new HashSet<>());
         traineeEntity.getUser().getRoles().add(Role.TRAINEE);
+        traineeEntity.getUser().setActive(true);
         traineeRepository.save(traineeEntity);
+        log.info("trainee created successfully with username: {}", username);
 
-        log.info("trainee created successfully with username: {}", traineeEntity.getUser().getUserName());
-
-        return traineeMapper.toDTO(traineeEntity);
+        return new AuthResponse(username,password);
     }
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN')")
     public TraineeDTO getTraineeByUsername(String username){
         log.debug("getting trainee with username: {}",username);
         return traineeRepository.findByUserUserName(username)
@@ -61,7 +69,7 @@ public class TraineeServiceJpa implements TraineeService {
                 .orElseThrow((() -> new UsernameNotFoundException("user not found with username: " + username)));
     }
     @Transactional
-    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN')")
     public void updateTrainersList(String traineeUsername, List<String> trainersUsernames) {
         log.debug("updating trainee: {}'s trainers", traineeUsername);
         TraineeEntity trainee = traineeRepository.findByUserUserName(traineeUsername)
@@ -73,7 +81,7 @@ public class TraineeServiceJpa implements TraineeService {
         log.info("trainee {}'s trainers updated successfully", traineeUsername);
     }
     @Transactional
-    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN')")
     public void deleteByUsername(String username) {
         log.debug("deleting user with username: {}", username);
         TraineeEntity trainee = traineeRepository.findByUserUserName(username)
@@ -83,7 +91,7 @@ public class TraineeServiceJpa implements TraineeService {
         log.info("user: {} is deleted successfully", username);
     }
     @Transactional
-    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN')")
     public TraineeDTO updateTrainee(String username, TraineeDTO updateDTO){
         log.debug("updating trainee with username: {}",username);
         TraineeEntity traineeEntity = traineeRepository.findByUserUserName(username)

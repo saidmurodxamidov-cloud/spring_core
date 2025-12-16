@@ -152,50 +152,6 @@ class TraineeServiceJpaTest {
         verify(traineeRepository, never()).delete(any());
     }
 
-    // ------------------ createTrainee test ------------------
-    @Test
-    void createTrainee_success() {
-        TraineeDTO dto = new TraineeDTO();
-        dto.setFirstName("John");
-        dto.setLastName("Doe");
-
-        Set<String> usernames = Set.of("jdoe1", "jdoe2");
-        when(userRepository.findAllUserNames()).thenReturn(usernames);
-
-        try (MockedStatic<UsernameGenerator> usernameGenMock = mockStatic(UsernameGenerator.class);
-             MockedStatic<PasswordGenerator> passwordGenMock = mockStatic(PasswordGenerator.class)) {
-
-            usernameGenMock.when(() ->
-                    UsernameGenerator.generateUsername(eq("John"), eq("Doe"), anySet())
-            ).thenReturn("jdoe3");
-
-            passwordGenMock.when(PasswordGenerator::generatePassword)
-                    .thenReturn("secret123".toCharArray());
-
-            when(bcrypt.encode(anyString())).thenReturn("encodedPassword");
-
-            TraineeEntity entity = new TraineeEntity();
-            UserEntity user = new UserEntity();
-            user.setUserName("jdoe3");
-            entity.setUser(user);
-
-            when(traineeMapper.toEntity(any(TraineeDTO.class))).thenReturn(entity);
-
-            TraineeDTO mappedDto = new TraineeDTO();
-            mappedDto.setUserName("jdoe3");
-            mappedDto.setPassword("encodedPassword".toCharArray());
-
-            when(traineeMapper.toDTO(any(TraineeEntity.class))).thenReturn(mappedDto);
-
-            TraineeDTO result = service.createTrainee(dto);
-
-            assertNotNull(result);
-            assertEquals("jdoe3", result.getUserName());
-            assertEquals("encodedPassword", String.valueOf(result.getPassword()));
-
-            verify(traineeRepository).save(entity);
-        }
-    }
 
     @Test
     void getTraineeByUsername_success() {

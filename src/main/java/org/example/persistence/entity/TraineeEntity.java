@@ -2,6 +2,7 @@ package org.example.persistence.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -21,7 +22,8 @@ public class TraineeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    @Past
+
+    @PastOrPresent
     private LocalDate dateOfBirth;
 
     private String address;

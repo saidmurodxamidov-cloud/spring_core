@@ -1,11 +1,13 @@
 package org.example.service;
+import org.example.dto.request.TraineeRegistrationRequest;
+import org.example.dto.response.AuthResponse;
 import org.example.persistence.model.TraineeDTO;
 
 import java.util.List;
 
 public interface TraineeService {
 
-    TraineeDTO createTrainee(TraineeDTO traineeDTO);
+    AuthResponse createTrainee(TraineeRegistrationRequest traineeDTO);
 
     TraineeDTO getTraineeByUsername(String username);
 
