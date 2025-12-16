@@ -51,7 +51,6 @@ public class UserServiceJpa implements UserService {
     }
 
     @Transactional
-//    @PreAuthorize("hasRole('ADMIN')")
     public boolean toggleUserActiveStatus(String username) {
         UserEntity user = userRepository.findByUserName(username).orElseThrow(() -> new UsernameNotFoundException(username + ": user does exist"));
         user.setActive(!user.isActive());
