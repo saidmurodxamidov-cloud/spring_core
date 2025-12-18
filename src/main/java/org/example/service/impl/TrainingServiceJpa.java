@@ -2,127 +2,53 @@ package org.example.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.dto.request.TrainingRequest;
+import org.example.dto.request.TrainingAddRequest;
 import org.example.persistence.entity.TraineeEntity;
 import org.example.persistence.entity.TrainerEntity;
 import org.example.persistence.entity.TrainingEntity;
 import org.example.persistence.entity.TrainingTypeEntity;
-import org.example.exception.EntityNotFoundException;
-import org.example.mapper.TrainingMapper;
-import org.example.persistence.model.TrainingDTO;
 import org.example.persistence.repository.TraineeRepository;
 import org.example.persistence.repository.TrainerRepository;
 import org.example.persistence.repository.TrainingRepository;
 import org.example.persistence.repository.TrainingTypeRepository;
 import org.example.service.TrainingService;
-//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.time.LocalDate;
-import java.util.List;
-
-import static org.example.util.NormalizeUtil.normalize;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class TrainingServiceJpa implements TrainingService {
-
     private final TrainingRepository trainingRepository;
     private final TrainerRepository trainerRepository;
     private final TraineeRepository traineeRepository;
     private final TrainingTypeRepository trainingTypeRepository;
-    private final TrainingMapper trainingMapper;
 
     @Transactional
-//    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN') or hasRole('TRAINER')")
-    public TrainingDTO createTraining(TrainingRequest trainingRequest){
-        log.debug("Creating training with name {}", trainingRequest.getTrainingName());
-
-        TraineeEntity trainee = traineeRepository.findByUserUserName((trainingRequest.getTraineeUsername()))
-                .orElseThrow(() -> new UsernameNotFoundException("trainee: " + trainingRequest.getTraineeUsername() + " does not exist"));
-
-        TrainerEntity trainer = trainerRepository.findByUserUserName(trainingRequest.getTrainerUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("trainer with: " + trainingRequest.getTrainerUsername() + " not found"));
-
-        TrainingTypeEntity trainingType = trainingTypeRepository
-                .findByTrainingTypeName(trainingRequest.getTrainingName())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Training type not found: " + trainingRequest.getTrainingName()
-                ));
-
-
+    public void addTraining(TrainingAddRequest request){
+        TraineeEntity trainee = traineeRepository.findByUserUserName(request.getTraineeUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("trainee does not exist " + request.getTraineeUsername()));
+        TrainerEntity trainer = trainerRepository.findByUserUserName(request.getTrainerUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("trainer does not exist " + request.getTraineeUsername()));
+        TrainingTypeEntity trainingType = trainingTypeRepository.findByTrainingTypeName(request.getTrainingType())
+                .orElseThrow(() -> new IllegalArgumentException("training does not exist " + request.getTrainingType()));
+        trainer.getTrainees().add(trainee);
+        trainee.getTrainers().add(trainer);
         TrainingEntity training = TrainingEntity.builder()
+                .trainingDuration(Duration.ofMinutes(request.getTrainingDurationInMinutes()))
+                .date(request.getTrainingDate())
+                .trainingName(request.getTrainingName())
+                .trainingType(trainingType)
                 .trainee(trainee)
                 .trainer(trainer)
-                .trainingName(trainingRequest.getTrainingName())
-                .trainingType(trainingType)
-                .trainingDuration(Duration.ofMinutes(trainingRequest.getDurationInMinutes()))
-                .date(trainingRequest.getTrainingDate())
                 .build();
-
         trainingRepository.save(training);
-        log.info("training named {} created successfully", training.getTrainingName());
-        return trainingMapper.toTraining(training);
-    }
-    @Transactional(readOnly = true)
-//    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN') or hasRole('TRAINER')")
-    public List<TrainingDTO> getAllTraineeTrainings(String username){
-        log.debug("getting trainee: {}'s trainings",username);
-        TraineeEntity trainee = traineeRepository.findByUserUserName(username)
-                .orElseThrow(() -> new UsernameNotFoundException("trainee " +  username + " does not exist"));
-        log.debug("successfully gotten trainings for trainee {}",username);
-        return trainingMapper.toTrainingModels(trainee.getTrainings()).stream().toList();
-    }
-    @Transactional(readOnly = true)
-//    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN') or hasRole('TRAINER')")
-    public List<TrainingDTO> getAllTrainerTrainings(String username){
-        log.debug("getting trainer: {}'s trainings",username);
-        TrainerEntity trainee = trainerRepository.findByUserUserName(username)
-                .orElseThrow(() -> new UsernameNotFoundException("trainer " +  username + " does not exist"));
-        log.debug("successfully gotten trainings for trainer {}",username);
-        return trainingMapper.toTrainingModels(trainee.getTrainings()).stream().toList();
+        trainer.getTrainings().add(training);
+        trainee.getTrainings().add(training);
+        log.info("successfully created training with name {}", training.getTrainingName());
     }
 
-    @Transactional(readOnly = true)
-//    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN') or hasRole('TRAINER')")
-    public List<TrainingDTO> getTraineeTrainings(String username, LocalDate fromDate, LocalDate toDate, String trainerName, String trainingTypeName){
-        log.debug("getting trainee {}, from = {},to = {}, trainerName = {}, trainingTypeName = {} trainings",username,fromDate,toDate,trainerName,trainingTypeName);
-
-        if(!traineeRepository.existsByUserUserName(username))
-            throw new UsernameNotFoundException("trainee " + username + " does not exist");
-
-        trainerName = normalize(trainerName);
-        trainingTypeName = normalize(trainingTypeName);
-        log.debug("got successfully trainee {}, from = {},to = {}, trainerName = {}, trainingTypeName = {} trainings",username,fromDate,toDate,trainerName,trainingTypeName);
-
-        return trainingRepository.findTraineeTrainingsByCriteria(
-                username,
-                fromDate,
-                toDate,
-                trainerName,
-                trainingTypeName
-        ).stream().map(trainingMapper::toTraining).toList();
-    }
-
-    @Transactional(readOnly = true)
-//    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN') or hasRole('TRAINER')")
-    public List<TrainingDTO> getTrainerTrainings(String username,
-                                                 LocalDate fromDate,
-                                                 LocalDate toDate,
-                                                 String traineeName) {
-        if(!trainerRepository.existsByUserUserName(username))
-            throw new UsernameNotFoundException("trainer " + username + " does not exist");
-        log.debug("getting trainer {}, from = {},to = {}, traineeName = {} trainings",username,fromDate,toDate,traineeName);
-        traineeName = normalize(traineeName);
-        List<TrainingEntity> trainings = trainingRepository.findTrainerTrainingsByCriteria(
-                username, fromDate, toDate, traineeName
-        );
-        log.debug("got successfully trainer {}, from = {},to = {}, traineeName = {} trainings",username,fromDate,toDate,traineeName);
-
-        return trainings.stream().map(trainingMapper::toTraining).toList();
-    }
 }

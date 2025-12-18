@@ -1,9 +1,12 @@
 package org.example.service;
 
+import org.example.dto.response.AuthResponse;
+
 public interface UserService {
 
-    boolean passwordMatches(String username, String password);
 
-    boolean changePassword(String username,String oldPassword, String newPassword);
-    boolean toggleUserActiveStatus(String username);
+    AuthResponse changePassword(String usernameFromToken, String oldPassword, String newPassword);
+
+
+    Boolean toggleUserActiveStatus(String username);
 }

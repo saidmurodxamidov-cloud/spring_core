@@ -1,12 +1,13 @@
 package org.example.service;
 
-import org.example.persistence.model.TrainingTypeDTO;
+import org.example.dto.request.TrainingTypeRequest;
+import org.example.dto.response.TrainingTypeResponse;
 
 import java.util.List;
 
 public interface TrainingTypeService {
 
-    TrainingTypeDTO create(TrainingTypeDTO trainingTypeDTO);
+    TrainingTypeResponse createTrainingType(TrainingTypeRequest trainingTypeRequest);
 
-    List<TrainingTypeDTO> getAllTrainingTypes();
+    List<TrainingTypeResponse> getAllTrainingTypes();
 }

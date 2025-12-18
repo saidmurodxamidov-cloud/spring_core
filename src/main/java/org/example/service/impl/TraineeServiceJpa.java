@@ -3,20 +3,16 @@ package org.example.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.request.TraineeRegistrationRequest;
-import org.example.dto.response.AuthResponse;
-import org.example.persistence.entity.Role;
-import org.example.persistence.entity.TraineeEntity;
-import org.example.persistence.entity.TrainerEntity;
-import org.example.exception.EntityNotFoundException;
-import org.example.mapper.TraineeMapper;
-import org.example.persistence.model.TraineeDTO;
+import org.example.dto.request.TraineeTrainingRequest;
+import org.example.dto.request.TraineeUpdateRequest;
+import org.example.dto.response.*;
+import org.example.persistence.entity.*;
 import org.example.persistence.repository.TraineeRepository;
 import org.example.persistence.repository.TrainerRepository;
+import org.example.persistence.repository.TrainingRepository;
 import org.example.persistence.repository.UserRepository;
 import org.example.service.TraineeService;
-import org.example.util.PasswordGenerator;
-import org.example.util.UsernameGenerator;
-//import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,81 +22,172 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Slf4j
+import static org.example.util.NormalizeUtil.normalize;
+import static org.example.util.PasswordGenerator.generatePassword;
+import static org.example.util.UsernameGenerator.generateUsername;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TraineeServiceJpa implements TraineeService {
     private final TraineeRepository traineeRepository;
-    private final TraineeMapper traineeMapper;
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bcrypt;
     private final TrainerRepository trainerRepository;
+    private final TrainingRepository trainingRepository;
 
     @Transactional
-    public AuthResponse createTrainee(TraineeRegistrationRequest traineeRegistrationRequest){
+    public AuthResponse createTrainee(TraineeRegistrationRequest traineeRequest){
         Set<String> availableUsernames = userRepository.findAllUserNames();
-        String password = new String(PasswordGenerator.generatePassword());
-        String username = UsernameGenerator.generateUsername(traineeRegistrationRequest.getFirstname(), traineeRegistrationRequest.getLastname(),availableUsernames);
-        String encodedPassword = bcrypt.encode(password);
+        String username = generateUsername(traineeRequest.getFirstname(),traineeRequest.getLastname(),availableUsernames);
+        log.debug("creating trainee with username: {}",username);
+        Set<Role> roles = new HashSet<>();
+        roles.add(Role.TRAINEE);
+        char[] password = generatePassword();
+        String encodedPassword = bcrypt.encode(String.valueOf(password));
+        UserEntity user = UserEntity.builder()
+                .firstName(traineeRequest.getFirstname())
+                .lastName(traineeRequest.getLastname())
+                .userName(username)
+                .passwordHash(encodedPassword)
+                .roles(roles)
+                .build();
+        TraineeEntity trainee = TraineeEntity.builder()
+                .user(user)
+                .address(traineeRequest.getAddress())
+                .dateOfBirth(traineeRequest.getDateOfBirth())
+                .build();
+        traineeRepository.save(trainee);
 
-        TraineeDTO traineeDTO = new TraineeDTO(null,traineeRegistrationRequest.getFirstname()
-                ,traineeRegistrationRequest.getLastname(),username,null
-                ,true,traineeRegistrationRequest.getDateOfBirth(),
-                traineeRegistrationRequest.getAddress());
-
-
-        log.info("creating trainee with username {}", username);
-        TraineeEntity traineeEntity = traineeMapper.toEntity(traineeDTO);
-        traineeEntity.getUser().setPasswordHash(encodedPassword);
-        traineeEntity.getUser().setRoles(new HashSet<>());
-        traineeEntity.getUser().getRoles().add(Role.TRAINEE);
-        traineeEntity.getUser().setActive(true);
-        traineeRepository.save(traineeEntity);
-        log.info("trainee created successfully with username: {}", username);
-
-        return new AuthResponse(username,password);
+        return new AuthResponse(username,String.valueOf(password));
     }
     @Transactional(readOnly = true)
-//    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN')")
-    public TraineeDTO getTraineeByUsername(String username){
-        log.debug("getting trainee with username: {}",username);
-        return traineeRepository.findByUserUserName(username)
-                .map(traineeMapper::toDTO)
-                .orElseThrow((() -> new UsernameNotFoundException("user not found with username: " + username)));
+    @PreAuthorize("hasRole('TRAINEE')")
+    public TraineeProfileResponse getTrainee(String username){
+        log.debug("getting trainee profile {}", username);
+        TraineeEntity trainee = traineeRepository.findByUserUserName(username)
+                .orElseThrow( () -> new UsernameNotFoundException(username + " user does not exist!"));
+
+        List<TrainerResponse> trainers = trainee.getTrainers().stream().map(trainer -> {
+            List<TrainingTypeResponse> specs = trainer.getSpecializations().stream()
+                    .map(spec -> new TrainingTypeResponse(spec.getId(),spec.getTrainingTypeName())).toList();
+            return TrainerResponse.builder()
+                    .lastname(trainer.getUser().getLastName())
+                    .firstname(trainer.getUser().getFirstName())
+                    .username(trainer.getUser().getUserName())
+                    .trainingTypeResponse(specs)
+                    .build();
+        }).toList();
+
+        return TraineeProfileResponse.builder()
+                .trainers(trainers)
+                .isActive(trainee.getUser().isActive())
+                .firstname(trainee.getUser().getFirstName())
+                .lastname(trainee.getUser().getLastName())
+                .dateOfBirth(trainee.getDateOfBirth())
+                .address(trainee.getAddress())
+                .build();
     }
     @Transactional
-//    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN')")
-    public void updateTrainersList(String traineeUsername, List<String> trainersUsernames) {
-        log.debug("updating trainee: {}'s trainers", traineeUsername);
-        TraineeEntity trainee = traineeRepository.findByUserUserName(traineeUsername)
-                .orElseThrow(() -> new UsernameNotFoundException("trainee: " + traineeUsername + "does not exist"));
+    @PreAuthorize("hasRole('TRAINEE')")
+    public TraineeUpdateResponse updateTrainee(String username,TraineeUpdateRequest request) {
 
-        Set<TrainerEntity> newTrainers = trainerRepository.findByUserUserNameIn(trainersUsernames);
+        TraineeEntity trainee = traineeRepository.findByUserUserName(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Trainee not found"));
+
+        trainee.getUser().setFirstName(request.getFirstname());
+        trainee.getUser().setLastName(request.getLastname());
+        trainee.getUser().setActive(request.getIsActive());
+
+        if (request.getAddress() != null) {
+            trainee.setAddress(request.getAddress());
+        }
+        if (request.getDateOfBirth() != null) {
+            trainee.setDateOfBirth(request.getDateOfBirth());
+        }
+
+        return TraineeUpdateResponse.builder()
+                .username(trainee.getUser().getUserName())
+                .firstname(trainee.getUser().getUserName())
+                .lastname(trainee.getUser().getLastName())
+                .dateOfBirth(trainee.getDateOfBirth())
+                .address(trainee.getAddress())
+                .isActive(trainee.getUser().isActive())
+                .trainers(trainee.getTrainers().stream()
+                        .map(trainer -> {
+                            List<TrainingTypeResponse> list = trainer.getSpecializations().stream()
+                                    .map(spec -> new TrainingTypeResponse(spec.getId(),spec.getTrainingTypeName())).toList();
+                            return TrainerResponse.builder()
+                                    .lastname(trainer.getUser().getLastName())
+                                    .firstname(trainer.getUser().getFirstName())
+                                    .username(trainer.getUser().getUserName())
+                                    .trainingTypeResponse(list)
+                                    .build();
+                        }).toList()).build();
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('TRAINEE')")
+    public void deleteTrainee(String username){
+        log.debug("deleting trainee with username {}" , username);
+         TraineeEntity trainee = traineeRepository.findByUserUserName(username).orElseThrow(() -> new UsernameNotFoundException("user does not exist " + username));
+         traineeRepository.delete(trainee);
+         log.info("trainee {} deleted success",username);
+    }
+
+    @Transactional
+    public List<TrainerResponse> updateTraineesTrainerList(String username, List<String> trainerUsernames){
+        TraineeEntity trainee = traineeRepository.findByUserUserName(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found " + username));
+        Set<TrainerEntity> newTrainers =  trainerRepository.findByUserUserNameIn(trainerUsernames);
+        if(newTrainers.size() != trainerUsernames.size())
+            log.warn("some of trainers referenced by trainee {} not found",  username);
         trainee.setTrainers(newTrainers);
         traineeRepository.save(trainee);
-        log.info("trainee {}'s trainers updated successfully", traineeUsername);
-    }
-    @Transactional
-//    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN')")
-    public void deleteByUsername(String username) {
-        log.debug("deleting user with username: {}", username);
-        TraineeEntity trainee = traineeRepository.findByUserUserName(username)
-                .orElseThrow(() -> new UsernameNotFoundException("user does not exist: " + username));
 
-        traineeRepository.delete(trainee);
-        log.info("user: {} is deleted successfully", username);
+        return newTrainers.stream().map(trainer -> {
+            List<TrainingTypeResponse> specs = trainer.getSpecializations().stream()
+                    .map(spec -> new TrainingTypeResponse(spec.getId(),spec.getTrainingTypeName())).toList();
+            return TrainerResponse.builder()
+                    .trainingTypeResponse(specs)
+                    .firstname(trainer.getUser().getFirstName())
+                    .lastname(trainer.getUser().getLastName())
+                    .username(trainer.getUser().getUserName())
+                    .build();
+        }).toList();
     }
-    @Transactional
-//    @PreAuthorize("hasRole('TRAINEE') or hasRole('ADMIN')")
-    public TraineeDTO updateTrainee(String username, TraineeDTO updateDTO){
-        log.debug("updating trainee with username: {}",username);
-        TraineeEntity traineeEntity = traineeRepository.findByUserUserName(username)
-                .orElseThrow(() -> new EntityNotFoundException("trainee with username: " + username + "not found"));
-        traineeMapper.updateEntity(updateDTO,traineeEntity);
-        traineeRepository.save(traineeEntity);
-        log.info("updated successfully trainee with username: {}", username);
-        return updateDTO;
+    @Transactional(readOnly = true)
+    public List<TrainingResponse> getTraineeTrainings(String username, TraineeTrainingRequest request){
+        log.debug("getting trainee {} trainers list by creteria", request.getTrainerName());
+        if(!traineeRepository.existsByUserUserName(username))
+            throw new UsernameNotFoundException("user not found " + username);
+        String trainingType = normalize(request.getTrainingType());
+        String trainerUsername = normalize(request.getTrainerName());
+
+        List<TrainingEntity> trainings = trainingRepository.findTraineeTrainingsByCriteria(username,request.getFrom(),request.getTo(),trainerUsername,trainingType);
+        return trainings.stream().map(training ->
+            TrainingResponse.builder()
+                    .traineeUsername(username)
+                    .trainingType(training.getTrainingType().getTrainingTypeName())
+                    .trainingDate(training.getDate())
+                    .durationInMinutes(training.getTrainingDuration().toMinutesPart())
+                    .trainingName(training.getTrainingName())
+                    .build()).toList();
+    }
+    @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('TRAINER') or hasRole('TRAINER')")
+    public List<TrainerResponse> getActiveTrainersNotAssignedToTrainee(String username){
+        log.debug("getting active trainer not assigned to trainee {}", username);
+        List<TrainerEntity> trainers = trainerRepository.findTrainersNotAssignedToTrainee(username);
+        return trainers.stream().map(trainer -> {
+            List<TrainingTypeResponse> specs = trainer.getSpecializations().stream()
+                    .map(spec -> new TrainingTypeResponse(spec.getId(),spec.getTrainingTypeName())).toList();
+            return TrainerResponse.builder()
+                    .firstname(trainer.getUser().getFirstName())
+                    .lastname(trainer.getUser().getLastName())
+                    .username(trainer.getUser().getUserName())
+                    .trainingTypeResponse(specs)
+                    .build();
+        }).toList();
     }
 }
-
-

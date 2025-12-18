@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.config.*;
 import org.example.mapper.TrainingMapper;
 import org.example.persistence.model.*;
-import org.example.security.AuthService;
+import org.example.service.AuthService;
 import org.example.service.*;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -89,8 +89,8 @@ public class Main {
             trainer.setActive(true);
             trainer.setSpecialization(Set.of(yogaType, strengthType));
 
-            strengthType = trainingTypeService.create(strengthType);
-            yogaType = trainingTypeService.create(yogaType);
+//            strengthType = trainingTypeService.create(strengthType);
+//            yogaType = trainingTypeService.create(yogaType);
 //            trainee = traineeService.createTrainee(trainee);
 //            trainer = trainerService.createTrainer(trainer);
             System.out.println(strengthType);
@@ -112,9 +112,9 @@ public class Main {
 
 //            training = trainingService.createTraining(training);
             System.out.println(training);
-            System.out.println(trainingService.getAllTraineeTrainings(trainee.getUserName()));
+//            System.out.println(trainingService.getAllTraineeTrainings(trainee.getUserName()));
 
-            System.out.println(trainerService.getTrainersNotAssignedToTrainee(trainee.getUserName()));
+//            System.out.println(trainerService.getTrainersNotAssignedToTrainee(trainee.getUserName()));
 
 
             System.out.println(SecurityContextHolder.getContext().getAuthentication());

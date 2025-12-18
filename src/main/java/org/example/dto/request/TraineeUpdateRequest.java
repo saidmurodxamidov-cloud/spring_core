@@ -1,8 +1,9 @@
 package org.example.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,13 +12,15 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TraineeRegistrationRequest {
+@Builder
+public class TraineeUpdateRequest {
     @NotBlank
-    @JsonProperty("firstname")
     private String firstname;
     @NotBlank
-    @JsonProperty("lastname")
     private String lastname;
-    private LocalDate dateOfBirth;
     private String address;
+    private LocalDate dateOfBirth;
+    @NotNull
+    private Boolean isActive;
+
 }

@@ -1,23 +1,24 @@
-package org.example.dto.request;
+package org.example.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotBlank;
+
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TraineeRegistrationRequest {
-    @NotBlank
-    @JsonProperty("firstname")
+@Builder
+public class TraineeProfileResponse {
     private String firstname;
-    @NotBlank
-    @JsonProperty("lastname")
     private String lastname;
     private LocalDate dateOfBirth;
     private String address;
+    boolean isActive;
+    List<TrainingTypeResponse> specialization;
+    List<TrainerResponse> trainers;
 }

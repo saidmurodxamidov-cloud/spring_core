@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthResponse {
-    private String username;
-    private String password;
+public class TrainingTypeResponse {
+    private Long id;
+    private String trainingTypeName;
 }
