@@ -1,0 +1,34 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:6432/test_db
+    username: root
+    password: root
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+jwt:
+  secret: myVerySecretKeyThatIsAtLeast256BitsLongForHS256AlgorithmToWork
+  expiration: 86400000
+
+logging:
+  level:
+    org.hibernate: INFO
+    org.example: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true

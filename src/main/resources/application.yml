@@ -1,13 +1,6 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:6432/test_db
-    username: root
-    password: root
-    driver-class-name: org.postgresql.Driver
-
   jpa:
     hibernate:
-      ddl-auto: update
       show-sql: false
       format-sql: true
       physical-strategy: org.example.persistence.config.SnakeCasePhysicalNamingStrategy
@@ -15,10 +8,6 @@ spring:
 logging:
   level:
     org.hibernate: INFO
-
-jwt:
-  secret: myVerySecretKeyThatIsAtLeast256BitsLongForHS256AlgorithmToWork
-  expiration: 86400000
 
 management:
   endpoints:
@@ -28,3 +17,8 @@ management:
   endpoint:
     health:
       show-details: always
+    prometheus:
+      enabled: true
+  observations:
+    key-values:
+      application: ${spring.application.name:gym-management-system}

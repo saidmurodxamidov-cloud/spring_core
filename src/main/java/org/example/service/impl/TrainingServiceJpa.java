@@ -1,8 +1,10 @@
 package org.example.service.impl;
 
+import io.micrometer.core.instrument.Timer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.request.TrainingAddRequest;
+import org.example.metrics.MetricsService;
 import org.example.persistence.entity.TraineeEntity;
 import org.example.persistence.entity.TrainerEntity;
 import org.example.persistence.entity.TrainingEntity;
@@ -26,9 +28,11 @@ public class TrainingServiceJpa implements TrainingService {
     private final TrainerRepository trainerRepository;
     private final TraineeRepository traineeRepository;
     private final TrainingTypeRepository trainingTypeRepository;
-
+    private final MetricsService metricsService;
     @Transactional
     public void addTraining(TrainingAddRequest request){
+        Timer.Sample sample = metricsService.startTrainingCreationTimer();
+        try{
         TraineeEntity trainee = traineeRepository.findByUserUserName(request.getTraineeUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("trainee does not exist " + request.getTraineeUsername()));
         TrainerEntity trainer = trainerRepository.findByUserUserName(request.getTrainerUsername())
@@ -48,7 +52,11 @@ public class TrainingServiceJpa implements TrainingService {
         trainingRepository.save(training);
         trainer.getTrainings().add(training);
         trainee.getTrainings().add(training);
+        metricsService.incrementTrainingCreated();
         log.info("successfully created training with name {}", training.getTrainingName());
+        }finally{
+            metricsService.recordTrainingCreationDuration(sample);
+        }
     }
 
 }

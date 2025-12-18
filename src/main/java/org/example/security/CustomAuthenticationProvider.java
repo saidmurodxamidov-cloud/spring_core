@@ -1,7 +1,9 @@
 package org.example.security;
 
+import io.micrometer.core.instrument.Timer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.metrics.MetricsService;
 import org.example.persistence.entity.UserEntity;
 import org.example.persistence.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -23,9 +25,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
+    private final MetricsService metricsService;
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+        Timer.Sample sample = metricsService.startLoginTimer();
+        try{
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
@@ -33,12 +37,14 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         UserEntity user = userRepository.findByUserName(username)
                 .orElseThrow(() -> {
+                    metricsService.incrementLoginFailure();
                     log.error("User not found: {}", username);
                     return new BadCredentialsException("Invalid username or password");
                 });
 
         if (!passwordEncoder.matches(password, user.getPasswordHash())) {
             log.error("Invalid password for user: {}", username);
+            metricsService.incrementLoginFailure();
             throw new BadCredentialsException("Invalid username or password");
         }
 
@@ -49,8 +55,12 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         log.info("User authenticated: {} with roles: {}", username,
                 authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
-
+        metricsService.incrementLoginSuccess();
+        metricsService.incrementActiveUsers();
         return new UsernamePasswordAuthenticationToken(username, password, authorities);
+        } finally {
+            metricsService.recordLoginDuration(sample);
+        }
     }
 
     @Override
