@@ -68,7 +68,7 @@ public class TrainerServiceJpa implements TrainerService {
         log.info("trainer {} created successfully", username);
         return new AuthResponse(username,password);
     }
-//    @PreAuthorize("hasRole('TRAINER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('TRAINER') or hasRole('ADMIN')")
     @Transactional
     public TrainerDTO getTrainerByUsername(String username){
         log.debug("getting trainer: {}" , username);

@@ -8,7 +8,9 @@ import org.example.persistence.model.TrainerDTO;
 import org.example.service.TrainerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,9 +39,10 @@ public class TrainerController {
     }
 
     @GetMapping("/me")
+    @PreAuthorize("hasRole('TRAINER')")
     public ResponseEntity<TrainerDTO> me(
             @AuthenticationPrincipal org.springframework.security.core.userdetails.UserDetails user) {
-
+        System.out.println(SecurityContextHolder.getContext().getAuthentication());
         return ResponseEntity.ok(
                 trainerService.getTrainerByUsername(user.getUsername())
         );

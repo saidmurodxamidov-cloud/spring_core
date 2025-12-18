@@ -30,7 +30,6 @@ public class SecurityConfig {
         authenticationManagerBuilder.authenticationProvider(authenticationProvider);
         return authenticationManagerBuilder.build();
     }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -40,7 +39,14 @@ public class SecurityConfig {
                                 new AntPathRequestMatcher("/api/trainers/register"),
                                 new AntPathRequestMatcher("/api/trainees/register"),
                                 new AntPathRequestMatcher("/api/training-types/**"),
-                                new AntPathRequestMatcher("/api/auth/**")
+                                new AntPathRequestMatcher("/api/auth/**"),
+                                new AntPathRequestMatcher("/error"),
+
+                                // Swagger / OpenAPI endpoints
+                                new AntPathRequestMatcher("/v3/api-docs/**"),
+                                new AntPathRequestMatcher("/swagger-ui/**"),
+                                new AntPathRequestMatcher("/swagger-ui.html"),
+                                new AntPathRequestMatcher("/webjars/**")
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -52,4 +58,5 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 }

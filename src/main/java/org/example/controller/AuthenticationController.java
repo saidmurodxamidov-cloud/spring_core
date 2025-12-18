@@ -20,6 +20,7 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request) {
+
         log.debug("Login attempt for user: {}", request.getUsername());
 
         String token = authService.login(request.getUsername(), request.getPassword());
@@ -29,10 +30,4 @@ public class AuthenticationController {
         return ResponseEntity.ok(new TokenResponse(token));
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<Void> logout() {
-        authService.logout();
-        log.debug("User logged out successfully");
-        return ResponseEntity.ok().build();
-    }
 }

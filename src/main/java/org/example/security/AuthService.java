@@ -32,8 +32,4 @@ public class AuthService {
         return token;
     }
 
-    public void logout() {
-        SecurityContextHolder.clearContext();
-        log.debug("Logged out successfully");
-    }
 }

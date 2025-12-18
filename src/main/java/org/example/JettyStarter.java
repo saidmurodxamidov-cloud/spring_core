@@ -1,12 +1,18 @@
 package org.example;
 
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.example.config.AppConfig;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
-import org.example.config.AppConfig;
+
+import jakarta.servlet.DispatcherType;
+
+import java.util.EnumSet;
 
 public class JettyStarter {
 
@@ -30,6 +36,15 @@ public class JettyStarter {
         AnnotationConfigWebApplicationContext rootContext =
                 new AnnotationConfigWebApplicationContext();
         rootContext.register(AppConfig.class);
+
+        // Register Spring Security filter chain
+        FilterHolder springSecurityFilterChain =
+                new FilterHolder(new DelegatingFilterProxy("springSecurityFilterChain"));
+        context.addFilter(
+                springSecurityFilterChain,
+                "/*",
+                EnumSet.of(DispatcherType.REQUEST, DispatcherType.ERROR)
+        );
 
         // ✅ Attach context to Jetty (VERY IMPORTANT)
         context.addEventListener(new ContextLoaderListener(rootContext));
