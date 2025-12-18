@@ -22,7 +22,7 @@ public class SecurityConfig {
 
     private final CustomAuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthFilter;
-
+    private final MdcFilter mdcFilter;
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authenticationManagerBuilder =
@@ -46,7 +46,8 @@ public class SecurityConfig {
                                 new AntPathRequestMatcher("/v3/api-docs/**"),
                                 new AntPathRequestMatcher("/swagger-ui/**"),
                                 new AntPathRequestMatcher("/swagger-ui.html"),
-                                new AntPathRequestMatcher("/webjars/**")
+                                new AntPathRequestMatcher("/webjars/**"),
+                                new AntPathRequestMatcher("/actuator/**")
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -54,6 +55,7 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+                .addFilterBefore(mdcFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

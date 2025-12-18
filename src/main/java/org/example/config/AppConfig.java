@@ -6,9 +6,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 
 @Configuration
-@ComponentScan({
-        "org.example",
-        "org.springdoc"
-})
+@ComponentScan("org.example")
 public class AppConfig {
 }

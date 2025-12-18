@@ -19,6 +19,5 @@ public class TraineeProfileResponse {
     private LocalDate dateOfBirth;
     private String address;
     boolean isActive;
-    List<TrainingTypeResponse> specialization;
     List<TrainerResponse> trainers;
 }

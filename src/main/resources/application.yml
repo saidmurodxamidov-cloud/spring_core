@@ -1,38 +1,30 @@
-storage:
-  init:
-    path: classpath:data/data.json
-db:
-  driver: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:6432/test_db
-  username: ${DB_USERNAME}
-  password: ${DB_PASSWORD}
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:6432/test_db
+    username: root
+    password: root
+    driver-class-name: org.postgresql.Driver
 
-hibernate:
-  ddl-auto: update
-  dialect: org.hibernate.dialect.PostgreSQLDialect
-  show-sql: false
-  format-sql: true
-  jdbc:
-    lob:
-      non-contextual-creation: true
-  temp:
-    use-jdbc-metadata-defaults: false
-
+  jpa:
+    hibernate:
+      ddl-auto: update
+      show-sql: false
+      format-sql: true
+      physical-strategy: org.example.persistence.config.SnakeCasePhysicalNamingStrategy
 
 logging:
   level:
-    org.hibernate: DEBUG
-    org.springframework.orm.jpa: DEBUG
-
-springdoc:
-  api-docs:
-    path: /v3/api-docs
-  swagger-ui:
-    path: /swagger-ui.html
-    operationsSorter: method
-    tagsSorter: alpha
-    tryItOutEnabled: true
+    org.hibernate: INFO
 
 jwt:
   secret: myVerySecretKeyThatIsAtLeast256BitsLongForHS256AlgorithmToWork
   expiration: 86400000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
