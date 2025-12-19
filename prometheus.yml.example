@@ -20,9 +20,7 @@ scrape_configs:
           application: 'gym-management-system'
           environment: 'local'
 
-    # Basic authentication for Prometheus endpoint
-    # This requires configuring basic auth in your Spring Boot application
-    # See: https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html#actuator.endpoints.security
+
     basic_auth:
       username: 'prometheus'
       password: 'prometheus_password'

@@ -25,16 +25,4 @@ scrape_configs:
     scrape_interval: 30s
     scrape_timeout: 10s
 
-  # Option 2: If host.docker.internal doesn't work, use your actual Windows host IP
-  # Find your IP with: ipconfig (look for IPv4 Address)
-  # Uncomment and replace 192.168.x.x with your actual IP:
-  # - job_name: 'spring-boot-app-ip'
-  #   metrics_path: '/actuator/prometheus'
-  #   static_configs:
-  #     - targets: ['192.168.1.100:8080']  # Replace with your Windows host IP
-  #       labels:
-  #         application: 'gym-management-system'
-  #         environment: 'local'
-  #   scrape_interval: 30s
-  #   scrape_timeout: 10s
 
