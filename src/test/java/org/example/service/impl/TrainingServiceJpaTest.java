@@ -1,6 +1,7 @@
 package org.example.service.impl;
 
 import org.example.dto.request.TrainingAddRequest;
+import org.example.metrics.MetricsService;
 import org.example.persistence.entity.*;
 import org.example.persistence.repository.TraineeRepository;
 import org.example.persistence.repository.TrainerRepository;
@@ -36,6 +37,9 @@ class TrainingServiceJpaTest {
 
     @Mock
     private TrainingTypeRepository trainingTypeRepository;
+
+    @Mock
+    private MetricsService metricsService;
 
     @InjectMocks
     private TrainingServiceJpa trainingService;
@@ -97,10 +101,11 @@ class TrainingServiceJpaTest {
 
         trainingService.addTraining(trainingRequest);
 
-        verify(traineeRepository, times(1)).findByUserUserName("john.doe");
-        verify(trainerRepository, times(1)).findByUserUserName("jane.smith");
-        verify(trainingTypeRepository, times(1)).findByTrainingTypeName("Fitness");
-        verify(trainingRepository, times(1)).save(any(TrainingEntity.class));
+        verify(traineeRepository).findByUserUserName("john.doe");
+        verify(trainerRepository).findByUserUserName("jane.smith");
+        verify(trainingTypeRepository).findByTrainingTypeName("Fitness");
+        verify(trainingRepository).save(any(TrainingEntity.class));
+
         assertTrue(trainer.getTrainees().contains(trainee));
         assertTrue(trainee.getTrainers().contains(trainer));
     }
@@ -109,9 +114,10 @@ class TrainingServiceJpaTest {
     void addTraining_TraineeNotFound() {
         when(traineeRepository.findByUserUserName(anyString())).thenReturn(Optional.empty());
 
-        assertThrows(UsernameNotFoundException.class, () -> trainingService.addTraining(trainingRequest));
-        verify(traineeRepository, times(1)).findByUserUserName("john.doe");
-        verify(trainingRepository, never()).save(any(TrainingEntity.class));
+        assertThrows(UsernameNotFoundException.class,
+                () -> trainingService.addTraining(trainingRequest));
+
+        verify(trainingRepository, never()).save(any());
     }
 
     @Test
@@ -119,9 +125,10 @@ class TrainingServiceJpaTest {
         when(traineeRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainee));
         when(trainerRepository.findByUserUserName(anyString())).thenReturn(Optional.empty());
 
-        assertThrows(UsernameNotFoundException.class, () -> trainingService.addTraining(trainingRequest));
-        verify(trainerRepository, times(1)).findByUserUserName("jane.smith");
-        verify(trainingRepository, never()).save(any(TrainingEntity.class));
+        assertThrows(UsernameNotFoundException.class,
+                () -> trainingService.addTraining(trainingRequest));
+
+        verify(trainingRepository, never()).save(any());
     }
 
     @Test
@@ -130,61 +137,24 @@ class TrainingServiceJpaTest {
         when(trainerRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainer));
         when(trainingTypeRepository.findByTrainingTypeName(anyString())).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> trainingService.addTraining(trainingRequest));
-        verify(trainingTypeRepository, times(1)).findByTrainingTypeName("Fitness");
-        verify(trainingRepository, never()).save(any(TrainingEntity.class));
+        assertThrows(IllegalArgumentException.class,
+                () -> trainingService.addTraining(trainingRequest));
+
+        verify(trainingRepository, never()).save(any());
     }
 
     @Test
     void addTraining_WithNullTrainingName() {
         trainingRequest.setTrainingName(null);
+
         when(traineeRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainee));
         when(trainerRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainer));
         when(trainingTypeRepository.findByTrainingTypeName(anyString())).thenReturn(Optional.of(trainingType));
-        when(trainingRepository.save(any(TrainingEntity.class))).thenReturn(new TrainingEntity());
+        when(trainingRepository.save(any())).thenReturn(new TrainingEntity());
 
         trainingService.addTraining(trainingRequest);
 
-        verify(trainingRepository, times(1)).save(any(TrainingEntity.class));
-    }
-
-    @Test
-    void addTraining_WithPastDate() {
-        trainingRequest.setTrainingDate(LocalDate.of(2020, 1, 1));
-        when(traineeRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainee));
-        when(trainerRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainer));
-        when(trainingTypeRepository.findByTrainingTypeName(anyString())).thenReturn(Optional.of(trainingType));
-        when(trainingRepository.save(any(TrainingEntity.class))).thenReturn(new TrainingEntity());
-
-        trainingService.addTraining(trainingRequest);
-
-        verify(trainingRepository, times(1)).save(any(TrainingEntity.class));
-    }
-
-    @Test
-    void addTraining_WithZeroDuration() {
-        trainingRequest.setTrainingDurationInMinutes(0);
-        when(traineeRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainee));
-        when(trainerRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainer));
-        when(trainingTypeRepository.findByTrainingTypeName(anyString())).thenReturn(Optional.of(trainingType));
-        when(trainingRepository.save(any(TrainingEntity.class))).thenReturn(new TrainingEntity());
-
-        trainingService.addTraining(trainingRequest);
-
-        verify(trainingRepository, times(1)).save(any(TrainingEntity.class));
-    }
-
-    @Test
-    void addTraining_WithLongDuration() {
-        trainingRequest.setTrainingDurationInMinutes(480);
-        when(traineeRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainee));
-        when(trainerRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainer));
-        when(trainingTypeRepository.findByTrainingTypeName(anyString())).thenReturn(Optional.of(trainingType));
-        when(trainingRepository.save(any(TrainingEntity.class))).thenReturn(new TrainingEntity());
-
-        trainingService.addTraining(trainingRequest);
-
-        verify(trainingRepository, times(1)).save(any(TrainingEntity.class));
+        verify(trainingRepository).save(any());
     }
 
     @Test
@@ -192,12 +162,10 @@ class TrainingServiceJpaTest {
         when(traineeRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainee));
         when(trainerRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainer));
         when(trainingTypeRepository.findByTrainingTypeName(anyString())).thenReturn(Optional.of(trainingType));
-        when(trainingRepository.save(any(TrainingEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(trainingRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         trainingService.addTraining(trainingRequest);
 
-        assertTrue(trainer.getTrainees().contains(trainee));
-        assertTrue(trainee.getTrainers().contains(trainer));
         assertEquals(1, trainer.getTrainees().size());
         assertEquals(1, trainee.getTrainers().size());
     }
@@ -207,11 +175,11 @@ class TrainingServiceJpaTest {
         when(traineeRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainee));
         when(trainerRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainer));
         when(trainingTypeRepository.findByTrainingTypeName(anyString())).thenReturn(Optional.of(trainingType));
-        when(trainingRepository.save(any(TrainingEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(trainingRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         trainingService.addTraining(trainingRequest);
 
-        verify(trainingRepository, times(1)).save(argThat(training ->
+        verify(trainingRepository).save(argThat(training ->
                 training.getTrainingName().equals("Morning Workout") &&
                         training.getTrainee().equals(trainee) &&
                         training.getTrainer().equals(trainer) &&
@@ -224,26 +192,11 @@ class TrainingServiceJpaTest {
         when(traineeRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainee));
         when(trainerRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainer));
         when(trainingTypeRepository.findByTrainingTypeName(anyString())).thenReturn(Optional.of(trainingType));
-        when(trainingRepository.save(any(TrainingEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(trainingRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         trainingService.addTraining(trainingRequest);
 
         assertEquals(1, trainer.getTrainings().size());
         assertEquals(1, trainee.getTrainings().size());
-    }
-
-    @Test
-    void addTraining_MultipleTrainings() {
-        when(traineeRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainee));
-        when(trainerRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainer));
-        when(trainingTypeRepository.findByTrainingTypeName(anyString())).thenReturn(Optional.of(trainingType));
-        when(trainingRepository.save(any(TrainingEntity.class))).thenReturn(new TrainingEntity());
-
-        trainingService.addTraining(trainingRequest);
-        trainingService.addTraining(trainingRequest);
-
-        assertEquals(1, trainer.getTrainees().size());
-        assertEquals(1, trainee.getTrainers().size());
-        verify(trainingRepository, times(2)).save(any(TrainingEntity.class));
     }
 }

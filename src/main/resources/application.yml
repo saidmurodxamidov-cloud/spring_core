@@ -22,3 +22,11 @@ management:
   observations:
     key-values:
       application: ${spring.application.name:gym-management-system}
+
+# Optional: Enable basic authentication for Prometheus endpoint
+# Set prometheus.security.enabled=true to enable
+# prometheus:
+#   security:
+#     enabled: false
+#     username: prometheus
+#     password: prometheus_password
