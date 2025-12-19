@@ -26,6 +26,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final MetricsService metricsService;
+    private final BruteForceProtectionService bruteForceProtectionService;
+    
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         Timer.Sample sample = metricsService.startLoginTimer();
@@ -35,18 +37,43 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         log.info("Authenticating user: {}", username);
 
+        // Check if user is blocked due to brute force protection
+        if (bruteForceProtectionService.isBlocked(username)) {
+            long remainingSeconds = bruteForceProtectionService.getRemainingBlockTimeSeconds(username);
+            log.warn("Login attempt blocked for user {} due to brute force protection. Remaining time: {} seconds", 
+                username, remainingSeconds);
+            metricsService.incrementLoginFailure();
+            throw new BadCredentialsException(
+                String.format("Account temporarily locked due to multiple failed login attempts. Please try again in %d seconds.", 
+                    remainingSeconds)
+            );
+        }
+
         UserEntity user = userRepository.findByUserName(username)
                 .orElseThrow(() -> {
+                    bruteForceProtectionService.recordFailedLogin(username);
                     metricsService.incrementLoginFailure();
                     log.error("User not found: {}", username);
                     return new BadCredentialsException("Invalid username or password");
                 });
 
         if (!passwordEncoder.matches(password, user.getPasswordHash())) {
+            boolean isBlocked = bruteForceProtectionService.recordFailedLogin(username);
             log.error("Invalid password for user: {}", username);
             metricsService.incrementLoginFailure();
+            
+            if (isBlocked) {
+                long remainingSeconds = bruteForceProtectionService.getRemainingBlockTimeSeconds(username);
+                throw new BadCredentialsException(
+                    String.format("Account temporarily locked due to multiple failed login attempts. Please try again in %d seconds.", 
+                        remainingSeconds)
+                );
+            }
             throw new BadCredentialsException("Invalid username or password");
         }
+        
+        // Successful login - reset brute force protection
+        bruteForceProtectionService.recordSuccessfulLogin(username);
 
         // getRoles() returns List<Role>, which implements GrantedAuthority
         List<GrantedAuthority> authorities = user.getRoles().stream()

@@ -14,6 +14,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -42,11 +48,9 @@ public class SecurityConfig {
                     auth.requestMatchers(
                             new AntPathRequestMatcher("/api/trainers/register"),
                             new AntPathRequestMatcher("/api/trainees/register"),
+                            new AntPathRequestMatcher("/api/auth/login"),
                             new AntPathRequestMatcher("/api/training-types/**"),
-                            new AntPathRequestMatcher("/api/auth/**"),
                             new AntPathRequestMatcher("/error"),
-
-                            // Swagger / OpenAPI endpoints
                             new AntPathRequestMatcher("/v3/api-docs/**"),
                             new AntPathRequestMatcher("/swagger-ui/**"),
                             new AntPathRequestMatcher("/swagger-ui.html"),
@@ -55,7 +59,8 @@ public class SecurityConfig {
                             new AntPathRequestMatcher("/actuator/info")
                     ).permitAll();
                     
-                    // Conditionally secure Prometheus endpoint if basic auth is enabled
+                    auth.requestMatchers("/api/auth/logout").authenticated();
+                    
                     if (prometheusSecurityEnabled) {
                         auth.requestMatchers("/actuator/prometheus").hasRole("PROMETHEUS");
                     } else {
@@ -75,10 +80,44 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .addFilterBefore(mdcFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        
+        configuration.setAllowedOrigins(Arrays.asList(
+            "http://localhost:3000",
+            "http://localhost:8080",
+            "http://localhost:4200"
+        ));
+        
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        
+        configuration.setAllowedHeaders(Arrays.asList(
+            "Authorization",
+            "Content-Type",
+            "X-Requested-With",
+            "Accept",
+            "Origin"
+        ));
+        
+        configuration.setAllowCredentials(true);
+        
+        configuration.setExposedHeaders(List.of("Authorization"));
+        
+        configuration.setMaxAge(3600L);
+        
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        
+        return source;
     }
 
 }
