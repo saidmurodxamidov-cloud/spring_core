@@ -111,9 +111,6 @@ public class BruteForceProtectionService {
         return attemptInfo != null ? attemptInfo.getAttemptCount() : 0;
     }
 
-    /**
-     * Internal class to track login attempt information
-     */
     @Getter
     private static class LoginAttemptInfo {
         private int attemptCount = 0;
