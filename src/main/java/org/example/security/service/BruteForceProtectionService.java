@@ -1,4 +1,4 @@
-package org.example.security;
+package org.example.security.service;
 
 import lombok.Getter;
 import lombok.Setter;

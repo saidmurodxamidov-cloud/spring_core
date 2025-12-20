@@ -1,4 +1,4 @@
-package org.example.security;
+package org.example.security.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.persistence.entity.UserEntity;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class CustomUserDetailsService implements UserDetailsService {
+public class GymUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
@@ -31,3 +31,4 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .build();
     }
 }
+

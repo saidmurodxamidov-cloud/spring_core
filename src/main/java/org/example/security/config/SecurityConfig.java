@@ -1,9 +1,16 @@
-package org.example.security;
+package org.example.security.config;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import org.example.config.PrometheusSecurityProperties;
+import org.example.persistence.entity.Role;
+import org.example.security.service.GymCustomersAuthenticationService;
+import org.example.security.filter.JwtAuthenticationFilter;
+import org.example.security.filter.MdcFilter;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -18,21 +25,20 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
+@EnableConfigurationProperties({CorsProperties.class, PrometheusSecurityProperties.class})
 public class SecurityConfig {
 
-    private final CustomAuthenticationProvider authenticationProvider;
+    private final GymCustomersAuthenticationService authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final MdcFilter mdcFilter;
-    
-    @Value("${prometheus.security.enabled:false}")
-    private boolean prometheusSecurityEnabled;
+    private final PrometheusSecurityProperties prometheusSecurityProperties;
+    private final CorsProperties corsProperties;
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authenticationManagerBuilder =
@@ -61,17 +67,17 @@ public class SecurityConfig {
                     
                     auth.requestMatchers("/api/auth/logout").authenticated();
                     
-                    if (prometheusSecurityEnabled) {
-                        auth.requestMatchers("/actuator/prometheus").hasRole("PROMETHEUS");
+                    if (prometheusSecurityProperties.isEnabled()) {
+                        auth.requestMatchers("/actuator/prometheus").hasRole(Role.PROMETHEUS.name());
                     } else {
                         auth.requestMatchers("/actuator/prometheus").permitAll();
                     }
                     
-                    auth.requestMatchers("/actuator/**").hasRole("ADMIN")
+                    auth.requestMatchers("/actuator/**").hasRole(Role.ADMIN.name())
                         .anyRequest().authenticated();
                 })
                 .httpBasic(httpBasic -> {
-                    if (prometheusSecurityEnabled) {
+                    if (prometheusSecurityProperties.isEnabled()) {
                         httpBasic.realmName("Prometheus");
                     } else {
                         httpBasic.disable();
@@ -92,27 +98,45 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        configuration.setAllowedOrigins(Arrays.asList(
-            "http://localhost:3000",
-            "http://localhost:8080",
-            "http://localhost:4200"
-        ));
+        configuration.setAllowedOrigins(corsProperties.getAllowedOrigins());
         
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        List<String> allowedMethods = corsProperties.getAllowedMethods().stream()
+                .map(method -> {
+                    try {
+                        return HttpMethod.valueOf(method).name();
+                    } catch (IllegalArgumentException e) {
+                        return method;
+                    }
+                })
+                .toList();
+        configuration.setAllowedMethods(allowedMethods);
         
-        configuration.setAllowedHeaders(Arrays.asList(
-            "Authorization",
-            "Content-Type",
-            "X-Requested-With",
-            "Accept",
-            "Origin"
-        ));
-        
-        configuration.setAllowCredentials(true);
-        
-        configuration.setExposedHeaders(List.of("Authorization"));
-        
-        configuration.setMaxAge(3600L);
+        List<String> allowedHeaders = corsProperties.getAllowedHeaders().stream()
+                .map(header -> {
+                    if ("Authorization".equalsIgnoreCase(header)) {
+                        return HttpHeaders.AUTHORIZATION;
+                    } else if ("Content-Type".equalsIgnoreCase(header)) {
+                        return HttpHeaders.CONTENT_TYPE;
+                    } else if ("Accept".equalsIgnoreCase(header)) {
+                        return HttpHeaders.ACCEPT;
+                    } else if ("Origin".equalsIgnoreCase(header)) {
+                        return HttpHeaders.ORIGIN;
+                    }
+                    return header;
+                })
+                .toList();
+        configuration.setAllowedHeaders(allowedHeaders);
+        configuration.setAllowCredentials(corsProperties.isAllowCredentials());
+        List<String> exposedHeaders = corsProperties.getExposedHeaders().stream()
+                .map(header -> {
+                    if ("Authorization".equalsIgnoreCase(header)) {
+                        return HttpHeaders.AUTHORIZATION;
+                    }
+                    return header;
+                })
+                .toList();
+        configuration.setExposedHeaders(exposedHeaders);
+        configuration.setMaxAge(corsProperties.getMaxAge());
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

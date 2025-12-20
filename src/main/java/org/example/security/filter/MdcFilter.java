@@ -1,4 +1,4 @@
-package org.example.security;
+package org.example.security.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,10 +24,8 @@ public class MdcFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         try {
-            // 1️⃣ request/transaction id
             MDC.put("requestId", UUID.randomUUID().toString());
 
-            // 2️⃣ username (from Spring Security)
             Authentication auth =
                     SecurityContextHolder.getContext().getAuthentication();
 

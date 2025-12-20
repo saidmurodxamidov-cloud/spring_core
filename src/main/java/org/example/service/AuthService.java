@@ -2,7 +2,7 @@ package org.example.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.security.JwtService;
+import org.example.security.service.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,11 +32,6 @@ public class AuthService {
         return token;
     }
 
-    /**
-     * Logout functionality - clears security context
-     * Note: With JWT tokens, logout is handled client-side by discarding the token.
-     * This method clears the server-side security context for the current request.
-     */
     public void logout() {
         String username = SecurityContextHolder.getContext().getAuthentication() != null
             ? SecurityContextHolder.getContext().getAuthentication().getName()

@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-public class CustomInfoContributor implements InfoContributor {
+public class ApplicationInfoContributor implements InfoContributor {
 
     private final Environment environment;
     private final EnvironmentInfo environmentInfo;
@@ -37,4 +37,3 @@ public class CustomInfoContributor implements InfoContributor {
         return url.replaceAll("://.*@", "://***:***@");
     }
 }
-

@@ -13,14 +13,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Custom health indicator that provides application health status.
- * This replaces the HealthController and integrates with Spring Boot Actuator.
- */
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class CustomHealthIndicator implements HealthIndicator {
+public class ApplicationHealthIndicator implements HealthIndicator {
 
     private final UserRepository userRepository;
     private final Environment environment;
@@ -29,10 +25,8 @@ public class CustomHealthIndicator implements HealthIndicator {
     @Override
     public Health health() {
         try {
-            // Check database connectivity
             userRepository.count();
             
-            // Build health details
             Map<String, Object> details = new HashMap<>();
             details.put("timestamp", LocalDateTime.now());
             details.put("profiles", Arrays.toString(environment.getActiveProfiles()));
@@ -52,11 +46,11 @@ public class CustomHealthIndicator implements HealthIndicator {
     }
 
     private String getEnvironmentType() {
-        if (environmentInfo.isLocal()) return "LOCAL";
-        if (environmentInfo.isDev()) return "DEVELOPMENT";
-        if (environmentInfo.isStaging()) return "STAGING";
-        if (environmentInfo.isProduction()) return "PRODUCTION";
-        return "UNKNOWN";
+        if (environmentInfo.getActive() == null || environmentInfo.getActive().isEmpty()) {
+            return "UNKNOWN";
+        }
+        
+        Profile activeProfile = environmentInfo.getActive().get(0);
+        return activeProfile.name();
     }
 }
-

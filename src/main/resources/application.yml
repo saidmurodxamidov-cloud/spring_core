@@ -23,10 +23,25 @@ management:
     key-values:
       application: ${spring.application.name:gym-management-system}
 
-# Optional: Enable basic authentication for Prometheus endpoint
-# Set prometheus.security.enabled=true to enable
-# prometheus:
-#   security:
-#     enabled: false
-#     username: prometheus
-#     password: prometheus_password
+cors:
+  allowed-origins:
+    - http://localhost:3000
+    - http://localhost:8080
+    - http://localhost:4200
+  allowed-methods:
+    - GET
+    - POST
+    - PUT
+    - DELETE
+    - PATCH
+    - OPTIONS
+  allowed-headers:
+    - Authorization
+    - Content-Type
+    - X-Requested-With
+    - Accept
+    - Origin
+  allow-credentials: true
+  exposed-headers:
+    - Authorization
+  max-age: 3600
