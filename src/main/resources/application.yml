@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: training-service
   jpa:
     hibernate:
       show-sql: false
@@ -45,3 +47,12 @@ cors:
   exposed-headers:
     - Authorization
   max-age: 3600
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true

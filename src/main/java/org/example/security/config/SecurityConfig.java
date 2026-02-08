@@ -56,6 +56,7 @@ public class SecurityConfig {
                             new AntPathRequestMatcher("/api/trainees/register"),
                             new AntPathRequestMatcher("/api/auth/login"),
                             new AntPathRequestMatcher("/api/training-types/**"),
+                            new AntPathRequestMatcher("api/trainings/**"),
                             new AntPathRequestMatcher("/error"),
                             new AntPathRequestMatcher("/v3/api-docs/**"),
                             new AntPathRequestMatcher("/swagger-ui/**"),
