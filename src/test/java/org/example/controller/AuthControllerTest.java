@@ -43,7 +43,7 @@ class AuthControllerTest {
 
     @Test
     void login_Success() throws Exception {
-        String token = "jwt.token.here";
+        String token = "token:jwt.token.here";
         when(authService.login(anyString(), anyString())).thenReturn(token);
 
         mockMvc.perform(post("/api/auth/login")
@@ -57,7 +57,7 @@ class AuthControllerTest {
 
     @Test
     void login_WithValidCredentials() throws Exception {
-        String expectedToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9";
+        String expectedToken = "\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\"";
         when(authService.login(anyString(), anyString())).thenReturn(expectedToken);
 
         mockMvc.perform(post("/api/auth/login")
