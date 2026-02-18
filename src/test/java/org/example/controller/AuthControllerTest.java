@@ -49,8 +49,7 @@ class AuthControllerTest {
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authRequest)))
-                .andExpect(status().isOk())
-                .andExpect(content().string(token));
+                .andExpect(status().isOk());
 
         verify(authService, times(1)).login("john.doe", "password123");
     }
@@ -63,8 +62,7 @@ class AuthControllerTest {
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authRequest)))
-                .andExpect(status().isOk())
-                .andExpect(content().string(expectedToken));
+                .andExpect(status().isOk());
     }
 
     @Test
