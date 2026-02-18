@@ -39,33 +39,24 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints (no authentication required)
                         .requestMatchers(
                                 "/api/trainers/register",
                                 "/api/trainees/register",
                                 "/api/auth/login",
+                                "/api/auth/logout",
                                 "/api/training-types/**",
                                 "/api/trainings/**",
                                 "/error",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/webjars/**",
                                 "/actuator/health",
-                                "/actuator/info",
                                 "/actuator/prometheus"
                         ).permitAll()
-
-                        // Authenticated endpoints
-                        .requestMatchers("/api/auth/logout").authenticated()
-
-                        // Everything else requires authentication
                         .anyRequest().authenticated()
                 )
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement(s ->
+                        s.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-
                 .addFilterBefore(mdcFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
