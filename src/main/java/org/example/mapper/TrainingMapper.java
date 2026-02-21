@@ -17,7 +17,7 @@ public interface TrainingMapper {
     @Mapping(source = "trainingType", target = "trainingType")
     TrainingEntity toEntity(TrainingDTO dto);
 
-    // Mapping from Entity -> DTO
+
     @Mapping(source = "id", target = "trainingId")
     @Mapping(source = "trainee.id", target = "traineeId")
     @Mapping(source = "trainer.id", target = "trainerId")

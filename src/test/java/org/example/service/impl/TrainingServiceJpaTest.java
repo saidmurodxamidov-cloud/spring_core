@@ -1,8 +1,15 @@
 package org.example.service.impl;
 
+import io.micrometer.core.instrument.Timer;
+import org.example.client.ActionType;
+import org.example.client.WorkloadSender;
+import org.example.dto.request.TrainerWorkloadRequest;
 import org.example.dto.request.TrainingAddRequest;
+import org.example.mapper.TrainerWorkloadMapper;
+import org.example.mapper.TrainingMapper;
 import org.example.metrics.MetricsService;
 import org.example.persistence.entity.*;
+import org.example.persistence.model.TrainingDTO;
 import org.example.persistence.repository.TraineeRepository;
 import org.example.persistence.repository.TrainerRepository;
 import org.example.persistence.repository.TrainingRepository;
@@ -41,6 +48,15 @@ class TrainingServiceJpaTest {
     @Mock
     private MetricsService metricsService;
 
+    @Mock
+    private WorkloadSender workloadSenderService;
+
+    @Mock
+    private TrainerWorkloadMapper workloadMapper;
+
+    @Mock
+    private TrainingMapper trainingMapper;
+
     @InjectMocks
     private TrainingServiceJpa trainingService;
 
@@ -48,8 +64,7 @@ class TrainingServiceJpaTest {
     private TraineeEntity trainee;
     private TrainerEntity trainer;
     private TrainingTypeEntity trainingType;
-    private UserEntity traineeUser;
-    private UserEntity trainerUser;
+    private TrainerWorkloadRequest workloadRequest;
 
     @BeforeEach
     void setUp() {
@@ -62,13 +77,13 @@ class TrainingServiceJpaTest {
                 .trainingDurationInMinutes(60)
                 .build();
 
-        traineeUser = UserEntity.builder()
+        UserEntity traineeUser = UserEntity.builder()
                 .userName("john.doe")
                 .firstName("John")
                 .lastName("Doe")
                 .build();
 
-        trainerUser = UserEntity.builder()
+        UserEntity trainerUser = UserEntity.builder()
                 .userName("jane.smith")
                 .firstName("Jane")
                 .lastName("Smith")
@@ -90,14 +105,23 @@ class TrainingServiceJpaTest {
                 .id(1L)
                 .trainingTypeName("Fitness")
                 .build();
+
+        workloadRequest = TrainerWorkloadRequest.builder().build();
+    }
+
+    private void stubHappyPath() {
+        when(traineeRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainee));
+        when(trainerRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainer));
+        when(trainingTypeRepository.findByTrainingTypeName(anyString())).thenReturn(Optional.of(trainingType));
+        when(trainingRepository.save(any(TrainingEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(workloadMapper.toDto(any(TrainingEntity.class), eq(ActionType.ADD))).thenReturn(workloadRequest);
+        when(trainingMapper.toTraining(any(TrainingEntity.class))).thenReturn(new TrainingDTO());
+        when(metricsService.startTrainingCreationTimer()).thenReturn(mock(Timer.Sample.class));
     }
 
     @Test
     void addTraining_Success() {
-        when(traineeRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainee));
-        when(trainerRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainer));
-        when(trainingTypeRepository.findByTrainingTypeName(anyString())).thenReturn(Optional.of(trainingType));
-        when(trainingRepository.save(any(TrainingEntity.class))).thenReturn(new TrainingEntity());
+        stubHappyPath();
 
         trainingService.addTraining(trainingRequest);
 
@@ -105,6 +129,9 @@ class TrainingServiceJpaTest {
         verify(trainerRepository).findByUserUserName("jane.smith");
         verify(trainingTypeRepository).findByTrainingTypeName("Fitness");
         verify(trainingRepository).save(any(TrainingEntity.class));
+        verify(workloadSenderService).sendWorkload(anyString(), any(TrainerWorkloadRequest.class));
+        verify(metricsService).incrementTrainingCreated();
+        verify(metricsService).recordTrainingCreationDuration(any());
 
         assertTrue(trainer.getTrainees().contains(trainee));
         assertTrue(trainee.getTrainers().contains(trainer));
@@ -112,16 +139,19 @@ class TrainingServiceJpaTest {
 
     @Test
     void addTraining_TraineeNotFound() {
+        when(metricsService.startTrainingCreationTimer()).thenReturn(mock(Timer.Sample.class));
         when(traineeRepository.findByUserUserName(anyString())).thenReturn(Optional.empty());
 
         assertThrows(UsernameNotFoundException.class,
                 () -> trainingService.addTraining(trainingRequest));
 
         verify(trainingRepository, never()).save(any());
+        verify(workloadSenderService, never()).sendWorkload(anyString(), any());
     }
 
     @Test
     void addTraining_TrainerNotFound() {
+        when(metricsService.startTrainingCreationTimer()).thenReturn(mock(Timer.Sample.class));
         when(traineeRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainee));
         when(trainerRepository.findByUserUserName(anyString())).thenReturn(Optional.empty());
 
@@ -129,10 +159,12 @@ class TrainingServiceJpaTest {
                 () -> trainingService.addTraining(trainingRequest));
 
         verify(trainingRepository, never()).save(any());
+        verify(workloadSenderService, never()).sendWorkload(anyString(), any());
     }
 
     @Test
     void addTraining_TrainingTypeNotFound() {
+        when(metricsService.startTrainingCreationTimer()).thenReturn(mock(Timer.Sample.class));
         when(traineeRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainee));
         when(trainerRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainer));
         when(trainingTypeRepository.findByTrainingTypeName(anyString())).thenReturn(Optional.empty());
@@ -141,16 +173,13 @@ class TrainingServiceJpaTest {
                 () -> trainingService.addTraining(trainingRequest));
 
         verify(trainingRepository, never()).save(any());
+        verify(workloadSenderService, never()).sendWorkload(anyString(), any());
     }
 
     @Test
     void addTraining_WithNullTrainingName() {
         trainingRequest.setTrainingName(null);
-
-        when(traineeRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainee));
-        when(trainerRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainer));
-        when(trainingTypeRepository.findByTrainingTypeName(anyString())).thenReturn(Optional.of(trainingType));
-        when(trainingRepository.save(any())).thenReturn(new TrainingEntity());
+        stubHappyPath();
 
         trainingService.addTraining(trainingRequest);
 
@@ -159,10 +188,7 @@ class TrainingServiceJpaTest {
 
     @Test
     void addTraining_VerifyBidirectionalRelationships() {
-        when(traineeRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainee));
-        when(trainerRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainer));
-        when(trainingTypeRepository.findByTrainingTypeName(anyString())).thenReturn(Optional.of(trainingType));
-        when(trainingRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        stubHappyPath();
 
         trainingService.addTraining(trainingRequest);
 
@@ -172,10 +198,7 @@ class TrainingServiceJpaTest {
 
     @Test
     void addTraining_VerifyTrainingEntityCreation() {
-        when(traineeRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainee));
-        when(trainerRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainer));
-        when(trainingTypeRepository.findByTrainingTypeName(anyString())).thenReturn(Optional.of(trainingType));
-        when(trainingRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        stubHappyPath();
 
         trainingService.addTraining(trainingRequest);
 
@@ -189,14 +212,84 @@ class TrainingServiceJpaTest {
 
     @Test
     void addTraining_AddsToCollections() {
-        when(traineeRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainee));
-        when(trainerRepository.findByUserUserName(anyString())).thenReturn(Optional.of(trainer));
-        when(trainingTypeRepository.findByTrainingTypeName(anyString())).thenReturn(Optional.of(trainingType));
-        when(trainingRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        stubHappyPath();
 
         trainingService.addTraining(trainingRequest);
 
         assertEquals(1, trainer.getTrainings().size());
         assertEquals(1, trainee.getTrainings().size());
+    }
+
+    @Test
+    void addTraining_SetsUniqueIdempotencyKeyOnEachCall() {
+        stubHappyPath();
+
+        var keys = new java.util.ArrayList<String>();
+        doAnswer(inv -> { keys.add(inv.getArgument(0)); return null; })
+                .when(workloadSenderService).sendWorkload(anyString(), any(TrainerWorkloadRequest.class));
+
+        trainingService.addTraining(trainingRequest);
+        trainingService.addTraining(trainingRequest);
+
+        assertEquals(2, keys.size());
+        assertNotEquals(keys.get(0), keys.get(1));
+        keys.forEach(k -> assertDoesNotThrow(() -> java.util.UUID.fromString(k)));
+    }
+
+    @Test
+    void addTraining_RecordsMetricsEvenOnException() {
+        Timer.Sample sample = mock(Timer.Sample.class);
+        when(metricsService.startTrainingCreationTimer()).thenReturn(sample);
+        when(traineeRepository.findByUserUserName(anyString())).thenThrow(new RuntimeException("DB error"));
+
+        assertThrows(RuntimeException.class, () -> trainingService.addTraining(trainingRequest));
+
+        verify(metricsService).recordTrainingCreationDuration(sample);
+        verify(metricsService, never()).incrementTrainingCreated();
+    }
+
+    @Test
+    void deleteTraining_TrainingNotFound_DoesNothing() {
+        when(trainingRepository.existsById(anyLong())).thenReturn(false);
+
+        trainingService.deleteTraining(1L);
+
+        verify(trainingRepository, never()).delete(any());
+        verify(workloadSenderService, never()).sendWorkload(anyString(), any());
+    }
+
+    @Test
+    void deleteTraining_Success() {
+        TrainingEntity trainingEntity = new TrainingEntity();
+        when(trainingRepository.existsById(1L)).thenReturn(true);
+        when(trainingRepository.findById(1L)).thenReturn(Optional.of(trainingEntity));
+        when(workloadMapper.toDto(eq(trainingEntity), eq(ActionType.DELETE))).thenReturn(workloadRequest);
+
+        trainingService.deleteTraining(1L);
+
+        verify(trainingRepository).delete(trainingEntity);
+        verify(workloadSenderService).sendWorkload(anyString(), eq(workloadRequest));
+    }
+
+    @Test
+    void deleteTraining_SetsUniqueIdempotencyKey() {
+        TrainingEntity trainingEntity = new TrainingEntity();
+        when(trainingRepository.existsById(1L)).thenReturn(true);
+        when(trainingRepository.findById(1L)).thenReturn(Optional.of(trainingEntity));
+        when(workloadMapper.toDto(eq(trainingEntity), eq(ActionType.DELETE))).thenReturn(workloadRequest);
+
+        trainingService.deleteTraining(1L);
+
+        verify(workloadSenderService).sendWorkload(
+                argThat(key -> {
+                    try {
+                        java.util.UUID.fromString(key);
+                        return true;
+                    } catch (IllegalArgumentException e) {
+                        return false;
+                    }
+                }),
+                eq(workloadRequest)
+        );
     }
 }

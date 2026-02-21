@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class TrainingResponse {
-
+    private Long id;
     private String trainingName;
     private LocalDate trainingDate;
     private String trainingType;

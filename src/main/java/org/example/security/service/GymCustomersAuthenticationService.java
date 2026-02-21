@@ -2,8 +2,9 @@ package org.example.security.service;
 
 import io.micrometer.core.instrument.Timer;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.example.metrics.MetricsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.example.persistence.entity.UserEntity;
 import org.example.persistence.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -18,10 +19,11 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class GymCustomersAuthenticationService implements AuthenticationProvider {
+
+    private static final Logger log = LoggerFactory.getLogger(GymCustomersAuthenticationService.class);
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;

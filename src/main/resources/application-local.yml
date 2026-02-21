@@ -9,6 +9,9 @@ spring:
     hibernate:
       ddl-auto: update
 
+server:
+  port: 8083
+
 jwt:
   secret: myVerySecretKeyThatIsAtLeast256BitsLongForHS256AlgorithmToWork
   expiration: 86400000
@@ -16,7 +19,7 @@ jwt:
 logging:
   level:
     org.hibernate: INFO
-    org.example: INFO
+    org.example: DEBUG
 
 management:
   endpoints:
@@ -28,6 +31,18 @@ management:
       show-details: always
     prometheus:
       enabled: true
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+        http.client.requests: true
+  observations:
+    key-values:
+      application: ${spring.application.name}
   prometheus:
     metrics:
       export:

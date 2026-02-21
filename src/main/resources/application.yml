@@ -1,13 +1,11 @@
 spring:
+  application:
+    name: training-service
   jpa:
     hibernate:
       show-sql: false
       format-sql: true
       physical-strategy: org.example.persistence.config.SnakeCasePhysicalNamingStrategy
-
-logging:
-  level:
-    org.hibernate: INFO
 
 management:
   endpoints:
@@ -19,29 +17,47 @@ management:
       show-details: always
     prometheus:
       enabled: true
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+        http.client.requests: true
   observations:
     key-values:
-      application: ${spring.application.name:gym-management-system}
+      application: ${spring.application.name}
 
-cors:
-  allowed-origins:
-    - http://localhost:3000
-    - http://localhost:8080
-    - http://localhost:4200
-  allowed-methods:
-    - GET
-    - POST
-    - PUT
-    - DELETE
-    - PATCH
-    - OPTIONS
-  allowed-headers:
-    - Authorization
-    - Content-Type
-    - X-Requested-With
-    - Accept
-    - Origin
-  allow-credentials: true
-  exposed-headers:
-    - Authorization
-  max-age: 3600
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      workloadService:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+  retry:
+    instances:
+      workloadService:
+        maxAttempts: 3
+        waitDuration: 500ms
+        retryExceptions:
+          - feign.FeignException
+          - java.io.IOException
