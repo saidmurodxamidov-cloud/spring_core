@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.client.ActionType;
 
-import org.example.client.WorkloadSenderService;
+import org.example.client.WorkloadSender;
 import org.example.dto.request.TrainerWorkloadRequest;
 import org.example.dto.request.TrainingAddRequest;
 import org.example.exception.EntityNotFoundException;
@@ -38,7 +38,7 @@ public class TrainingServiceJpa implements TrainingService {
     private final TraineeRepository traineeRepository;
     private final TrainingTypeRepository trainingTypeRepository;
     private final MetricsService metricsService;
-    private final WorkloadSenderService workloadSenderService;
+    private final WorkloadSender workloadSenderService;
     private final TrainerWorkloadMapper workloadMapper;
     private final TrainingMapper trainingMapper;
 
@@ -69,20 +69,20 @@ public class TrainingServiceJpa implements TrainingService {
         trainee.getTrainings().add(training);
 
         TrainerWorkloadRequest workloadRequest = workloadMapper.toDto(training,ActionType.ADD);
-        String uuid = UUID.randomUUID().toString();
-        workloadRequest.setIdempotencyKey(uuid);
         submitWorkLoadEvent(workloadRequest);
 
         metricsService.incrementTrainingCreated();
         log.info("successfully created training with name {}", training.getTrainingName());
         return trainingMapper.toTraining(training);
+
         }finally{
             metricsService.recordTrainingCreationDuration(sample);
         }
     }
 
     private void submitWorkLoadEvent(TrainerWorkloadRequest request){
-        workloadSenderService.sendWorkload(request);
+        String uuid = UUID.randomUUID().toString();
+        workloadSenderService.sendWorkload(uuid,request);
     }
 
     @Transactional
@@ -95,11 +95,7 @@ public class TrainingServiceJpa implements TrainingService {
 
         TrainerWorkloadRequest workloadRequest = workloadMapper.toDto(trainingEntity,ActionType.DELETE);
 
-        deleteWorkload(workloadRequest);
-    }
+        submitWorkLoadEvent(workloadRequest);
 
-    private void deleteWorkload(TrainerWorkloadRequest request){
-        workloadSenderService.deleteWorkload(request);
     }
-
 }

@@ -2,7 +2,7 @@ package org.example.service.impl;
 
 import io.micrometer.core.instrument.Timer;
 import org.example.client.ActionType;
-import org.example.client.WorkloadSenderService;
+import org.example.client.WorkloadSender;
 import org.example.dto.request.TrainerWorkloadRequest;
 import org.example.dto.request.TrainingAddRequest;
 import org.example.mapper.TrainerWorkloadMapper;
@@ -49,7 +49,7 @@ class TrainingServiceJpaTest {
     private MetricsService metricsService;
 
     @Mock
-    private WorkloadSenderService workloadSenderService;
+    private WorkloadSender workloadSenderService;
 
     @Mock
     private TrainerWorkloadMapper workloadMapper;
@@ -129,7 +129,7 @@ class TrainingServiceJpaTest {
         verify(trainerRepository).findByUserUserName("jane.smith");
         verify(trainingTypeRepository).findByTrainingTypeName("Fitness");
         verify(trainingRepository).save(any(TrainingEntity.class));
-        verify(workloadSenderService).sendWorkload(any(TrainerWorkloadRequest.class));
+        verify(workloadSenderService).sendWorkload(anyString(), any(TrainerWorkloadRequest.class));
         verify(metricsService).incrementTrainingCreated();
         verify(metricsService).recordTrainingCreationDuration(any());
 
@@ -146,7 +146,7 @@ class TrainingServiceJpaTest {
                 () -> trainingService.addTraining(trainingRequest));
 
         verify(trainingRepository, never()).save(any());
-        verify(workloadSenderService, never()).sendWorkload(any());
+        verify(workloadSenderService, never()).sendWorkload(anyString(), any());
     }
 
     @Test
@@ -159,7 +159,7 @@ class TrainingServiceJpaTest {
                 () -> trainingService.addTraining(trainingRequest));
 
         verify(trainingRepository, never()).save(any());
-        verify(workloadSenderService, never()).sendWorkload(any());
+        verify(workloadSenderService, never()).sendWorkload(anyString(), any());
     }
 
     @Test
@@ -173,7 +173,7 @@ class TrainingServiceJpaTest {
                 () -> trainingService.addTraining(trainingRequest));
 
         verify(trainingRepository, never()).save(any());
-        verify(workloadSenderService, never()).sendWorkload(any());
+        verify(workloadSenderService, never()).sendWorkload(anyString(), any());
     }
 
     @Test
@@ -221,14 +221,19 @@ class TrainingServiceJpaTest {
     }
 
     @Test
-    void addTraining_SetsIdempotencyKeyOnWorkloadRequest() {
+    void addTraining_SetsUniqueIdempotencyKeyOnEachCall() {
         stubHappyPath();
 
+        var keys = new java.util.ArrayList<String>();
+        doAnswer(inv -> { keys.add(inv.getArgument(0)); return null; })
+                .when(workloadSenderService).sendWorkload(anyString(), any(TrainerWorkloadRequest.class));
+
+        trainingService.addTraining(trainingRequest);
         trainingService.addTraining(trainingRequest);
 
-        verify(workloadSenderService).sendWorkload(argThat(req ->
-                req.getIdempotencyKey() != null && !req.getIdempotencyKey().isBlank()
-        ));
+        assertEquals(2, keys.size());
+        assertNotEquals(keys.get(0), keys.get(1));
+        keys.forEach(k -> assertDoesNotThrow(() -> java.util.UUID.fromString(k)));
     }
 
     @Test
@@ -250,7 +255,7 @@ class TrainingServiceJpaTest {
         trainingService.deleteTraining(1L);
 
         verify(trainingRepository, never()).delete(any());
-        verify(workloadSenderService, never()).deleteWorkload(any());
+        verify(workloadSenderService, never()).sendWorkload(anyString(), any());
     }
 
     @Test
@@ -263,6 +268,28 @@ class TrainingServiceJpaTest {
         trainingService.deleteTraining(1L);
 
         verify(trainingRepository).delete(trainingEntity);
-        verify(workloadSenderService).deleteWorkload(workloadRequest);
+        verify(workloadSenderService).sendWorkload(anyString(), eq(workloadRequest));
+    }
+
+    @Test
+    void deleteTraining_SetsUniqueIdempotencyKey() {
+        TrainingEntity trainingEntity = new TrainingEntity();
+        when(trainingRepository.existsById(1L)).thenReturn(true);
+        when(trainingRepository.findById(1L)).thenReturn(Optional.of(trainingEntity));
+        when(workloadMapper.toDto(eq(trainingEntity), eq(ActionType.DELETE))).thenReturn(workloadRequest);
+
+        trainingService.deleteTraining(1L);
+
+        verify(workloadSenderService).sendWorkload(
+                argThat(key -> {
+                    try {
+                        java.util.UUID.fromString(key);
+                        return true;
+                    } catch (IllegalArgumentException e) {
+                        return false;
+                    }
+                }),
+                eq(workloadRequest)
+        );
     }
 }

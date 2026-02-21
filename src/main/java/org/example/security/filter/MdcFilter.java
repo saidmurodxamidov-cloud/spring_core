@@ -63,17 +63,6 @@ public class MdcFilter extends OncePerRequestFilter {
                 }
             }
 
-            Authentication auth =
-                    SecurityContextHolder.getContext().getAuthentication();
-
-            if (auth != null && auth.isAuthenticated()
-                    && auth.getPrincipal() instanceof UserDetails user) {
-
-                MDC.put("username", user.getUsername());
-            } else {
-                MDC.put("username", "anonymous");
-            }
-
             filterChain.doFilter(request, response);
         } finally {
             MDC.remove("requestId");
