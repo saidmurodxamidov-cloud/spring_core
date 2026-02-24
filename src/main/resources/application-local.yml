@@ -5,6 +5,9 @@ spring:
     password: root
     driver-class-name: org.postgresql.Driver
 
+  activemq:
+    broker-url: tcp://localhost:61616
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -31,10 +34,10 @@ management:
       show-details: always
     prometheus:
       enabled: true
-  tracing:
-    enabled: true
-    sampling:
-      probability: 1.0
+#  tracing:
+#    enabled: true
+#    sampling:
+#      probability: 1.0
   metrics:
     distribution:
       percentiles-histogram:

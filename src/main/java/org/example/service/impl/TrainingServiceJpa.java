@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.client.ActionType;
 
-import org.example.client.WorkloadSender;
+import org.example.messageQueue.WorkloadSender;
 import org.example.dto.request.TrainerWorkloadRequest;
 import org.example.dto.request.TrainingAddRequest;
 import org.example.exception.EntityNotFoundException;
