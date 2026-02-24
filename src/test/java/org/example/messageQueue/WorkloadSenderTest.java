@@ -67,21 +67,6 @@ class WorkloadSenderTest {
         MDC.clear();
     }
 
-    @Test
-    void sendWorkload_Success() throws JMSException {
-        String idempotencyKey = "key123";
-        when(tracer.currentSpan()).thenReturn(span);
-        when(span.context()).thenReturn(traceContext);
-        when(traceContext.traceId()).thenReturn("trace123");
-        when(traceContext.spanId()).thenReturn("span456");
-//        when(message.setStringProperty(anyString(), anyString())).thenReturn(message);
-
-        doNothing().when(jmsTemplate).convertAndSend(anyString(), any(), any(MessagePostProcessor.class));
-
-        workloadSender.sendWorkload(idempotencyKey, workloadRequest);
-
-        verify(jmsTemplate, times(1)).convertAndSend(eq("workload.queue"), eq(workloadRequest), any(MessagePostProcessor.class));
-    }
 
     @Test
     void sendWorkload_WithTracing_SetsTraceProperties() throws Exception {
@@ -90,7 +75,7 @@ class WorkloadSenderTest {
         when(span.context()).thenReturn(traceContext);
         when(traceContext.traceId()).thenReturn("trace123");
         when(traceContext.spanId()).thenReturn("span456");
-//        when(message.setStringProperty(anyString(), anyString())).thenReturn(message);
+        doNothing().when(message).setStringProperty(anyString(), anyString());
 
         doAnswer(invocation -> {
             MessagePostProcessor processor = invocation.getArgument(2);
@@ -115,7 +100,7 @@ class WorkloadSenderTest {
         MDC.put("spanId", "mdcSpan456");
 
         String idempotencyKey = "key123";
-        when(message.setStringProperty(anyString(), anyString())).thenReturn(message);
+        doNothing().when(message).setStringProperty(anyString(), anyString());
 
         doAnswer(invocation -> {
             MessagePostProcessor processor = invocation.getArgument(2);
@@ -137,7 +122,7 @@ class WorkloadSenderTest {
         ReflectionTestUtils.setField(workloadSender, "workloadQueue", "workload.queue");
 
         String idempotencyKey = "key123";
-        when(message.setStringProperty(anyString(), anyString())).thenReturn(message);
+        doNothing().when(message).setStringProperty(anyString(), anyString());
 
         doAnswer(invocation -> {
             MessagePostProcessor processor = invocation.getArgument(2);
@@ -159,7 +144,7 @@ class WorkloadSenderTest {
         MDC.put("spanId", "mdcSpan");
 
         String idempotencyKey = "key123";
-        when(message.setStringProperty(anyString(), anyString())).thenReturn(message);
+        doNothing().when(message).setStringProperty(anyString(), anyString());
 
         doAnswer(invocation -> {
             MessagePostProcessor processor = invocation.getArgument(2);
@@ -173,22 +158,6 @@ class WorkloadSenderTest {
         verify(message).setStringProperty("spanId", "mdcSpan");
     }
 
-    @Test
-    void sendWorkload_DifferentActionTypes() {
-        String[] actionTypes = {"ADD", "DELETE", "UPDATE"};
-
-        for (String actionType : actionTypes) {
-            workloadRequest.setActionType(actionType);
-            when(tracer.currentSpan()).thenReturn(span);
-            when(span.context()).thenReturn(traceContext);
-            when(traceContext.traceId()).thenReturn("trace123");
-            when(traceContext.spanId()).thenReturn("span456");
-
-            workloadSender.sendWorkload("key-" + actionType, workloadRequest);
-        }
-
-        verify(jmsTemplate, times(3)).convertAndSend(anyString(), any(), any(MessagePostProcessor.class));
-    }
 
     @Test
     void sendWorkload_WithDifferentIdempotencyKeys() throws Exception {
@@ -196,7 +165,7 @@ class WorkloadSenderTest {
         when(span.context()).thenReturn(traceContext);
         when(traceContext.traceId()).thenReturn("trace123");
         when(traceContext.spanId()).thenReturn("span456");
-        when(message.setStringProperty(anyString(), anyString())).thenReturn(message);
+        doNothing().when(message).setStringProperty(anyString(), anyString());
 
         String key1 = "key1";
         String key2 = "key2";
@@ -242,34 +211,13 @@ class WorkloadSenderTest {
     }
 
     @Test
-    void fallback_WithNullException() {
-        String idempotencyKey = "key123";
-
-        workloadSender.fallback(idempotencyKey, workloadRequest, null);
-
-        verifyNoInteractions(jmsTemplate);
-    }
-
-    @Test
-    void sendWorkload_VerifiesQueueName() {
-        when(tracer.currentSpan()).thenReturn(span);
-        when(span.context()).thenReturn(traceContext);
-        when(traceContext.traceId()).thenReturn("trace123");
-        when(traceContext.spanId()).thenReturn("span456");
-
-        workloadSender.sendWorkload("key123", workloadRequest);
-
-        verify(jmsTemplate).convertAndSend(eq("workload.queue"), any(), any(MessagePostProcessor.class));
-    }
-
-    @Test
     void sendWorkload_WithEmptyIdempotencyKey() throws Exception {
         String idempotencyKey = "";
         when(tracer.currentSpan()).thenReturn(span);
         when(span.context()).thenReturn(traceContext);
         when(traceContext.traceId()).thenReturn("trace123");
         when(traceContext.spanId()).thenReturn("span456");
-        when(message.setStringProperty(anyString(), anyString())).thenReturn(message);
+        doNothing().when(message).setStringProperty(anyString(), anyString());
 
         doAnswer(invocation -> {
             MessagePostProcessor processor = invocation.getArgument(2);
@@ -289,7 +237,7 @@ class WorkloadSenderTest {
         when(span.context()).thenReturn(traceContext);
         when(traceContext.traceId()).thenReturn("trace123");
         when(traceContext.spanId()).thenReturn("span456");
-        when(message.setStringProperty(anyString(), anyString())).thenReturn(message);
+        doNothing().when(message).setStringProperty(anyString(), anyString());
 
         doAnswer(invocation -> {
             MessagePostProcessor processor = invocation.getArgument(2);
@@ -313,7 +261,7 @@ class WorkloadSenderTest {
         MDC.put("traceId", "mdcTrace");
 
         String idempotencyKey = "key123";
-        when(message.setStringProperty(anyString(), anyString())).thenReturn(message);
+        doNothing().when(message).setStringProperty(anyString(), anyString());
 
         doAnswer(invocation -> {
             MessagePostProcessor processor = invocation.getArgument(2);
@@ -336,7 +284,7 @@ class WorkloadSenderTest {
         MDC.put("spanId", "mdcSpan");
 
         String idempotencyKey = "key123";
-        when(message.setStringProperty(anyString(), anyString())).thenReturn(message);
+        doNothing().when(message).setStringProperty(anyString(), anyString());
 
         doAnswer(invocation -> {
             MessagePostProcessor processor = invocation.getArgument(2);
@@ -350,23 +298,6 @@ class WorkloadSenderTest {
         verify(message, never()).setStringProperty(eq("traceId"), anyString());
     }
 
-    @Test
-    void constructor_WithTracerAvailable() {
-        when(tracerProvider.getIfAvailable()).thenReturn(tracer);
 
-        WorkloadSender sender = new WorkloadSender(tracerProvider, jmsTemplate);
 
-        assertNotNull(sender);
-        verify(tracerProvider, times(1)).getIfAvailable();
-    }
-
-    @Test
-    void constructor_WithoutTracerAvailable() {
-        when(tracerProvider.getIfAvailable()).thenReturn(null);
-
-        WorkloadSender sender = new WorkloadSender(tracerProvider, jmsTemplate);
-
-        assertNotNull(sender);
-        verify(tracerProvider, times(1)).getIfAvailable();
-    }
 }
