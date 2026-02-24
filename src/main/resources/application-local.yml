@@ -34,10 +34,10 @@ management:
       show-details: always
     prometheus:
       enabled: true
-#  tracing:
-#    enabled: true
-#    sampling:
-#      probability: 1.0
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
   metrics:
     distribution:
       percentiles-histogram:

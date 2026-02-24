@@ -1,6 +1,6 @@
 package org.example.mapper;
 
-import org.example.client.ActionType;
+import org.example.messageQueue.ActionType;
 import org.example.dto.request.TrainerWorkloadRequest;
 import org.example.persistence.entity.TrainingEntity;
 import org.mapstruct.Mapper;

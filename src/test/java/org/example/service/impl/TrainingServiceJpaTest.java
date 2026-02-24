@@ -1,7 +1,7 @@
 package org.example.service.impl;
 
 import io.micrometer.core.instrument.Timer;
-import org.example.client.ActionType;
+import org.example.messageQueue.ActionType;
 import org.example.messageQueue.WorkloadSender;
 import org.example.dto.request.TrainerWorkloadRequest;
 import org.example.dto.request.TrainingAddRequest;

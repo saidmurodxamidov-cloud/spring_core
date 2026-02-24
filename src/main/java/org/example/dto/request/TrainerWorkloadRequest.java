@@ -4,9 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.client.ActionType;
+import org.example.messageQueue.ActionType;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 
 @Data
