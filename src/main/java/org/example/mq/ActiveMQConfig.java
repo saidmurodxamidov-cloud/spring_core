@@ -1,7 +1,7 @@
-package org.example.messageQueue;
+package org.example.mq;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
@@ -13,8 +13,9 @@ import org.springframework.jms.support.converter.MessageType;
 import java.util.Map;
 
 @Configuration
+@RequiredArgsConstructor
 public class ActiveMQConfig {
-
+    private final ActiveMQProperties activeMQProperties;
     @Bean
     public MessageConverter jacksonJmsMessageConverter() {
         MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
@@ -32,21 +33,18 @@ public class ActiveMQConfig {
     }
 
     @Bean
-    public ActiveMQConnectionFactory connectionFactory(
-            @Value("${spring.activemq.broker-url}") String brokerUrl,
-            @Value("${spring.activemq.user}") String user,
-            @Value("${spring.activemq.password}") String password) {
-
-        ActiveMQConnectionFactory factory =
-                new ActiveMQConnectionFactory(user, password, brokerUrl);
-        return factory;
+    public ActiveMQConnectionFactory connectionFactory() {
+        return new ActiveMQConnectionFactory(
+                activeMQProperties.getUser(),
+                activeMQProperties.getPassword(),
+                activeMQProperties.getBrokerUrl());
     }
 
     @Bean
     public JmsTemplate jmsTemplate(ActiveMQConnectionFactory connectionFactory,
                                    MessageConverter jacksonJmsMessageConverter) {
         JmsTemplate template = new JmsTemplate(connectionFactory);
-        template.setMessageConverter(jacksonJmsMessageConverter);  // ← wire it in
+        template.setMessageConverter(jacksonJmsMessageConverter);
         template.setDeliveryPersistent(true);
         template.setSessionTransacted(true);
         return template;
@@ -59,7 +57,7 @@ public class ActiveMQConfig {
         DefaultJmsListenerContainerFactory factory =
                 new DefaultJmsListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory);
-        factory.setMessageConverter(jacksonJmsMessageConverter);  // ← wire it in
+        factory.setMessageConverter(jacksonJmsMessageConverter);
         factory.setSessionTransacted(true);
         factory.setConcurrency("1-5");
         return factory;

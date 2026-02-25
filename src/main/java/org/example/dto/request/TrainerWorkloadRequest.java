@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.messageQueue.ActionType;
+import org.example.mq.ActionType;
 
 import java.time.LocalDate;
 
