@@ -6,6 +6,27 @@ spring:
       show-sql: false
       format-sql: true
       physical-strategy: org.example.persistence.config.SnakeCasePhysicalNamingStrategy
+  activemq:
+    broker-url: ${SPRING_ACTIVEMQ_BROKER_URL:tcp://localhost:61616}
+    user: admin
+    password: admin
+    packages:
+      trust-all: true
+  redelivery:
+    maximum-redeliveries: 3
+    initial-redelivery-delay: 1000
+    use-exponential-back-off: true
+    back-off-multiplier: 2.0
+
+  jms:
+    listener:
+      session:
+        acknowledge-mode: client
+
+
+app:
+  queue:
+    workload: workload.queue
 
 management:
   endpoints:
@@ -22,9 +43,6 @@ management:
     sampling:
       probability: 1.0
   metrics:
-    export:
-      prometheus:
-        enabled: true
     distribution:
       percentiles-histogram:
         http.server.requests: true
@@ -32,6 +50,10 @@ management:
   observations:
     key-values:
       application: ${spring.application.name}
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 
 eureka:
   client:
@@ -59,5 +81,5 @@ resilience4j:
         maxAttempts: 3
         waitDuration: 500ms
         retryExceptions:
-          - feign.FeignException
+          - org.springframework.jms.JmsException
           - java.io.IOException

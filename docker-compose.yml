@@ -11,6 +11,14 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  activemq:
+    image: apache/activemq-classic:5.18.3
+    ports:
+      - "61616:61616"  # JMS — what Spring connects to
+      - "8161:8161"    # Web console — http://localhost:8161 (admin/admin)
+      # use this to see queues, messages, DLQ live
+
+
   pgadmin:
     image: dpage/pgadmin4:8
     container_name: local-pgadmin

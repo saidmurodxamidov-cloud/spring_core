@@ -3,9 +3,9 @@ package org.example.service.impl;
 import io.micrometer.core.instrument.Timer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.client.ActionType;
+import org.example.mq.ActionType;
 
-import org.example.client.WorkloadSender;
+import org.example.mq.WorkloadSender;
 import org.example.dto.request.TrainerWorkloadRequest;
 import org.example.dto.request.TrainingAddRequest;
 import org.example.exception.EntityNotFoundException;
@@ -27,7 +27,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -81,8 +80,7 @@ public class TrainingServiceJpa implements TrainingService {
     }
 
     private void submitWorkLoadEvent(TrainerWorkloadRequest request){
-        String uuid = UUID.randomUUID().toString();
-        workloadSenderService.sendWorkload(uuid,request);
+        workloadSenderService.sendWorkload(request);
     }
 
     @Transactional
