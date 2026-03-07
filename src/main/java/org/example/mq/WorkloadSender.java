@@ -30,7 +30,7 @@ public class WorkloadSender {
 
     @Retry(name = "workloadService")
     @CircuitBreaker(name = "workloadService", fallbackMethod = "fallback")
-    private void sendWorkload(TrainerWorkloadRequest request,String idempotencyKey) {
+    public void sendWorkload(TrainerWorkloadRequest request,String idempotencyKey) {
         jmsTemplate.convertAndSend(workloadQueue, request, message -> {
             message.setStringProperty("idempotencyKey", idempotencyKey);
             enricher.enrich(message,idempotencyKey);
@@ -39,7 +39,7 @@ public class WorkloadSender {
         log.info("Workload sent. key={} action={}", idempotencyKey, request.getActionType());
     }
 
-    public void fallback(TrainerWorkloadRequest request, Throwable ex) {
+    public void fallback(TrainerWorkloadRequest request, String idempotencyKey, Throwable ex) {
         log.error("Workload queue unavailable. action={} reason={}",
                  request.getActionType(), ex.getMessage());
     }
