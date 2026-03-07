@@ -23,10 +23,14 @@ public class WorkloadSender {
     @Value("${app.queue.workload}")
     private String workloadQueue;
 
+    public void sendWorkload(TrainerWorkloadRequest request){
+        String idempotencyKey = idempotencyKeyService.generateKey(request);
+        sendWorkload(request,idempotencyKey);
+    }
+
     @Retry(name = "workloadService")
     @CircuitBreaker(name = "workloadService", fallbackMethod = "fallback")
-    public void sendWorkload(TrainerWorkloadRequest request) {
-        String idempotencyKey = idempotencyKeyService.generateKey(request);
+    private void sendWorkload(TrainerWorkloadRequest request,String idempotencyKey) {
         jmsTemplate.convertAndSend(workloadQueue, request, message -> {
             message.setStringProperty("idempotencyKey", idempotencyKey);
             enricher.enrich(message,idempotencyKey);
