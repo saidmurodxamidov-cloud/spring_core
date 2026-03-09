@@ -1,0 +1,65 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:integration_testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;NON_KEYWORDS=VALUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: false
+
+  # Real embedded broker – messages are actually delivered end-to-end
+  activemq:
+    broker-url: vm://integration-test?broker.persistent=false
+    user: admin
+    password: admin
+    packages:
+      trust-all: true
+
+  jms:
+    listener:
+      session:
+        acknowledge-mode: auto
+
+app:
+  queue:
+    workload: workload.queue
+
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+    fetch-registry: false
+
+# Slightly more lenient retry settings so transient test-timing issues
+# do not cause false failures.
+resilience4j:
+  circuitbreaker:
+    instances:
+      workloadService:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 80
+        waitDurationInOpenState: 2s
+        enabled: true
+  retry:
+    instances:
+      workloadService:
+        maxAttempts: 1
+        waitDuration: 100ms
+
+management:
+  tracing:
+    enabled: false
+  metrics:
+    export:
+      prometheus:
+        enabled: false
+
+jwt:
+  # Base64-encoded 32+ byte secret suitable for HS256 (tests only)
+  secret: "dGVzdC1zZWNyZXQtdGVzdC1zZWNyZXQtdGVzdC1zZWNyZXQ="
+  expiration: 3600000
