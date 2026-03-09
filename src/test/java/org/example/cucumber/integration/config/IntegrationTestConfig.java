@@ -22,26 +22,14 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Spring Boot test context for integration-level Cucumber scenarios.
- *
- * <p>The {@code integration-test} profile wires in an embedded ActiveMQ broker
- * using the {@code vm://} transport, ensuring real JMS message delivery without
- * needing an external broker.
- *
- * <p>The inner {@link TestWorkloadListener} bean subscribes to the same queue
- * as the real workload service so that tests can assert on published messages.
- */
+
 @CucumberContextConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("integration-test")
 @Import(IntegrationTestConfig.TestWorkloadListener.class)
 public class IntegrationTestConfig {
 
-    /**
-     * Test-only JMS listener that drains messages from the workload queue and
-     * puts them into a {@link BlockingQueue} for assertion in step definitions.
-     */
+  
     @TestConfiguration
     @Component
     public static class TestWorkloadListener {
@@ -75,12 +63,10 @@ public class IntegrationTestConfig {
             receivedMessages.add(new CapturedMessage(request, idempotencyKey, message));
         }
 
-        /** Waits up to {@code timeoutSeconds} for the next message to arrive. */
         public CapturedMessage pollMessage(long timeoutSeconds) throws InterruptedException {
             return receivedMessages.poll(timeoutSeconds, TimeUnit.SECONDS);
         }
 
-        /** Checks that no message arrives within {@code timeoutSeconds}. */
         public boolean noMessageWithin(long timeoutSeconds) throws InterruptedException {
             return receivedMessages.poll(timeoutSeconds, TimeUnit.SECONDS) == null;
         }
@@ -90,7 +76,6 @@ public class IntegrationTestConfig {
         }
     }
 
-    /** Immutable holder for a captured JMS message and its metadata. */
     public record CapturedMessage(
             TrainerWorkloadRequest request,
             String idempotencyKey,

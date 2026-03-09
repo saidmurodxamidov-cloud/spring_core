@@ -17,12 +17,11 @@ import org.springframework.stereotype.Component;
 @Setter
 public class ScenarioContext {
 
-    /** The HTTP response captured by the most recent "When" step. */
+  
     private ResponseEntity<String> lastResponse;
 
-    /** ID of the last training that was created, used by delete steps. */
+    
     private Long lastCreatedTrainingId;
 
-    /** Tracks whether an exception was thrown during the last consumer invocation. */
     private Exception lastException;
 }

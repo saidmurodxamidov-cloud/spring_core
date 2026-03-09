@@ -7,14 +7,7 @@ import org.junit.platform.suite.api.Suite;
 
 import static io.cucumber.junit.platform.engine.Constants.*;
 
-/**
- * JUnit Platform Suite runner for integration-level Cucumber features under
- * {@code features/integration}.
- *
- * <p>Integration tests use an embedded ActiveMQ broker (vm://) and verify
- * that messages are actually placed on the workload queue when trainings are
- * created or deleted via the REST API.
- */
+
 @Suite
 @IncludeEngines("cucumber")
 @SelectClasspathResource("features/integration")

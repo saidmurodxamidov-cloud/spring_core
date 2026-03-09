@@ -26,18 +26,9 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Step definitions for integration scenarios that verify the full message flow:
- *
- * <pre>
- *   Training REST API  →  TrainingService  →  WorkloadSender  →  ActiveMQ queue
- *                                                                        ↓
- *                                                            TestWorkloadListener
- * </pre>
- */
+
 public class TrainingWorkloadIntegrationSteps {
 
-    /* ───── Spring beans ───────────────────────────────────────────── */
 
     @Autowired private TestRestTemplate  restTemplate;
     @Autowired private BCryptPasswordEncoder bcrypt;
@@ -51,7 +42,6 @@ public class TrainingWorkloadIntegrationSteps {
 
     @Autowired private IntegrationTestConfig.TestWorkloadListener workloadListener;
 
-    /* ───── scenario state ─────────────────────────────────────────── */
 
     private String currentAuthUsername;
     private String currentAuthRoles;
@@ -60,9 +50,6 @@ public class TrainingWorkloadIntegrationSteps {
     private Long lastCreatedTrainingId;
     private CapturedMessage capturedMessage;
 
-    /* ═══════════════════════════════════════════════════════════════
-       HOOKS
-    ═══════════════════════════════════════════════════════════════ */
 
     @Before
     public void resetIntegrationState() {
@@ -74,9 +61,7 @@ public class TrainingWorkloadIntegrationSteps {
         workloadListener.clearMessages();
     }
 
-    /* ═══════════════════════════════════════════════════════════════
-       DATA SETUP STEPS
-    ═══════════════════════════════════════════════════════════════ */
+
 
     @Given("the integration database is clean")
     public void theIntegrationDatabaseIsClean() {
@@ -148,9 +133,7 @@ public class TrainingWorkloadIntegrationSteps {
         lastCreatedTrainingId = training.getId();
     }
 
-    /* ═══════════════════════════════════════════════════════════════
-       HTTP ACTION STEPS
-    ═══════════════════════════════════════════════════════════════ */
+
 
     @When("I send an integration POST request to {string} with body:")
     public void iSendIntegrationPostRequest(String path, DataTable table) {
@@ -190,9 +173,7 @@ public class TrainingWorkloadIntegrationSteps {
                 String.class);
     }
 
-    /* ═══════════════════════════════════════════════════════════════
-       ASSERTION STEPS
-    ═══════════════════════════════════════════════════════════════ */
+  
 
     @Then("the training creation response status should be {int}")
     public void trainingCreationResponseShouldBe(int status) {
@@ -249,9 +230,7 @@ public class TrainingWorkloadIntegrationSteps {
                 .isTrue();
     }
 
-    /* ═══════════════════════════════════════════════════════════════
-       PRIVATE HELPERS
-    ═══════════════════════════════════════════════════════════════ */
+    
 
     private HttpHeaders buildAuthHeaders() {
         HttpHeaders headers = new HttpHeaders();

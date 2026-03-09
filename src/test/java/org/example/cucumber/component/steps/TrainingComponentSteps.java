@@ -33,19 +33,10 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-/**
- * Step definitions for the {@code training.feature} component scenarios.
- *
- * <p>HTTP calls are made via {@link TestRestTemplate}. Authentication is
- * simulated by adding {@code X-Auth-Username} and {@code X-Auth-Roles} headers,
- * mirroring the behaviour of the API gateway in production.
- *
- * <p>The JMS delegate ({@link WorkloadSenderDelegate}) is a Mockito mock, so
- * no real ActiveMQ broker is needed in component tests.
- */
+
 public class TrainingComponentSteps {
 
-    /* ───── Spring beans ───────────────────────────────────────────── */
+  
 
     @Autowired private TestRestTemplate restTemplate;
     @Autowired private ScenarioContext  scenarioContext;
@@ -62,32 +53,27 @@ public class TrainingComponentSteps {
     @Autowired private BCryptPasswordEncoder  bcrypt;
     @Autowired private ObjectMapper           objectMapper;
 
-    /* ───── current request auth ───────────────────────────────────── */
+   
 
     private String currentAuthUsername;
     private String currentAuthRoles;
 
-    /* ═══════════════════════════════════════════════════════════════
-       HOOKS
-    ═══════════════════════════════════════════════════════════════ */
+   
 
     @Before
     public void resetState() {
         currentAuthUsername = null;
         currentAuthRoles    = null;
-        // Reset mock interactions between scenarios
+
         Mockito.reset(workloadSenderDelegate);
     }
 
-    /* ═══════════════════════════════════════════════════════════════
-       DATABASE SETUP STEPS  (shared with AuthComponentSteps via @Given)
-    ═══════════════════════════════════════════════════════════════ */
+
 
     @Given("the database is clean")
     public void theDatabaseIsClean() {
         trainingRepository.deleteAll();
         trainerRepository.deleteAll();
-        // Clear join tables that can block deletes due to FK constraints (H2).
         jdbcTemplate.update("DELETE FROM trainers_trainee");
         jdbcTemplate.update("DELETE FROM user_entity_roles");
         traineeRepository.deleteAll();
@@ -163,9 +149,6 @@ public class TrainingComponentSteps {
         scenarioContext.setLastCreatedTrainingId(training.getId());
     }
 
-    /* ═══════════════════════════════════════════════════════════════
-       AUTH SETUP STEPS
-    ═══════════════════════════════════════════════════════════════ */
 
     @Given("I am authenticated as {string} with roles {string}")
     public void iAmAuthenticatedAs(String username, String roles) {
@@ -173,9 +156,6 @@ public class TrainingComponentSteps {
         this.currentAuthRoles    = roles;
     }
 
-    /* ═══════════════════════════════════════════════════════════════
-       HTTP ACTION STEPS
-    ═══════════════════════════════════════════════════════════════ */
 
     @When("I send a POST request to {string} with body:")
     public void iSendPostRequest(String path, DataTable table) {
@@ -217,9 +197,6 @@ public class TrainingComponentSteps {
         iSendDeleteRequest("/api/trainings/" + id);
     }
 
-    /* ═══════════════════════════════════════════════════════════════
-       ASSERTION STEPS
-    ═══════════════════════════════════════════════════════════════ */
 
     @Then("the response status should be {int}")
     public void theResponseStatusShouldBe(int expectedStatus) {
@@ -276,9 +253,6 @@ public class TrainingComponentSteps {
         verify(workloadSenderDelegate, never()).sendWorkload(any(), anyString());
     }
 
-    /* ═══════════════════════════════════════════════════════════════
-       PRIVATE HELPERS
-    ═══════════════════════════════════════════════════════════════ */
 
     private HttpHeaders buildAuthHeaders() {
         HttpHeaders headers = new HttpHeaders();
