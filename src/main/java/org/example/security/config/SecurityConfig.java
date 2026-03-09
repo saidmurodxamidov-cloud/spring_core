@@ -42,10 +42,10 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/trainers/register",
                                 "/api/trainees/register",
+                                "/api/auth",
                                 "/api/auth/login",
                                 "/api/auth/logout",
                                 "/api/training-types/**",
-                                "/api/trainings/**",
                                 "/error",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",

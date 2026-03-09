@@ -50,7 +50,7 @@ public class ApplicationHealthIndicator implements HealthIndicator {
             return "UNKNOWN";
         }
         
-        Profile activeProfile = environmentInfo.getActive().get(0);
-        return activeProfile.name();
+        String activeProfile = environmentInfo.getActive().get(0);
+        return activeProfile == null ? "UNKNOWN" : activeProfile;
     }
 }
