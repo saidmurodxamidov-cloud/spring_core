@@ -68,7 +68,6 @@ public class TrainingServiceJpa implements TrainingService {
         trainee.getTrainings().add(training);
 
         TrainerWorkloadRequest workloadRequest = workloadMapper.toDto(training, ActionType.ADD);
-        workloadRequest.setDuration(training.getTrainingDuration().toMinutesPart());
         submitWorkLoadEvent(
                 workloadRequest,
                 trainee.getUser().getUserName(),

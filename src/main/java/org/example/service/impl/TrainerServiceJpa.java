@@ -139,7 +139,7 @@ public class TrainerServiceJpa implements TrainerService {
                         .traineeUsername(username)
                         .trainingType(training.getTrainingType().getTrainingTypeName())
                         .trainingDate(training.getDate())
-                        .durationInMinutes(training.getTrainingDuration().toMinutesPart())
+                        .durationInMinutes((int) training.getTrainingDuration().toMinutes())
                         .trainingName(trainingType)
                         .build()).toList();
     }
