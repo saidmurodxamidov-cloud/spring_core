@@ -1,0 +1,14 @@
+target/
+*.jar
+*.war
+.idea/
+*.iml
+.git/
+.gitignore
+.DS_Store
+Thumbs.db
+*.log
+logs/
+Dockerfile
+.dockerignore
+docker-compose*.yml

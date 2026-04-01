@@ -67,8 +67,12 @@ public class TrainingServiceJpa implements TrainingService {
         trainer.getTrainings().add(training);
         trainee.getTrainings().add(training);
 
-        TrainerWorkloadRequest workloadRequest = workloadMapper.toDto(training,ActionType.ADD);
-        submitWorkLoadEvent(workloadRequest);
+        TrainerWorkloadRequest workloadRequest = workloadMapper.toDto(training, ActionType.ADD);
+        submitWorkLoadEvent(
+                workloadRequest,
+                trainee.getUser().getUserName(),
+                training.getTrainingName(),
+                training.getId());
 
         metricsService.incrementTrainingCreated();
         log.info("successfully created training with name {}", training.getTrainingName());
@@ -79,8 +83,12 @@ public class TrainingServiceJpa implements TrainingService {
         }
     }
 
-    private void submitWorkLoadEvent(TrainerWorkloadRequest request){
-        workloadSenderService.sendWorkload(request);
+    private void submitWorkLoadEvent(
+            TrainerWorkloadRequest request,
+            String traineeUsername,
+            String trainingName,
+            Long trainingRecordId) {
+        workloadSenderService.sendWorkload(request, traineeUsername, trainingName, trainingRecordId);
     }
 
     @Transactional
@@ -89,11 +97,14 @@ public class TrainingServiceJpa implements TrainingService {
             return;
         }
         TrainingEntity trainingEntity = trainingRepository.findById(trainingId).orElseThrow(EntityNotFoundException::new);
+
+        TrainerWorkloadRequest workloadRequest = workloadMapper.toDto(trainingEntity, ActionType.DELETE);
+        String traineeUsername = trainingEntity.getTrainee().getUser().getUserName();
+        String trainingName = trainingEntity.getTrainingName();
+        Long id = trainingEntity.getId();
+
         trainingRepository.delete(trainingEntity);
 
-        TrainerWorkloadRequest workloadRequest = workloadMapper.toDto(trainingEntity,ActionType.DELETE);
-
-        submitWorkLoadEvent(workloadRequest);
-
+        submitWorkLoadEvent(workloadRequest, traineeUsername, trainingName, id);
     }
 }

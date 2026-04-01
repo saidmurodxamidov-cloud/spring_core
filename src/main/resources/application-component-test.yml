@@ -1,0 +1,68 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:component_testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;NON_KEYWORDS=VALUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+  # Use in-process broker so the context starts without a real ActiveMQ,
+  # but still satisfies beans that require a ConnectionFactory.
+  # The WorkloadSenderDelegate is mocked via @MockBean so messages never
+  # actually reach the broker in component tests.
+  activemq:
+    broker-url: vm://component-test?broker.persistent=false
+    user: admin
+    password: admin
+    packages:
+      trust-all: true
+
+  jms:
+    listener:
+      auto-startup: false
+      session:
+        acknowledge-mode: auto
+
+app:
+  queue:
+    workload: workload.queue
+
+# Disable Eureka registration in tests
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+    fetch-registry: false
+
+# Disable resilience4j retry/circuit-breaker so mocked calls do not get retried
+resilience4j:
+  circuitbreaker:
+    instances:
+      workloadService:
+        enabled: false
+  retry:
+    instances:
+      workloadService:
+        maxAttempts: 1
+
+# Disable distributed tracing to avoid Zipkin calls in tests
+management:
+  tracing:
+    enabled: false
+  metrics:
+    export:
+      prometheus:
+        enabled: false
+
+jwt:
+  # Base64-encoded 32+ byte secret suitable for HS256 (tests only)
+  secret: "dGVzdC1zZWNyZXQtdGVzdC1zZWNyZXQtdGVzdC1zZWNyZXQ="
+  expiration: 3600000

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -18,7 +19,13 @@ import java.util.stream.Collectors;
 @ConfigurationProperties(prefix = "spring.profiles")
 public class EnvironmentInfo {
 
-    private List<Profile> active;
+    /**
+     * Active Spring profile names (e.g. {@code local}, {@code dev}, {@code component-test}).
+     *
+     * <p>Stored as strings (not {@link Profile} enum) so test-only profiles don't break
+     * configuration-properties binding.
+     */
+    private List<String> active;
     
     @Autowired
     private Environment environment;
@@ -27,17 +34,7 @@ public class EnvironmentInfo {
     public void logEnvironmentInfo() {
         if (active == null || active.isEmpty()) {
             String[] activeProfiles = environment.getActiveProfiles();
-            active = java.util.Arrays.stream(activeProfiles)
-                    .map(profile -> {
-                        try {
-                            return Profile.valueOf(profile.toUpperCase());
-                        } catch (IllegalArgumentException e) {
-                            log.warn("Unknown profile: {}, skipping", profile);
-                            return null;
-                        }
-                    })
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+            active = java.util.Arrays.stream(activeProfiles).toList();
         }
 
         String[] defaultProfiles = environment.getDefaultProfiles();
@@ -53,19 +50,27 @@ public class EnvironmentInfo {
         log.info("=================================================");
     }
 
+    private Set<String> activeUpper() {
+        if (active == null) return Set.of();
+        return active.stream()
+                .filter(Objects::nonNull)
+                .map(s -> s.trim().toUpperCase())
+                .collect(Collectors.toSet());
+    }
+
     public boolean isLocal() {
-        return active != null && active.contains(Profile.LOCAL);
+        return activeUpper().contains(Profile.LOCAL.name());
     }
 
     public boolean isDev() {
-        return active != null && active.contains(Profile.DEV);
+        return activeUpper().contains(Profile.DEV.name());
     }
 
     public boolean isStaging() {
-        return active != null && active.contains(Profile.STG);
+        return activeUpper().contains(Profile.STG.name());
     }
 
     public boolean isProduction() {
-        return active != null && active.contains(Profile.PROD);
+        return activeUpper().contains(Profile.PROD.name());
     }
 }

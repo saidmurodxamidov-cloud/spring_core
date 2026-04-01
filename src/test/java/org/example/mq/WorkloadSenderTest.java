@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,11 +33,11 @@ class WorkloadSenderTest {
 
     @Test
     void sendWorkload_GeneratesKeyAndDelegates() {
-        when(idempotencyKeyService.generateKey(workloadRequest)).thenReturn("key123");
+        when(idempotencyKeyService.generateKey(workloadRequest, "t1", "n1", 1L)).thenReturn("key123");
 
-        workloadSender.sendWorkload(workloadRequest);
+        workloadSender.sendWorkload(workloadRequest, "t1", "n1", 1L);
 
-        verify(idempotencyKeyService).generateKey(workloadRequest);
+        verify(idempotencyKeyService).generateKey(workloadRequest, "t1", "n1", 1L);
         verify(delegate).sendWorkload(workloadRequest, "key123");
     }
 
@@ -50,11 +51,11 @@ class WorkloadSenderTest {
         request2.setActionType(ActionType.DELETE);
         request2.setUsername("trainer2");
 
-        when(idempotencyKeyService.generateKey(request1)).thenReturn("key1");
-        when(idempotencyKeyService.generateKey(request2)).thenReturn("key2");
+        when(idempotencyKeyService.generateKey(eq(request1), any(), any(), any())).thenReturn("key1");
+        when(idempotencyKeyService.generateKey(eq(request2), any(), any(), any())).thenReturn("key2");
 
-        workloadSender.sendWorkload(request1);
-        workloadSender.sendWorkload(request2);
+        workloadSender.sendWorkload(request1, "a", "b", null);
+        workloadSender.sendWorkload(request2, "a", "b", null);
 
         verify(delegate).sendWorkload(request1, "key1");
         verify(delegate).sendWorkload(request2, "key2");
