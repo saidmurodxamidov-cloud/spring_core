@@ -103,6 +103,8 @@ services:
         condition: service_healthy
       eureka:
         condition: service_healthy
+      api-gateway:
+        condition: service_started
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/test_db
       SPRING_DATASOURCE_USERNAME: root
@@ -112,6 +114,9 @@ services:
       SPRING_ACTIVEMQ_USER: admin
       SPRING_ACTIVEMQ_PASSWORD: admin
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
+      # Use compose DNS names so other containers and the gateway resolve instances reliably (prefer-ip alone can mis-register on some hosts).
+      EUREKA_INSTANCE_HOSTNAME: training-service
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
       JWT_SECRET: myVerySecretKeyThatIsAtLeast256BitsLongForHS256AlgorithmToWork
       JWT_EXPIRATION: 86400000
       SERVER_PORT: 8083
@@ -134,21 +139,35 @@ services:
       SPRING_ACTIVEMQ_USER: admin
       SPRING_ACTIVEMQ_PASSWORD: admin
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
+      SERVER_PORT: 8084
+      EUREKA_INSTANCE_HOSTNAME: workload-service
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8084/actuator/health || exit 1"]
       interval: 15s
       timeout: 5s
       retries: 5
       start_period: 40s
+    depends_on:
+      api-gateway:
+        condition: service_started
+      eureka:
+        condition: service_healthy
+      activemq:
+        condition: service_healthy
 
   api-gateway:
     image: saidmurods/api_gateway
     container_name: api_gateway
     ports:
       - "8080:8080"
-
+    depends_on:
+      eureka:
+        condition: service_healthy
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
+      EUREKA_INSTANCE_HOSTNAME: api-gateway
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
 
 volumes:
   mongo_data:

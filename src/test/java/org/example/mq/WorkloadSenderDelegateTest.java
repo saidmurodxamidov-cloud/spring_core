@@ -51,7 +51,6 @@ class WorkloadSenderDelegateTest {
 
         delegate.sendWorkload(workloadRequest, "key123");
 
-        verify(message).setStringProperty("idempotencyKey", "key123");
         verify(enricher).enrich(message, "key123");
     }
 

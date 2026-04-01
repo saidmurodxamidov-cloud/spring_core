@@ -129,7 +129,11 @@ class TrainingServiceJpaTest {
         verify(trainerRepository).findByUserUserName("jane.smith");
         verify(trainingTypeRepository).findByTrainingTypeName("Fitness");
         verify(trainingRepository).save(any(TrainingEntity.class));
-        verify(workloadSenderService).sendWorkload(any(TrainerWorkloadRequest.class));
+        verify(workloadSenderService).sendWorkload(
+                any(TrainerWorkloadRequest.class),
+                eq("john.doe"),
+                eq("Morning Workout"),
+                nullable(Long.class));
         verify(metricsService).incrementTrainingCreated();
         verify(metricsService).recordTrainingCreationDuration(any());
 
@@ -146,7 +150,7 @@ class TrainingServiceJpaTest {
                 () -> trainingService.addTraining(trainingRequest));
 
         verify(trainingRepository, never()).save(any());
-        verify(workloadSenderService, never()).sendWorkload(any(TrainerWorkloadRequest.class));
+        verify(workloadSenderService, never()).sendWorkload(any(), any(), any(), any());
     }
 
     @Test
@@ -159,7 +163,7 @@ class TrainingServiceJpaTest {
                 () -> trainingService.addTraining(trainingRequest));
 
         verify(trainingRepository, never()).save(any());
-        verify(workloadSenderService, never()).sendWorkload(any(TrainerWorkloadRequest.class));
+        verify(workloadSenderService, never()).sendWorkload(any(), any(), any(), any());
     }
 
     @Test
@@ -173,7 +177,7 @@ class TrainingServiceJpaTest {
                 () -> trainingService.addTraining(trainingRequest));
 
         verify(trainingRepository, never()).save(any());
-        verify(workloadSenderService, never()).sendWorkload(any(TrainerWorkloadRequest.class));
+        verify(workloadSenderService, never()).sendWorkload(any(), any(), any(), any());
     }
 
     @Test
@@ -239,12 +243,15 @@ class TrainingServiceJpaTest {
         trainingService.deleteTraining(1L);
 
         verify(trainingRepository, never()).delete(any());
-        verify(workloadSenderService, never()).sendWorkload(any(TrainerWorkloadRequest.class));
+        verify(workloadSenderService, never()).sendWorkload(any(), any(), any(), any());
     }
 
     @Test
     void deleteTraining_Success() {
         TrainingEntity trainingEntity = new TrainingEntity();
+        trainingEntity.setId(1L);
+        trainingEntity.setTrainingName("Morning Workout");
+        trainingEntity.setTrainee(trainee);
         when(trainingRepository.existsById(1L)).thenReturn(true);
         when(trainingRepository.findById(1L)).thenReturn(Optional.of(trainingEntity));
         when(workloadMapper.toDto(eq(trainingEntity), eq(ActionType.DELETE))).thenReturn(workloadRequest);
@@ -252,6 +259,10 @@ class TrainingServiceJpaTest {
         trainingService.deleteTraining(1L);
 
         verify(trainingRepository).delete(trainingEntity);
-        verify(workloadSenderService).sendWorkload(eq(workloadRequest));
+        verify(workloadSenderService).sendWorkload(
+                eq(workloadRequest),
+                eq("john.doe"),
+                eq("Morning Workout"),
+                eq(1L));
     }
 }

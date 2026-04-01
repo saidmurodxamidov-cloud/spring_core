@@ -24,7 +24,6 @@ public class WorkloadSenderDelegate {
     @CircuitBreaker(name = "workloadService", fallbackMethod = "fallback")
     public void sendWorkload(TrainerWorkloadRequest request, String idempotencyKey) {
         jmsTemplate.convertAndSend(workloadQueue, request, message -> {
-            message.setStringProperty("idempotencyKey", idempotencyKey);
             enricher.enrich(message, idempotencyKey);
             return message;
         });
